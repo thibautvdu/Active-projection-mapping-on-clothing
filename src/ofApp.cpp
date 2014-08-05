@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include "ofApp.h"
-#include "KinectBackgroundRemoval.h"
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -88,5 +87,5 @@ void ofApp::draw() {
 
 //--------------------------------------------------------------
 void ofApp::exit() {
-
+	mOfxKinect.stop();
 }
