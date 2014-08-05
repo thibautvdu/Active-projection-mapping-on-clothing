@@ -14,7 +14,8 @@ class ofApp : public ofBaseApp {
 		void exit();
 
 		ofxKinectCommonBridge mOfxKinect;
-		std::vector<cv::Point> mModelHullOfInterest;
+		KCBHANDLE mKcbKinect;
+		ofImage mOfSegmentedImage;
 };
 
 #endif // FLEXIBLE_SURFACE_AUGMENTATION_OF_APP_H_

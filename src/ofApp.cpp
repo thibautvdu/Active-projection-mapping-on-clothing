@@ -1,16 +1,17 @@
 #include <stdlib.h>
 #include "ofApp.h"
-#include "KinectBackgroundRemoval.h"
 
 //--------------------------------------------------------------
 void ofApp::setup() {
+	mKcbKinect = mOfxKinect.getHandle();
+
 	bool initSensor = mOfxKinect.initSensor();
 	if (!initSensor) {
 		ofLog(OF_LOG_FATAL_ERROR) << "Couldn't init the kinect's sensor";
 		exit();
 	}
 
-	bool initStreams = mOfxKinect.initColorStream(640,480) && mOfxKinect.initDepthStream(640,480,true);
+	bool initStreams = mOfxKinect.initColorStream(640, 480) && mOfxKinect.initDepthStream(640, 480, false, true);
 	if (!initStreams) {
 		ofLog(OF_LOG_FATAL_ERROR) << "Couldn't init the kinect's color and/or depth streams";
 		exit();
@@ -28,6 +29,8 @@ void ofApp::setup() {
 		exit();
 	}
 
+	mOfSegmentedImage.allocate(640, 480, OF_IMAGE_COLOR);
+
 	ofDisableAlphaBlending();
 	ofSetFrameRate(30);
 }
@@ -35,33 +38,23 @@ void ofApp::setup() {
 //--------------------------------------------------------------
 void ofApp::update() {
 	mOfxKinect.update();
-
+	
 	if (mOfxKinect.isNewSkeleton()) {
-		// Search for the first non-empty skeleton
-		vector<Skeleton> skeletons = mOfxKinect.getSkeletons();
-		for (int i = 0; i < skeletons.size(); ++i) {
-			if (skeletons[i].find(NUI_SKELETON_POSITION_HEAD) != skeletons[i].end()) {
-				/*
-				INuiSensor* nuiKinect = &mOfxKinect.getNuiSensor();
-				INuiBackgroundRemovedColorStream* backgroundLessColorStream;
-				NuiCreateBackgroundRemovedColorStream(nuiKinect, &backgroundLessColorStream);
-				*/
-				
-				// Construct an openCV convex hull from the skeleton
-				Skeleton modelSkeleton = skeletons[i];
-				std::vector<cv::Point> modelImgBonePoints;
-				for (Skeleton::iterator it = modelSkeleton.begin(); it != modelSkeleton.end(); ++it) {
-					modelImgBonePoints.push_back(cv::Point(it->second.getScreenPosition().x, it->second.getScreenPosition().y));
-				}
-				std::vector<int> hullIndices;
-				cv::convexHull(modelImgBonePoints, hullIndices);
+		NUI_DEPTH_IMAGE_PIXEL * pNuiDepthPixel = mOfxKinect.getNuiMappedDepthPixelsRef();
 
-				mModelHullOfInterest.clear();
-				for (int i = 0; i < hullIndices.size(); ++i) {
-					mModelHullOfInterest.push_back(modelImgBonePoints[hullIndices[i]]);
+		ofPixels ofxKinectColorPixels = mOfxKinect.getColorPixelsRef();
+		mOfSegmentedImage.setColor(ofColor::black);
+		ofPixels segmentedImagePixels = mOfSegmentedImage.getPixelsRef();
+		for (int x = 0; x < 640; x++) {
+			for (int y = 0; y < 480; y++) {
+				USHORT playerId = (pNuiDepthPixel + x + y*640)->playerIndex;
+
+				if (playerId != 0) {
+					segmentedImagePixels.setColor(x, y, ofxKinectColorPixels.getColor(x,y));
 				}
 			}
 		}
+		mOfSegmentedImage.setFromPixels(segmentedImagePixels);
 	}
 }
 
@@ -71,18 +64,8 @@ void ofApp::draw() {
 		ofBackground(0);
 
 		mOfxKinect.draw(0, 0);
-
-		ofMesh vertexData;
-		for (int i = 0; i < mModelHullOfInterest.size(); ++i) {
-			vertexData.addVertex(ofVec3f(mModelHullOfInterest[i].x, mModelHullOfInterest[i].y, 0));
-		}
-
-		ofSetColor(255, 0, 0);
-		vertexData.setMode(OF_PRIMITIVE_LINE_LOOP);
-		vertexData.draw();
-		ofSetColor(255);
-
 		mOfxKinect.drawDepth(640, 0);
+		mOfSegmentedImage.draw(0, 480);
 	}
 }
 
