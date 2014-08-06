@@ -44,17 +44,17 @@ void ofApp::update() {
 
 		ofPixels ofxKinectColorPixels = mOfxKinect.getColorPixelsRef();
 		mOfSegmentedImage.setColor(ofColor::black);
-		ofPixels segmentedImagePixels = mOfSegmentedImage.getPixelsRef();
+		ofPixels* pSegmentedImagePixels = &(mOfSegmentedImage.getPixelsRef());
 		for (int x = 0; x < 640; x++) {
 			for (int y = 0; y < 480; y++) {
 				USHORT playerId = (pNuiDepthPixel + x + y*640)->playerIndex;
 
 				if (playerId != 0) {
-					segmentedImagePixels.setColor(x, y, ofxKinectColorPixels.getColor(x,y));
+					pSegmentedImagePixels->setColor(x, y, ofxKinectColorPixels.getColor(x,y));
 				}
 			}
 		}
-		mOfSegmentedImage.setFromPixels(segmentedImagePixels);
+		mOfSegmentedImage.update();
 	}
 }
 
