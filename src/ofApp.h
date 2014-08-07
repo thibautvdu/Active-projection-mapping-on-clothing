@@ -28,6 +28,8 @@ class ofApp : public ofBaseApp {
 		ofxPanel mGui;
 		ofxIntSlider mClothSegmentationLowH, mClothSegmentationLowS, mClothSegmentationLowV; // Cloth color segmentation low thresh
 		ofxIntSlider mClothSegmentationHighH, mClothSegmentationHighS, mClothSegmentationHighV; // Cloth color segmentation high thresh
+		ofxIntSlider mOpenKernelSize, mCloseKernelSize;
+		ofxToggle mMorphoUseEllipse;
 };
 
 #endif // FLEXIBLE_SURFACE_AUGMENTATION_OF_APP_H_

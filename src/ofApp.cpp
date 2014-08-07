@@ -50,6 +50,9 @@ void ofApp::setup() {
 	mGui.add(mClothSegmentationHighH.setup("high hue thresh", 120, 0, 179));
 	mGui.add(mClothSegmentationHighS.setup("high saturation thresh", 95, 0, 255));
 	mGui.add(mClothSegmentationHighV.setup("high value thresh", 255, 0, 255));
+	mGui.add(mOpenKernelSize.setup("opening kernel size", 5, 1, 9));
+	mGui.add(mCloseKernelSize.setup("closing kernel size", 9, 1, 9));
+	mGui.add(mMorphoUseEllipse.setup("ellipse for morpho operations",false));
 }
 
 //--------------------------------------------------------------
@@ -91,14 +94,12 @@ void ofApp::update() {
 		cv::Mat mCvSegmentedImgHsv;
 		cv::cvtColor(mCvSegmentedImg, mCvSegmentedImgHsv, CV_RGB2HSV);
 		cv::inRange(mCvSegmentedImgHsv, cv::Scalar(mClothSegmentationLowH, mClothSegmentationLowS, mClothSegmentationLowV), cv::Scalar(mClothSegmentationHighH, mClothSegmentationHighS, mClothSegmentationHighV), mCvClothMask);
-
-		//morphological opening (remove small objects from the foreground)
-		cv::erode(mCvClothMask, mCvClothMask, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)));
-		cv::dilate(mCvClothMask, mCvClothMask, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)));
-
-		//morphological closing (fill small holes in the foreground)
-		cv::dilate(mCvClothMask, mCvClothMask, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)));
-		cv::erode(mCvClothMask, mCvClothMask, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)));
+		
+		//morphological opening (remove small objects) and closing (fill small holes)
+		cv::Mat openingOperator = cv::getStructuringElement(mMorphoUseEllipse ? cv::MORPH_ELLIPSE : cv::MORPH_RECT, cv::Size(mOpenKernelSize, mOpenKernelSize));
+		cv::Mat closingOperator = cv::getStructuringElement(mMorphoUseEllipse ? cv::MORPH_ELLIPSE : cv::MORPH_RECT, cv::Size(mCloseKernelSize, mCloseKernelSize));
+		cv::morphologyEx(mCvClothMask, mCvClothMask, cv::MORPH_OPEN, openingOperator);
+		cv::morphologyEx(mCvClothMask, mCvClothMask, cv::MORPH_CLOSE, closingOperator);
 	}
 	mOfSegmentedImg.update();
 	mOfClothMask.update();
