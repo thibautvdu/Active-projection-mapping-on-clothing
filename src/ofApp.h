@@ -15,7 +15,11 @@ class ofApp : public ofBaseApp {
 
 		ofxKinectCommonBridge mOfxKinect;
 		KCBHANDLE mKcbKinect;
-		ofImage mOfSegmentedImage;
+		int mKinectColorImgWidth, mKinectColorImgHeight;
+		int mKinectDepthImgWidth, mKinectDepthImgHeight;
+
+		ofImage mOfSegmentedImg;
+		cv::Mat mCvSegmentedImg;
 };
 
 #endif // FLEXIBLE_SURFACE_AUGMENTATION_OF_APP_H_
