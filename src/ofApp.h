@@ -21,15 +21,18 @@ class ofApp : public ofBaseApp {
 
 		ofImage mOfSegmentedImg;
 		cv::Mat mCvSegmentedImg;
-		ofImage mOfClothMask;
-		cv::Mat mCvClothMask;
+		ofImage mOfGarmentMask;
+		cv::Mat mCvGarmentMask;
+
+		ofxCv::ContourFinder mContourFinder;
 
 		// GUI
 		ofxPanel mGui;
-		ofxIntSlider mClothSegmentationLowH, mClothSegmentationLowS, mClothSegmentationLowV; // Cloth color segmentation low thresh
-		ofxIntSlider mClothSegmentationHighH, mClothSegmentationHighS, mClothSegmentationHighV; // Cloth color segmentation high thresh
+		ofxIntSlider mGarmentSegmentationLowH, mGarmentSegmentationLowS, mGarmentSegmentationLowV; // Cloth color segmentation low thresh
+		ofxIntSlider mGarmentSegmentationHighH, mGarmentSegmentationHighS, mGarmentSegmentationHighV; // Cloth color segmentation high thresh
 		ofxIntSlider mOpenKernelSize, mCloseKernelSize;
 		ofxToggle mMorphoUseEllipse;
+		ofxIntSlider mGarmentBodyPercent;
 };
 
 #endif // FLEXIBLE_SURFACE_AUGMENTATION_OF_APP_H_

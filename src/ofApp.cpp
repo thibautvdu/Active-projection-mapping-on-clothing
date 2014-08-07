@@ -4,6 +4,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
+	// Kinect
 	mKcbKinect = mOfxKinect.getHandle();
 	mKinectColorImgWidth = 640;
 	mKinectColorImgHeight = 480;
@@ -34,25 +35,36 @@ void ofApp::setup() {
 		exit();
 	}
 
+	// Allocation
 	mOfSegmentedImg.allocate(mKinectColorImgWidth, mKinectColorImgHeight, OF_IMAGE_COLOR);
 	mCvSegmentedImg = ofxCv::toCv(mOfSegmentedImg);
-	mOfClothMask.allocate(mKinectColorImgWidth, mKinectColorImgHeight, OF_IMAGE_GRAYSCALE);
-	mCvClothMask = ofxCv::toCv(mOfClothMask);
+	mOfGarmentMask.allocate(mKinectColorImgWidth, mKinectColorImgHeight, OF_IMAGE_GRAYSCALE);
+	mCvGarmentMask = ofxCv::toCv(mOfGarmentMask);
 
+	// Computer vision tools
+	mContourFinder.setAutoThreshold(false);
+	mContourFinder.setFindHoles(false);
+	mContourFinder.setInvert(false);
+	mContourFinder.setSimplify(true);
+	mContourFinder.setSortBySize(true);
+	mContourFinder.setUseTargetColor(false);
+
+	// OpenGL
 	ofDisableAlphaBlending();
 	ofSetFrameRate(30);
 
 	// GUI
 	mGui.setup();
-	mGui.add(mClothSegmentationLowH.setup("low hue thresh", 70, 0, 179));
-	mGui.add(mClothSegmentationLowS.setup("low saturation thresh", 0, 0, 255));
-	mGui.add(mClothSegmentationLowV.setup("low value thresh", 120, 0, 255));
-	mGui.add(mClothSegmentationHighH.setup("high hue thresh", 120, 0, 179));
-	mGui.add(mClothSegmentationHighS.setup("high saturation thresh", 95, 0, 255));
-	mGui.add(mClothSegmentationHighV.setup("high value thresh", 255, 0, 255));
+	mGui.add(mGarmentSegmentationLowH.setup("low hue thresh", 70, 0, 179));
+	mGui.add(mGarmentSegmentationLowS.setup("low saturation thresh", 0, 0, 255));
+	mGui.add(mGarmentSegmentationLowV.setup("low value thresh", 40, 0, 255));
+	mGui.add(mGarmentSegmentationHighH.setup("high hue thresh", 120, 0, 179));
+	mGui.add(mGarmentSegmentationHighS.setup("high saturation thresh", 95, 0, 255));
+	mGui.add(mGarmentSegmentationHighV.setup("high value thresh", 255, 0, 255));
 	mGui.add(mOpenKernelSize.setup("opening kernel size", 5, 1, 9));
 	mGui.add(mCloseKernelSize.setup("closing kernel size", 9, 1, 9));
 	mGui.add(mMorphoUseEllipse.setup("ellipse for morpho operations",false));
+	mGui.add(mGarmentBodyPercent.setup("percent of clothing on body", 20, 0, 100)); // 30% is a good value for a t-shirt
 }
 
 //--------------------------------------------------------------
@@ -62,9 +74,10 @@ void ofApp::update() {
 	if (mOfxKinect.isNewSkeleton()) {
 		NUI_DEPTH_IMAGE_PIXEL * pNuiDepthPixel = mOfxKinect.getNuiMappedDepthPixelsRef(); // The kinect segmentation map
 		
-		int modelPixelCount = 0;
-		ofPoint modelRoiPointA(mOfSegmentedImg.width, mOfSegmentedImg.height);
-		ofPoint modelRoiPointD(0, 0);
+		// Model ROI
+		ofRectangle modelRoi(mOfSegmentedImg.width, mOfSegmentedImg.height, 0, 0);
+		int modelRoiXBottomRight = 0, modelRoiYBottomRight = 0;
+		int modelBodyPixelsCount = 0; // Used to discriminate contours, more robust than bounding box if the model extend their arms, etc.
 		for (int x = 0; x < mOfSegmentedImg.width; ++x) {
 			for (int y = 0; y < mOfSegmentedImg.height; ++y) {
 				USHORT playerId = (pNuiDepthPixel + x + y*mOfSegmentedImg.width)->playerIndex;
@@ -72,37 +85,49 @@ void ofApp::update() {
 				if (playerId != 0) {
 					ofColor bgra = mOfxKinect.getColorPixelsRef().getColor(x, y);
 					mOfSegmentedImg.setColor(x, y, ofColor(bgra.b,bgra.g,bgra.r));
-					modelPixelCount++;
+
 					// Update the ROI
-					modelRoiPointA.x = (x < modelRoiPointA.x) ? x : modelRoiPointA.x;
-					modelRoiPointA.y = (y < modelRoiPointA.y) ? y : modelRoiPointA.y;
-					modelRoiPointD.x = (x > modelRoiPointD.x) ? x : modelRoiPointD.x;
-					modelRoiPointD.y = (y > modelRoiPointD.y) ? y : modelRoiPointD.y;
+					modelRoi.x = (x < modelRoi.x) ? x : modelRoi.x;
+					modelRoi.y = (y < modelRoi.y) ? y : modelRoi.y;
+					modelRoiXBottomRight = (x > modelRoiXBottomRight) ? x : modelRoiXBottomRight;
+					modelRoiYBottomRight = (y > modelRoiYBottomRight) ? y : modelRoiYBottomRight;
+					modelBodyPixelsCount++;
 				}
 				else {
 					mOfSegmentedImg.setColor(x, y, ofColor::black);
 				}
 			}
 		}
+		// Update the ROI information
+		modelRoi.width = modelRoiXBottomRight - modelRoi.x;
+		modelRoi.height = modelRoiYBottomRight - modelRoi.y;
 
 		// OPENCV
-		/*if (mCvSegmentedImage.type() != CV_8UC4) {
-		ofLog(OF_LOG_FATAL_ERROR) << "Expected the kinect's color image to be 8 bytes x 4 channels";
-		exit();
-		}*/
 		// Color segmentation
 		cv::Mat mCvSegmentedImgHsv;
 		cv::cvtColor(mCvSegmentedImg, mCvSegmentedImgHsv, CV_RGB2HSV);
-		cv::inRange(mCvSegmentedImgHsv, cv::Scalar(mClothSegmentationLowH, mClothSegmentationLowS, mClothSegmentationLowV), cv::Scalar(mClothSegmentationHighH, mClothSegmentationHighS, mClothSegmentationHighV), mCvClothMask);
+		cv::inRange(mCvSegmentedImgHsv, cv::Scalar(mGarmentSegmentationLowH, mGarmentSegmentationLowS, mGarmentSegmentationLowV), cv::Scalar(mGarmentSegmentationHighH, mGarmentSegmentationHighS, mGarmentSegmentationHighV), mCvGarmentMask);
 		
-		//morphological opening (remove small objects) and closing (fill small holes)
+		// Morphological opening (remove small objects) and closing (fill small holes)
 		cv::Mat openingOperator = cv::getStructuringElement(mMorphoUseEllipse ? cv::MORPH_ELLIPSE : cv::MORPH_RECT, cv::Size(mOpenKernelSize, mOpenKernelSize));
 		cv::Mat closingOperator = cv::getStructuringElement(mMorphoUseEllipse ? cv::MORPH_ELLIPSE : cv::MORPH_RECT, cv::Size(mCloseKernelSize, mCloseKernelSize));
-		cv::morphologyEx(mCvClothMask, mCvClothMask, cv::MORPH_OPEN, openingOperator);
-		cv::morphologyEx(mCvClothMask, mCvClothMask, cv::MORPH_CLOSE, closingOperator);
+		cv::morphologyEx(mCvGarmentMask, mCvGarmentMask, cv::MORPH_OPEN, openingOperator);
+		cv::morphologyEx(mCvGarmentMask, mCvGarmentMask, cv::MORPH_CLOSE, closingOperator);
+		// !OPENCV
+		
+		// Find the biggest correct contour
+		mContourFinder.setMinArea(modelBodyPixelsCount*mGarmentBodyPercent/100.f);
+		mContourFinder.findContours(mCvGarmentMask);
+		if (mContourFinder.getContours().size() != 0) {
+			std::vector<cv::Point> clothContour = mContourFinder.getContour(0);
+			//cv::fillPoly(mCvGarmentMask, clothContour, cv::Scalar(100, 0, 100));
+		}
+		else {
+			ofLog(OF_LOG_ERROR) << "Couldn't retrieve contour of the garment";
+		}
 	}
 	mOfSegmentedImg.update();
-	mOfClothMask.update();
+	mOfGarmentMask.update();
 }
 
 //--------------------------------------------------------------
@@ -113,7 +138,7 @@ void ofApp::draw() {
 		mOfxKinect.draw(0, 0);
 		mOfxKinect.drawDepth(640, 0);
 		mOfSegmentedImg.draw(0, 480);
-		mOfClothMask.draw(640, 480);
+		mOfGarmentMask.draw(640, 480);
 	}
 	mGui.draw();
 }
