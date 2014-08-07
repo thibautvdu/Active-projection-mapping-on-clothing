@@ -4,6 +4,7 @@
 #include "ofMain.h"
 #include "ofxCv.h"
 #include "ofxKinectCommonBridge.h"
+#include "ofxGui.h"
 
 class ofApp : public ofBaseApp {
 
@@ -20,6 +21,13 @@ class ofApp : public ofBaseApp {
 
 		ofImage mOfSegmentedImg;
 		cv::Mat mCvSegmentedImg;
+		ofImage mOfClothMask;
+		cv::Mat mCvClothMask;
+
+		// GUI
+		ofxPanel mGui;
+		ofxIntSlider mClothSegmentationLowH, mClothSegmentationLowS, mClothSegmentationLowV; // Cloth color segmentation low thresh
+		ofxIntSlider mClothSegmentationHighH, mClothSegmentationHighS, mClothSegmentationHighV; // Cloth color segmentation high thresh
 };
 
 #endif // FLEXIBLE_SURFACE_AUGMENTATION_OF_APP_H_

@@ -34,21 +34,31 @@ void ofApp::setup() {
 		exit();
 	}
 
-	mOfSegmentedImg.allocate(mKinectColorImgWidth, mKinectColorImgHeight, OF_IMAGE_COLOR_ALPHA);
+	mOfSegmentedImg.allocate(mKinectColorImgWidth, mKinectColorImgHeight, OF_IMAGE_COLOR);
 	mCvSegmentedImg = ofxCv::toCv(mOfSegmentedImg);
+	mOfClothMask.allocate(mKinectColorImgWidth, mKinectColorImgHeight, OF_IMAGE_GRAYSCALE);
+	mCvClothMask = ofxCv::toCv(mOfClothMask);
 
 	ofDisableAlphaBlending();
 	ofSetFrameRate(30);
+
+	// GUI
+	mGui.setup();
+	mGui.add(mClothSegmentationLowH.setup("low hue thresh", 70, 0, 179));
+	mGui.add(mClothSegmentationLowS.setup("low saturation thresh", 0, 0, 255));
+	mGui.add(mClothSegmentationLowV.setup("low value thresh", 120, 0, 255));
+	mGui.add(mClothSegmentationHighH.setup("high hue thresh", 120, 0, 179));
+	mGui.add(mClothSegmentationHighS.setup("high saturation thresh", 95, 0, 255));
+	mGui.add(mClothSegmentationHighV.setup("high value thresh", 255, 0, 255));
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
 	mOfxKinect.update();
-	
+
 	if (mOfxKinect.isNewSkeleton()) {
 		NUI_DEPTH_IMAGE_PIXEL * pNuiDepthPixel = mOfxKinect.getNuiMappedDepthPixelsRef(); // The kinect segmentation map
 		
-		mOfSegmentedImg.setColor(ofColor::black);
 		int modelPixelCount = 0;
 		ofPoint modelRoiPointA(mOfSegmentedImg.width, mOfSegmentedImg.height);
 		ofPoint modelRoiPointD(0, 0);
@@ -57,13 +67,17 @@ void ofApp::update() {
 				USHORT playerId = (pNuiDepthPixel + x + y*mOfSegmentedImg.width)->playerIndex;
 
 				if (playerId != 0) {
-					mOfSegmentedImg.setColor(x, y, mOfxKinect.getColorPixelsRef().getColor(x,y));
+					ofColor bgra = mOfxKinect.getColorPixelsRef().getColor(x, y);
+					mOfSegmentedImg.setColor(x, y, ofColor(bgra.b,bgra.g,bgra.r));
 					modelPixelCount++;
 					// Update the ROI
 					modelRoiPointA.x = (x < modelRoiPointA.x) ? x : modelRoiPointA.x;
 					modelRoiPointA.y = (y < modelRoiPointA.y) ? y : modelRoiPointA.y;
 					modelRoiPointD.x = (x > modelRoiPointD.x) ? x : modelRoiPointD.x;
 					modelRoiPointD.y = (y > modelRoiPointD.y) ? y : modelRoiPointD.y;
+				}
+				else {
+					mOfSegmentedImg.setColor(x, y, ofColor::black);
 				}
 			}
 		}
@@ -73,53 +87,21 @@ void ofApp::update() {
 		ofLog(OF_LOG_FATAL_ERROR) << "Expected the kinect's color image to be 8 bytes x 4 channels";
 		exit();
 		}*/
-		cv::Mat mCvSegmentedImgRoi = mCvSegmentedImg(cv::Rect(cv::Point(modelRoiPointA.x, modelRoiPointA.y), cv::Point(modelRoiPointD.x, modelRoiPointD.y)));
-		// K-means clustering
-		if (modelPixelCount != 0) {
-			cv::Mat cvKmeansData = cv::Mat::zeros(modelPixelCount, 5, CV_32F);
-			int index = 0;
-			cv::Vec4b bgraColor;
-			for (int row = 0; row < mCvSegmentedImgRoi.rows; ++row) {
-				cv::Vec4b* pRow = mCvSegmentedImgRoi.ptr<cv::Vec4b>(row);
-				for (int col = 0; col < mCvSegmentedImgRoi.cols; ++col) {
-					if (pRow[col] != cv::Vec4b(0, 0, 0, 255)) {
-						bgraColor = mCvSegmentedImg.at<cv::Vec4b>(row, col);
-						cvKmeansData.at<float>(index, 0) = row / (float)mCvSegmentedImgRoi.rows;
-						cvKmeansData.at<float>(index, 1) = col / (float)mCvSegmentedImgRoi.cols;
-						cvKmeansData.at<float>(index, 2) = bgraColor[0] / 255.f;
-						cvKmeansData.at<float>(index, 3) = bgraColor[1] / 255.f;
-						cvKmeansData.at<float>(index, 4) = bgraColor[2] / 255.f;
-						index++;
-					}
-				}
-			}
-			cv::Mat intOutLabels;
-			cv::kmeans(cvKmeansData, 3, intOutLabels, cv::TermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 10, 0.1), 1, cv::KMEANS_RANDOM_CENTERS);
+		// Color segmentation
+		cv::Mat mCvSegmentedImgHsv;
+		cv::cvtColor(mCvSegmentedImg, mCvSegmentedImgHsv, CV_RGB2HSV);
+		cv::inRange(mCvSegmentedImgHsv, cv::Scalar(mClothSegmentationLowH, mClothSegmentationLowS, mClothSegmentationLowV), cv::Scalar(mClothSegmentationHighH, mClothSegmentationHighS, mClothSegmentationHighV), mCvClothMask);
 
-			index = 0;
-			for (int row = 0; row < mCvSegmentedImgRoi.rows; ++row) {
-				cv::Vec4b* pRow = mCvSegmentedImgRoi.ptr<cv::Vec4b>(row);
-				for (int col = 0; col < mCvSegmentedImgRoi.cols; ++col) {
-					if (pRow[col] != cv::Vec4b(0, 0, 0, 255)) {
-						int clusterId = intOutLabels.at<int>(index, 0);
-						switch (clusterId) {
-						case 0:
-							pRow[col] = cv::Vec4b(255, 0, 0, 0);
-							break;
-						case 1:
-							pRow[col] = cv::Vec4b(0, 255, 0, 0);
-							break;
-						case 2:
-							pRow[col] = cv::Vec4b(0, 0, 255, 0);
-							break;
-						}
-						index++;
-					}
-				}
-			}
-			mOfSegmentedImg.update();
-		}
+		//morphological opening (remove small objects from the foreground)
+		cv::erode(mCvClothMask, mCvClothMask, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)));
+		cv::dilate(mCvClothMask, mCvClothMask, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)));
+
+		//morphological closing (fill small holes in the foreground)
+		cv::dilate(mCvClothMask, mCvClothMask, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)));
+		cv::erode(mCvClothMask, mCvClothMask, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)));
 	}
+	mOfSegmentedImg.update();
+	mOfClothMask.update();
 }
 
 //--------------------------------------------------------------
@@ -129,11 +111,10 @@ void ofApp::draw() {
 
 		mOfxKinect.draw(0, 0);
 		mOfxKinect.drawDepth(640, 0);
-
-		if (mOfSegmentedImg.isAllocated()) {
-			mOfSegmentedImg.draw(0, 480);
-		}
+		mOfSegmentedImg.draw(0, 480);
+		mOfClothMask.draw(640, 480);
 	}
+	mGui.draw();
 }
 
 //--------------------------------------------------------------
