@@ -16,20 +16,26 @@ class ofApp : public ofBaseApp {
 		void draw();
 		void exit();
 
+		// Kinect sensor
 		ofxKinectCommonBridge mOfxKinect;
 		KCBHANDLE mKcbKinect;
 		int mKinectColorImgWidth, mKinectColorImgHeight;
 		int mKinectDepthImgWidth, mKinectDepthImgHeight;
 
+		// Background segmentation
 		ofImage mOfSegmentedImg;
 		cv::Mat mCvSegmentedImg;
+		ofRectangle mModelRoi;
+		
+		// Cloth segmentation and contour detection
 		ofImage mOfGarmentMask;
 		cv::Mat mCvGarmentMask;
-
 		ofxCv::ContourFinder mContourFinder;
 		std::vector<cv::Point> mCvGarmentContour;
 		ofPolyline mOfGarmentContour;
+		ofRectangle mGarmentRoi;
 
+		// Mesh generation
 		ofMesh mGarmentPointOfCloud;
 
 		// GUI
