@@ -1,5 +1,6 @@
-#include <stdlib.h>
 #include "ofApp.h"
+
+#include <stdlib.h>
 #include "cvHelper.h"
 
 //--------------------------------------------------------------
@@ -35,7 +36,7 @@ void ofApp::setup() {
 		exit();
 	}
 
-	// Allocation
+	// Images allocation
 	mOfSegmentedImg.allocate(mKinectColorImgWidth, mKinectColorImgHeight, OF_IMAGE_COLOR);
 	mCvSegmentedImg = ofxCv::toCv(mOfSegmentedImg);
 	mOfGarmentMask.allocate(mKinectColorImgWidth, mKinectColorImgHeight, OF_IMAGE_GRAYSCALE);
@@ -49,11 +50,14 @@ void ofApp::setup() {
 	mContourFinder.setSortBySize(true);
 	mContourFinder.setUseTargetColor(false);
 
+	// 3D assets
+	mGarmentPointOfCloud.setMode(OF_PRIMITIVE_POINTS);
+
 	// OpenGL
 	ofDisableAlphaBlending();
 	ofSetFrameRate(30);
 
-	// GUI
+	// GUI-
 	mGui.setup();
 	mGui.add(mGarmentSegmentationLowH.setup("low hue thresh", 70, 0, 179));
 	mGui.add(mGarmentSegmentationLowS.setup("low saturation thresh", 0, 0, 255));
@@ -119,11 +123,25 @@ void ofApp::update() {
 		mContourFinder.setMinArea(modelBodyPixelsCount*mGarmentBodyPercent/100.f);
 		mContourFinder.findContours(mCvGarmentMask);
 		if (mContourFinder.getContours().size() != 0) {
-			std::vector<cv::Point> clothContour = mContourFinder.getContour(0);
-			//cv::fillPoly(mCvGarmentMask, clothContour, cv::Scalar(100, 0, 100));
+			mCvGarmentContour = mContourFinder.getContour(0);
+			mOfGarmentContour = mContourFinder.getPolyline(0);
+
+			// Generate the point of cloud
+			int step = 0;
+			for (int x = 0; x < mKinectDepthImgWidth; x += step) {
+				for (int y = 0; y < mKinectDepthImgHeight; y += step) {
+					ofVec3f worldCoordinates = mOfxKinect.getWorldCoordinates(x, y);
+					if (worldCoordinates.z > 0) {
+						mGarmentPointOfCloud.addColor(mOfSegmentedImg.getColor(x,y));
+						mGarmentPointOfCloud.addVertex(worldCoordinates);
+					}
+				}
+			}
 		}
 		else {
 			ofLog(OF_LOG_ERROR) << "Couldn't retrieve contour of the garment";
+			mCvGarmentContour.clear();
+			mOfGarmentContour.clear();
 		}
 	}
 	mOfSegmentedImg.update();
@@ -135,10 +153,30 @@ void ofApp::draw() {
 	if (mOfxKinect.isFrameNew()) {
 		ofBackground(0);
 
+		// Top Left
 		mOfxKinect.draw(0, 0);
-		mOfxKinect.drawDepth(640, 0);
-		mOfSegmentedImg.draw(0, 480);
-		mOfGarmentMask.draw(640, 480);
+		ofSetColor(ofColor::red);
+		mOfGarmentContour.draw();
+		ofSetColor(ofColor::white);
+
+		// Top Right
+		mOfxKinect.drawDepth(mKinectColorImgWidth, 0);
+
+		// Bottom Left
+		//mOfSegmentedImg.draw(0, mKinectColorImgHeight);
+		mOfGarmentMask.draw(0, mKinectColorImgHeight);
+
+		// Bottom Right
+		//mOfGarmentMask.draw(mKinectColorImgWidth, mKinectColorImgHeight);
+		glPointSize(3);
+
+		ofPushMatrix();
+		ofScale(1, -1, -1); // the projected points are 'upside down' and 'backwards' 
+		ofTranslate(mKinectColorImgWidth, mKinectColorImgHeight, -1000); // center the points a bit with - 1 meter
+		ofEnableDepthTest();
+		mGarmentPointOfCloud.drawVertices();
+		ofDisableDepthTest();
+		ofPopMatrix();
 	}
 	mGui.draw();
 }

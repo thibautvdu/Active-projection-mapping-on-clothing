@@ -2,6 +2,8 @@
 #define FLEXIBLE_SURFACE_AUGMENTATION_OF_APP_H_
 
 #include "ofMain.h"
+
+#include <stdlib.h>
 #include "ofxCv.h"
 #include "ofxKinectCommonBridge.h"
 #include "ofxGui.h"
@@ -25,6 +27,10 @@ class ofApp : public ofBaseApp {
 		cv::Mat mCvGarmentMask;
 
 		ofxCv::ContourFinder mContourFinder;
+		std::vector<cv::Point> mCvGarmentContour;
+		ofPolyline mOfGarmentContour;
+
+		ofMesh mGarmentPointOfCloud;
 
 		// GUI
 		ofxPanel mGui;
