@@ -71,20 +71,22 @@ void ofApp::setup() {
 void ofApp::update() {
 	mOfxKinect.update();
 
+	// Model ROI
+	ofRectangle modelRoi(mOfSegmentedImg.width, mOfSegmentedImg.height, 0, 0);
+	int modelRoiXBottomRight = 0, modelRoiYBottomRight = 0;
+	int modelBodyPixelsCount = 0; // Used to discriminate contours, more robust than bounding box if the model extend their arms, etc.
+
+	// Segmentation from the skeleton
 	if (mOfxKinect.isNewSkeleton()) {
 		NUI_DEPTH_IMAGE_PIXEL * pNuiDepthPixel = mOfxKinect.getNuiMappedDepthPixelsRef(); // The kinect segmentation map
-		
-		// Model ROI
-		ofRectangle modelRoi(mOfSegmentedImg.width, mOfSegmentedImg.height, 0, 0);
-		int modelRoiXBottomRight = 0, modelRoiYBottomRight = 0;
-		int modelBodyPixelsCount = 0; // Used to discriminate contours, more robust than bounding box if the model extend their arms, etc.
+
 		for (int x = 0; x < mOfSegmentedImg.width; ++x) {
 			for (int y = 0; y < mOfSegmentedImg.height; ++y) {
 				USHORT playerId = (pNuiDepthPixel + x + y*mOfSegmentedImg.width)->playerIndex;
 
 				if (playerId != 0) {
 					ofColor bgra = mOfxKinect.getColorPixelsRef().getColor(x, y);
-					mOfSegmentedImg.setColor(x, y, ofColor(bgra.b,bgra.g,bgra.r));
+					mOfSegmentedImg.setColor(x, y, ofColor(bgra.b, bgra.g, bgra.r));
 
 					// Update the ROI
 					modelRoi.x = (x < modelRoi.x) ? x : modelRoi.x;
@@ -98,26 +100,33 @@ void ofApp::update() {
 				}
 			}
 		}
+	}
+	
+	// Cloth segmentation and contour acquisition
+	if (modelBodyPixelsCount != 0) {
 		// Update the ROI information
 		modelRoi.width = modelRoiXBottomRight - modelRoi.x;
 		modelRoi.height = modelRoiYBottomRight - modelRoi.y;
+		mOfGarmentMask.setColor(ofColor::black); // reset the mask as opencv only draw on the ROI
+		cv::Mat cvSegmentedImgRoi = mCvSegmentedImg(ofxCv::toCv(modelRoi));
+		cv::Mat cvGarmentMaskRoi = mCvGarmentMask(ofxCv::toCv(modelRoi));
 
 		// OPENCV
 		// Color segmentation
 		cv::Mat mCvSegmentedImgHsv;
-		cv::cvtColor(mCvSegmentedImg, mCvSegmentedImgHsv, CV_RGB2HSV);
-		cv::inRange(mCvSegmentedImgHsv, cv::Scalar(mGarmentSegmentationLowH, mGarmentSegmentationLowS, mGarmentSegmentationLowV), cv::Scalar(mGarmentSegmentationHighH, mGarmentSegmentationHighS, mGarmentSegmentationHighV), mCvGarmentMask);
-		
+		cv::cvtColor(cvSegmentedImgRoi, mCvSegmentedImgHsv, CV_RGB2HSV);
+		cv::inRange(mCvSegmentedImgHsv, cv::Scalar(mGarmentSegmentationLowH, mGarmentSegmentationLowS, mGarmentSegmentationLowV), cv::Scalar(mGarmentSegmentationHighH, mGarmentSegmentationHighS, mGarmentSegmentationHighV), cvGarmentMaskRoi);
+
 		// Morphological opening (remove small objects) and closing (fill small holes)
 		cv::Mat openingOperator = cv::getStructuringElement(mMorphoUseEllipse ? cv::MORPH_ELLIPSE : cv::MORPH_RECT, cv::Size(mOpenKernelSize, mOpenKernelSize));
 		cv::Mat closingOperator = cv::getStructuringElement(mMorphoUseEllipse ? cv::MORPH_ELLIPSE : cv::MORPH_RECT, cv::Size(mCloseKernelSize, mCloseKernelSize));
-		cv::morphologyEx(mCvGarmentMask, mCvGarmentMask, cv::MORPH_OPEN, openingOperator);
-		cv::morphologyEx(mCvGarmentMask, mCvGarmentMask, cv::MORPH_CLOSE, closingOperator);
+		cv::morphologyEx(cvGarmentMaskRoi, cvGarmentMaskRoi, cv::MORPH_OPEN, openingOperator);
+		cv::morphologyEx(cvGarmentMaskRoi, cvGarmentMaskRoi, cv::MORPH_CLOSE, closingOperator);
 		// !OPENCV
-		
+
 		// Find the biggest correct contour
-		mContourFinder.setMinArea(modelBodyPixelsCount*mGarmentBodyPercent/100.f);
-		mContourFinder.findContours(mCvGarmentMask);
+		mContourFinder.setMinArea(modelBodyPixelsCount*mGarmentBodyPercent / 100.f);
+		mContourFinder.findContours(cvGarmentMaskRoi);
 		if (mContourFinder.getContours().size() != 0) {
 			std::vector<cv::Point> clothContour = mContourFinder.getContour(0);
 			//cv::fillPoly(mCvGarmentMask, clothContour, cv::Scalar(100, 0, 100));
@@ -138,7 +147,9 @@ void ofApp::draw() {
 		mOfxKinect.draw(0, 0);
 		mOfxKinect.drawDepth(640, 0);
 		mOfSegmentedImg.draw(0, 480);
-		mOfGarmentMask.draw(640, 480);
+		if (mOfGarmentMask.isAllocated()) {
+			mOfGarmentMask.draw(640, 480);
+		}
 	}
 	mGui.draw();
 }
