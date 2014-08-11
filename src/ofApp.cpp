@@ -197,18 +197,20 @@ void ofApp::draw() {
 
 		// Bottom Right
 		//mOfGarmentMask.draw(mKinectColorImgWidth, mKinectColorImgHeight);
-		glPointSize(1);
+		if (mGarmentPointOfCloud.hasVertices()) {
+			glPointSize(1);
 
 
-		mEasyCam.begin();
-		mEasyCam.setTarget(mGarmentPointOfCloud.getCentroid());
-			ofPushMatrix();
-				ofEnableDepthTest();
-				ofScale(-1, -1, 1);
-				mGarmentPointOfCloud.drawVertices();
-				ofDisableDepthTest();
-			ofPopMatrix();
-		mEasyCam.end();
+			mEasyCam.begin();
+			mEasyCam.setTarget(mGarmentPointOfCloud.getCentroid());
+				ofPushMatrix();
+					ofEnableDepthTest();
+					ofScale(-1, -1, 1);
+					mGarmentPointOfCloud.drawVertices();
+					ofDisableDepthTest();
+				ofPopMatrix();
+			mEasyCam.end();
+		}
 	}
 	mGui.draw();
 }
