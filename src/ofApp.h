@@ -16,6 +16,8 @@ class ofApp : public ofBaseApp {
 		void draw();
 		void exit();
 
+		void mousePressed(int x, int y, int button);
+
 		// Kinect sensor
 		ofxKinectCommonBridge mOfxKinect;
 		KCBHANDLE mKcbKinect;
@@ -45,6 +47,7 @@ class ofApp : public ofBaseApp {
 		ofxIntSlider mOpenKernelSize, mCloseKernelSize;
 		ofxToggle mMorphoUseEllipse;
 		ofxIntSlider mGarmentBodyPercent;
+		ofEasyCam mEasyCam;
 };
 
 #endif // FLEXIBLE_SURFACE_AUGMENTATION_OF_APP_H_

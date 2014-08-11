@@ -110,7 +110,6 @@ void ofApp::update() {
 			// Update the ROI information of the model
 			mModelRoi.width = modelRoiXBottomRight - mModelRoi.x;
 			mModelRoi.height = modelRoiYBottomRight - mModelRoi.y;
-			mOfGarmentMask.setColor(ofColor::black); // reset the mask as opencv only draw on the ROI
 			cv::Mat cvSegmentedImgRoi = mCvSegmentedImg(ofxCv::toCv(mModelRoi));
 			cv::Mat cvGarmentMaskRoi = mCvGarmentMask(ofxCv::toCv(mModelRoi));
 
@@ -133,6 +132,8 @@ void ofApp::update() {
 			if (mContourFinder.getContours().size() != 0) {
 				mCvGarmentContour = mContourFinder.getContour(0);
 				mOfGarmentContour = mContourFinder.getPolyline(0);
+				mOfGarmentMask.setColor(ofColor::black); // reset the mask as opencv only draw on the ROI
+				ofxCv::fillPoly(mCvGarmentContour, cvGarmentMaskRoi);
 			}
 			else {
 				ofLog(OF_LOG_ERROR) << "Couldn't retrieve big enough contour";
@@ -152,19 +153,16 @@ void ofApp::update() {
 			mGarmentRoi = mOfGarmentContour.getBoundingBox();
 			mGarmentRoi.translate(mModelRoi.getTopLeft());
 
-			if (mGarmentRoi.getMaxX() > 679) {
-				ofLog() << "Oh la la";
-				ofLog() << mModelRoi;
-				ofLog() << mOfGarmentContour.getBoundingBox();
-			}
-
+			mGarmentPointOfCloud.clear();
 			int step = 1;
 			for (int x = (int)mGarmentRoi.getMinX(); x <= (int)mGarmentRoi.getMaxX(); x += step) {
 				for (int y = (int)mGarmentRoi.getMinY(); y <= (int)mGarmentRoi.getMaxY(); y += step) {
-					ofVec3f worldCoordinates = mOfxKinect.getWorldCoordinates(x, y);
-					if (worldCoordinates.z > 0) {
-						mGarmentPointOfCloud.addColor(mOfSegmentedImg.getColor(x, y));
-						mGarmentPointOfCloud.addVertex(worldCoordinates);
+					if (mOfGarmentMask.getColor(x, y) != ofColor::black) {
+						ofVec3f worldCoordinates = mOfxKinect.getWorldCoordinates(x, y);
+						if (worldCoordinates.z > 0) {
+							mGarmentPointOfCloud.addColor(mOfSegmentedImg.getColor(x, y));
+							mGarmentPointOfCloud.addVertex(worldCoordinates);
+						}
 					}
 				}
 			}
@@ -199,15 +197,18 @@ void ofApp::draw() {
 
 		// Bottom Right
 		//mOfGarmentMask.draw(mKinectColorImgWidth, mKinectColorImgHeight);
-		glPointSize(3);
+		glPointSize(1);
 
-		ofPushMatrix();
-		ofScale(1, -1, -1); // the projected points are 'upside down' and 'backwards' 
-		ofTranslate(mKinectColorImgWidth, mKinectColorImgHeight, -100); // center the points a bit with - 1 meter
-		ofEnableDepthTest();
-		mGarmentPointOfCloud.drawVertices();
-		ofDisableDepthTest();
-		ofPopMatrix();
+
+		mEasyCam.begin();
+		mEasyCam.setTarget(mGarmentPointOfCloud.getCentroid());
+			ofPushMatrix();
+				ofEnableDepthTest();
+				ofScale(-1, -1, 1);
+				mGarmentPointOfCloud.drawVertices();
+				ofDisableDepthTest();
+			ofPopMatrix();
+		mEasyCam.end();
 	}
 	mGui.draw();
 }
@@ -215,4 +216,11 @@ void ofApp::draw() {
 //--------------------------------------------------------------
 void ofApp::exit() {
 	mOfxKinect.stop();
+}
+
+void ofApp::mousePressed(int x, int y, int button) {
+	if (button == OF_MOUSE_BUTTON_MIDDLE) {
+		mGarmentPointOfCloud.save("export.ply");
+		ofLog() << "Exported the 3D cloud of points";
+	}
 }
