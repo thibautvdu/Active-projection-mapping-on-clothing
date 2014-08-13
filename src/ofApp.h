@@ -19,6 +19,7 @@ class ofApp : public ofBaseApp {
 		void mousePressed(int x, int y, int button);
 
 		void generateMesh(cv::Mat& maskImage, const vector<cv::Point>& contour, ofMesh& mesh, int step = 1, ofPoint offset = ofPoint(0,0));
+		void ofApp::computeNormals(ofMesh& mesh, bool bNormalize);
 
 		// Kinect sensor
 		ofxKinectCommonBridge mOfxKinect;
@@ -35,21 +36,21 @@ class ofApp : public ofBaseApp {
 		ofImage mOfGarmentMask;
 		cv::Mat mCvGarmentMask;
 		ofxCv::ContourFinder mContourFinder;
-		std::vector<cv::Point> mCvGarmentContour;
-		ofPolyline mOfGarmentContour;
+		std::vector<cv::Point> mCvGarmentContourModelRoiRel;
+		ofPolyline mOfGarmentContourModelRoiRel;
 		ofRectangle mGarmentRoi;
 
 		// Mesh generation
-		ofMesh mGarmentPointOfCloud;
 		ofMesh mGarmentGeneratedMesh;
 
 		// GUI
 		ofxPanel mGui;
 		ofxIntSlider mGarmentSegmentationLowH, mGarmentSegmentationLowS, mGarmentSegmentationLowV; // Cloth color segmentation low thresh
 		ofxIntSlider mGarmentSegmentationHighH, mGarmentSegmentationHighS, mGarmentSegmentationHighV; // Cloth color segmentation high thresh
-		ofxIntSlider mOpenKernelSize, mCloseKernelSize;
-		ofxToggle mMorphoUseEllipse;
-		ofxIntSlider mGarmentBodyPercent;
+		ofxIntSlider mOpenKernelSize, mCloseKernelSize; // Morphological operators
+		ofxToggle mMorphoUseEllipse; // Morphological operators
+		ofxIntSlider mGarmentBodyPercent; // Contour discrimination
+		ofxIntSlider mMeshGenerationStep;
 		ofEasyCam mEasyCam;
 };
 

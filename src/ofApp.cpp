@@ -50,9 +50,6 @@ void ofApp::setup() {
 	mContourFinder.setSortBySize(true);
 	mContourFinder.setUseTargetColor(false);
 
-	// 3D assets
-	mGarmentPointOfCloud.setMode(OF_PRIMITIVE_POINTS);
-
 	// OpenGL
 	ofDisableAlphaBlending();
 	ofSetFrameRate(30);
@@ -69,6 +66,7 @@ void ofApp::setup() {
 	mGui.add(mCloseKernelSize.setup("closing kernel size", 9, 1, 9));
 	mGui.add(mMorphoUseEllipse.setup("ellipse for morpho operations",false));
 	mGui.add(mGarmentBodyPercent.setup("percent of clothing on body", 20, 0, 100)); // 30% is a good value for a t-shirt
+	mGui.add(mMeshGenerationStep.setup("undersampling the polygonal mesh", 2, 1, 20)); // in pixels
 }
 
 //--------------------------------------------------------------
@@ -130,44 +128,30 @@ void ofApp::update() {
 			mContourFinder.setMinArea(modelBodyPixelsCount*mGarmentBodyPercent / 100.f);
 			mContourFinder.findContours(cvGarmentMaskRoi);
 			if (mContourFinder.getContours().size() != 0) {
-				mCvGarmentContour = mContourFinder.getContour(0);
-				mOfGarmentContour = mContourFinder.getPolyline(0);
+				mCvGarmentContourModelRoiRel = mContourFinder.getContour(0);
+				mOfGarmentContourModelRoiRel = mContourFinder.getPolyline(0);
 				mOfGarmentMask.setColor(ofColor::black); // reset the mask as opencv only draw on the ROI
-				ofxCv::fillPoly(mCvGarmentContour, cvGarmentMaskRoi);
+				ofxCv::fillPoly(mCvGarmentContourModelRoiRel, cvGarmentMaskRoi);
 			}
 			else {
 				ofLog(OF_LOG_ERROR) << "Couldn't retrieve big enough contour";
-				mCvGarmentContour.clear();
-				mOfGarmentContour.clear();
+				mCvGarmentContourModelRoiRel.clear();
+				mOfGarmentContourModelRoiRel.clear();
 			}
 		}
 		else {
 			ofLog(OF_LOG_ERROR) << "Found skeleton but couldn't detect garment";
-			mCvGarmentContour.clear();
-			mOfGarmentContour.clear();
+			mCvGarmentContourModelRoiRel.clear();
+			mOfGarmentContourModelRoiRel.clear();
 		}
 
 		// Generate the point of cloud
-		if (mOfGarmentContour.size() != 0) {
+		if (mOfGarmentContourModelRoiRel.size() != 0) {
 			// Update the ROI information of the garment
-			mGarmentRoi = mOfGarmentContour.getBoundingBox();
+			mGarmentRoi = mOfGarmentContourModelRoiRel.getBoundingBox();
 			mGarmentRoi.translate(mModelRoi.getTopLeft());
-
-			/*
-			mGarmentPointOfCloud.clear();
-			int step = 1;
-			for (int x = (int)mGarmentRoi.getMinX(); x <= (int)mGarmentRoi.getMaxX(); x += step) {
-				for (int y = (int)mGarmentRoi.getMinY(); y <= (int)mGarmentRoi.getMaxY(); y += step) {
-					if (mOfGarmentMask.getColor(x, y) != ofColor::black) {
-						ofVec3f worldCoordinates = mOfxKinect.getWorldCoordinates(x, y);
-						if (worldCoordinates.z > 0) {
-							mGarmentPointOfCloud.addColor(mOfSegmentedImg.getColor(x, y));
-							mGarmentPointOfCloud.addVertex(worldCoordinates);
-						}
-					}
-				}
-			}*/
-			generateMesh(mCvGarmentMask(ofxCv::toCv(mGarmentRoi)), mCvGarmentContour, mGarmentGeneratedMesh, 2, mGarmentRoi.getTopLeft());
+			generateMesh(mCvGarmentMask(ofxCv::toCv(mGarmentRoi)), mCvGarmentContourModelRoiRel, mGarmentGeneratedMesh, mMeshGenerationStep, mGarmentRoi.getTopLeft());
+			computeNormals(mGarmentGeneratedMesh, true);
 		}
 		mOfSegmentedImg.update();
 		mOfGarmentMask.update();
@@ -185,7 +169,7 @@ void ofApp::draw() {
 		ofPushMatrix();
 		ofSetColor(ofColor::red);
 		ofTranslate(mModelRoi.getTopLeft());
-		mOfGarmentContour.draw();
+		mOfGarmentContourModelRoiRel.draw();
 		ofPopMatrix();
 
 		ofSetColor(ofColor::white);
@@ -199,27 +183,16 @@ void ofApp::draw() {
 
 		// Bottom Right
 		//mOfGarmentMask.draw(mKinectColorImgWidth, mKinectColorImgHeight);
-		if (mGarmentPointOfCloud.hasVertices() || mGarmentGeneratedMesh.hasVertices()) {
+		if (mGarmentGeneratedMesh.hasVertices()) {
 			glPointSize(1);
 
-			/*
-			mEasyCam.begin();
-			mEasyCam.setTarget(mGarmentPointOfCloud.getCentroid());
-				ofPushMatrix();
-					ofEnableDepthTest();
-					ofScale(-1, -1, 1);
-					mGarmentPointOfCloud.drawVertices();
-					ofDisableDepthTest();
-				ofPopMatrix();
-			mEasyCam.end();
-			*/
 			mEasyCam.begin();
 			mEasyCam.setTarget(mGarmentGeneratedMesh.getCentroid());
 			ofSetColor(ofColor::blue);
 			ofPushMatrix();
 				ofEnableDepthTest();
 				ofScale(-1, -1, 1);
-				mGarmentGeneratedMesh.drawVertices();
+				mGarmentGeneratedMesh.drawWireframe();
 				ofDisableDepthTest();
 			ofPopMatrix();
 			mEasyCam.end();
@@ -236,9 +209,8 @@ void ofApp::exit() {
 
 void ofApp::mousePressed(int x, int y, int button) {
 	if (button == OF_MOUSE_BUTTON_MIDDLE) {
-		mGarmentPointOfCloud.save("export.ply");
-		mGarmentGeneratedMesh.save("export2.ply");
-		ofLog() << "Exported the 3D cloud of points";
+		mGarmentGeneratedMesh.save("export.ply");
+		ofLog() << "Exported the 3D mesh";
 	}
 }
 
@@ -322,5 +294,28 @@ void ofApp::generateMesh(cv::Mat& maskImage, const vector<cv::Point>& contour, o
 				mesh.addTriangle(pointBIdx, pointCIdx, pointDIdx);
 			}
 		}
+	}
+}
+
+void ofApp::computeNormals(ofMesh& mesh, bool bNormalize){
+	for (int i = 0; i < mesh.getVertices().size(); i++) mesh.addNormal(ofPoint(0, 0, 0));
+
+	for (int i = 0; i < mesh.getIndices().size(); i += 3){
+		const int ia = mesh.getIndices()[i];
+		const int ib = mesh.getIndices()[i + 1];
+		const int ic = mesh.getIndices()[i + 2];
+
+		ofVec3f e1 = mesh.getVertices()[ia] - mesh.getVertices()[ib];
+		ofVec3f e2 = mesh.getVertices()[ic] - mesh.getVertices()[ib];
+		ofVec3f no = e1.cross(e2);
+
+		mesh.getNormals()[ia] += no;
+		mesh.getNormals()[ib] += no;
+		mesh.getNormals()[ic] += no;
+	}
+
+	if (bNormalize)
+	for (int i = 0; i < mesh.getNormals().size(); i++) {
+		mesh.getNormals()[i].normalize();
 	}
 }
