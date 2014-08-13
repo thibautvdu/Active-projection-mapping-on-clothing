@@ -18,6 +18,8 @@ class ofApp : public ofBaseApp {
 
 		void mousePressed(int x, int y, int button);
 
+		void generateMesh(cv::Mat& maskImage, const vector<cv::Point>& contour, ofMesh& mesh, int step = 1, ofPoint offset = ofPoint(0,0));
+
 		// Kinect sensor
 		ofxKinectCommonBridge mOfxKinect;
 		KCBHANDLE mKcbKinect;
@@ -39,6 +41,7 @@ class ofApp : public ofBaseApp {
 
 		// Mesh generation
 		ofMesh mGarmentPointOfCloud;
+		ofMesh mGarmentGeneratedMesh;
 
 		// GUI
 		ofxPanel mGui;

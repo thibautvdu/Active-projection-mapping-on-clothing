@@ -115,9 +115,9 @@ void ofApp::update() {
 
 			// OPENCV
 			// Color segmentation
-			cv::Mat mCvSegmentedImgHsv;
-			cv::cvtColor(cvSegmentedImgRoi, mCvSegmentedImgHsv, CV_RGB2HSV);
-			cv::inRange(mCvSegmentedImgHsv, cv::Scalar(mGarmentSegmentationLowH, mGarmentSegmentationLowS, mGarmentSegmentationLowV), cv::Scalar(mGarmentSegmentationHighH, mGarmentSegmentationHighS, mGarmentSegmentationHighV), cvGarmentMaskRoi);
+			cv::Mat cvSegmentedImgHsv;
+			cv::cvtColor(cvSegmentedImgRoi, cvSegmentedImgHsv, CV_RGB2HSV);
+			cv::inRange(cvSegmentedImgHsv, cv::Scalar(mGarmentSegmentationLowH, mGarmentSegmentationLowS, mGarmentSegmentationLowV), cv::Scalar(mGarmentSegmentationHighH, mGarmentSegmentationHighS, mGarmentSegmentationHighV), cvGarmentMaskRoi);
 
 			// Morphological opening (remove small objects) and closing (fill small holes)
 			cv::Mat openingOperator = cv::getStructuringElement(mMorphoUseEllipse ? cv::MORPH_ELLIPSE : cv::MORPH_RECT, cv::Size(mOpenKernelSize, mOpenKernelSize));
@@ -153,6 +153,7 @@ void ofApp::update() {
 			mGarmentRoi = mOfGarmentContour.getBoundingBox();
 			mGarmentRoi.translate(mModelRoi.getTopLeft());
 
+			/*
 			mGarmentPointOfCloud.clear();
 			int step = 1;
 			for (int x = (int)mGarmentRoi.getMinX(); x <= (int)mGarmentRoi.getMaxX(); x += step) {
@@ -165,7 +166,8 @@ void ofApp::update() {
 						}
 					}
 				}
-			}
+			}*/
+			generateMesh(mCvGarmentMask(ofxCv::toCv(mGarmentRoi)), mCvGarmentContour, mGarmentGeneratedMesh, 2, mGarmentRoi.getTopLeft());
 		}
 		mOfSegmentedImg.update();
 		mOfGarmentMask.update();
@@ -197,10 +199,10 @@ void ofApp::draw() {
 
 		// Bottom Right
 		//mOfGarmentMask.draw(mKinectColorImgWidth, mKinectColorImgHeight);
-		if (mGarmentPointOfCloud.hasVertices()) {
+		if (mGarmentPointOfCloud.hasVertices() || mGarmentGeneratedMesh.hasVertices()) {
 			glPointSize(1);
 
-
+			/*
 			mEasyCam.begin();
 			mEasyCam.setTarget(mGarmentPointOfCloud.getCentroid());
 				ofPushMatrix();
@@ -210,6 +212,18 @@ void ofApp::draw() {
 					ofDisableDepthTest();
 				ofPopMatrix();
 			mEasyCam.end();
+			*/
+			mEasyCam.begin();
+			mEasyCam.setTarget(mGarmentGeneratedMesh.getCentroid());
+			ofSetColor(ofColor::blue);
+			ofPushMatrix();
+				ofEnableDepthTest();
+				ofScale(-1, -1, 1);
+				mGarmentGeneratedMesh.drawVertices();
+				ofDisableDepthTest();
+			ofPopMatrix();
+			mEasyCam.end();
+			ofSetColor(ofColor::white);
 		}
 	}
 	mGui.draw();
@@ -223,6 +237,90 @@ void ofApp::exit() {
 void ofApp::mousePressed(int x, int y, int button) {
 	if (button == OF_MOUSE_BUTTON_MIDDLE) {
 		mGarmentPointOfCloud.save("export.ply");
+		mGarmentGeneratedMesh.save("export2.ply");
 		ofLog() << "Exported the 3D cloud of points";
+	}
+}
+
+void ofApp::generateMesh(cv::Mat& maskImage, const vector<cv::Point>& contour, ofMesh& mesh, int step, ofPoint offset){
+	int width = maskImage.cols;
+	int height = maskImage.rows;
+	int meshRows = height / step;
+	int meshCols = width / step;
+
+	mesh.clear();
+	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
+
+	cv::Mat meshIndexMap;
+	meshIndexMap.create(meshRows, meshCols, CV_32S);
+	std::deque<cvHelper::Mat2Pos> mapIndicestoInterpolate;
+	std::vector<cvHelper::Mat2Pos> mapReferenceIndices;
+	int index = -1;
+	int x, y;
+	for (int row = 0; row < meshRows; row++) {
+		for (int col = 0; col < meshCols; col++) {
+			x = col*step;
+			y = row*step;
+
+			if (!cvHelper::zeroAt(maskImage, y, x)) {
+				ofVec3f worldCoordinates = mOfxKinect.getWorldCoordinates(x + offset.x, y + offset.y);
+				if (abs(worldCoordinates.z) > 0.1) {
+					mesh.addVertex(worldCoordinates);
+					*(meshIndexMap.ptr<int>(row)+col) = ++index;
+					mapReferenceIndices.push_back(cvHelper::Mat2Pos(row, col));
+				}
+				else {
+					*(meshIndexMap.ptr<int>(row)+col) = -2; // No depth value, need interpolation in the mesh
+					mapIndicestoInterpolate.push_back(cvHelper::Mat2Pos(row, col));
+				}
+			} else {
+				*(meshIndexMap.ptr<int>(row)+col) = -1; // Discontinuity in the shape
+			}
+		}
+	}
+
+	// Interpolate missing depths
+	cvHelper::Mat2Pos currentInterpolatedCell;
+	cvHelper::Mat2Pos neighbour;
+	int neighbourValue;
+	cvHelper::Mat2Pos radiusSearch[] = { cvHelper::Mat2Pos(0, 1), cvHelper::Mat2Pos(1, 1), cvHelper::Mat2Pos(1, 0), cvHelper::Mat2Pos(1, -1),
+		cvHelper::Mat2Pos(0, -1), cvHelper::Mat2Pos(-1, -1), cvHelper::Mat2Pos(-1, 0), cvHelper::Mat2Pos(-1, 1) };
+	while (!mapIndicestoInterpolate.empty()) {
+		currentInterpolatedCell = mapIndicestoInterpolate.front();
+		mapIndicestoInterpolate.pop_front();
+
+		// Look in the 8 neighbours
+		int i = 0;
+		bool found = false;
+		while (i < 8 && !found) {
+			neighbour = currentInterpolatedCell + radiusSearch[i];
+			if (neighbour.row > 0 && neighbour.row < meshRows && neighbour.col > 0 && neighbour.col < meshCols) {
+				neighbourValue = *(meshIndexMap.ptr<int>(neighbour.row) + neighbour.col);
+				if (neighbourValue >= 0){
+					*(meshIndexMap.ptr<int>(currentInterpolatedCell.row) + currentInterpolatedCell.col) = neighbourValue;
+					found = true;
+				}
+			}
+			++i;
+		}
+		if (!found)
+			mapIndicestoInterpolate.push_back(currentInterpolatedCell);
+	}
+	
+	for (int i = 0; i < mapReferenceIndices.size(); ++i) {
+		if (mapReferenceIndices[i].row < meshRows - 1 && mapReferenceIndices[i].col < meshCols - 1) { // Don't process on the last col and row
+			int pointAIdx = *(meshIndexMap.ptr<int>(mapReferenceIndices[i].row) + mapReferenceIndices[i].col);
+			int pointBIdx = *(meshIndexMap.ptr<int>(mapReferenceIndices[i].row) + mapReferenceIndices[i].col + 1);
+			int pointCIdx = *(meshIndexMap.ptr<int>(mapReferenceIndices[i].row + 1) + mapReferenceIndices[i].col + 1);
+			int pointDIdx = *(meshIndexMap.ptr<int>(mapReferenceIndices[i].row + 1) + mapReferenceIndices[i].col);
+
+			if (pointAIdx != -1 && pointBIdx != -1 && pointDIdx != -1 && pointBIdx != pointAIdx) {
+				mesh.addTriangle(pointAIdx, pointBIdx, pointDIdx);
+			}
+
+			if (pointBIdx != -1 && pointCIdx != -1 && pointDIdx != -1 && pointDIdx != pointCIdx) {
+				mesh.addTriangle(pointBIdx, pointCIdx, pointDIdx);
+			}
+		}
 	}
 }

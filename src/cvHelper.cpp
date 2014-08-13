@@ -42,4 +42,13 @@ namespace cvHelper {
 		return type.str();
 	}
 
+	bool zeroAt(cv::Mat& mat, int row, int col) {
+		if (row >= mat.rows || col >= mat.cols) {
+			ofLog(OF_LOG_ERROR) << "Trying to test an element out of range";
+			return true;
+		}
+
+		return (*(mat.ptr<uchar>(row) +col) == 0);
+	}
+
 }
