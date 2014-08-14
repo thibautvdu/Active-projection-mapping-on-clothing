@@ -151,7 +151,7 @@ void ofApp::update() {
 			mGarmentRoi = mOfGarmentContourModelRoiRel.getBoundingBox();
 			mGarmentRoi.translate(mModelRoi.getTopLeft());
 			generateMesh(mCvGarmentMask(ofxCv::toCv(mGarmentRoi)), mCvGarmentContourModelRoiRel, mGarmentGeneratedMesh, mMeshGenerationStep, mGarmentRoi.getTopLeft());
-			computeNormals(mGarmentGeneratedMesh, true);
+			computeNormals(mGarmentGeneratedMesh, false);
 		}
 		mOfSegmentedImg.update();
 		mOfGarmentMask.update();
@@ -257,7 +257,9 @@ void ofApp::generateMesh(cv::Mat& maskImage, const vector<cv::Point>& contour, o
 	int neighbourValue;
 	cvHelper::Mat2Pos radiusSearch[] = { cvHelper::Mat2Pos(0, 1), cvHelper::Mat2Pos(1, 1), cvHelper::Mat2Pos(1, 0), cvHelper::Mat2Pos(1, -1),
 		cvHelper::Mat2Pos(0, -1), cvHelper::Mat2Pos(-1, -1), cvHelper::Mat2Pos(-1, 0), cvHelper::Mat2Pos(-1, 1) };
-	while (!mapIndicestoInterpolate.empty()) {
+	int loopingCounter =  -1;
+	bool detectedLoop = false;
+	while (!mapIndicestoInterpolate.empty() && !detectedLoop) {
 		currentInterpolatedCell = mapIndicestoInterpolate.front();
 		mapIndicestoInterpolate.pop_front();
 
@@ -271,12 +273,26 @@ void ofApp::generateMesh(cv::Mat& maskImage, const vector<cv::Point>& contour, o
 				if (neighbourValue >= 0){
 					*(meshIndexMap.ptr<int>(currentInterpolatedCell.row) + currentInterpolatedCell.col) = neighbourValue;
 					found = true;
+					loopingCounter = -1;
 				}
 			}
 			++i;
 		}
-		if (!found)
+		if (!found) {
 			mapIndicestoInterpolate.push_back(currentInterpolatedCell);
+			if (loopingCounter == -1) { // Changes have been made, reinit the infinite loop detection (isolated unknown blob)
+				loopingCounter = mapIndicestoInterpolate.size();
+			}
+			else if (--loopingCounter == 0) {
+				detectedLoop = true;
+			}
+		}
+	}
+
+	while (!mapIndicestoInterpolate.empty()) { // Class the eventual isolated unknown blob as a discontinuity
+		currentInterpolatedCell = mapIndicestoInterpolate.front();
+		mapIndicestoInterpolate.pop_front();
+		*(meshIndexMap.ptr<int>(currentInterpolatedCell.row) + currentInterpolatedCell.col) = -1;
 	}
 	
 	for (int i = 0; i < mapReferenceIndices.size(); ++i) {
@@ -304,10 +320,14 @@ void ofApp::computeNormals(ofMesh& mesh, bool bNormalize){
 		const int ia = mesh.getIndices()[i];
 		const int ib = mesh.getIndices()[i + 1];
 		const int ic = mesh.getIndices()[i + 2];
+		ofVec3f a = mesh.getVertices()[ia];
+		ofVec3f b = mesh.getVertices()[ib];
+		ofVec3f c = mesh.getVertices()[ic];
 
-		ofVec3f e1 = mesh.getVertices()[ia] - mesh.getVertices()[ib];
-		ofVec3f e2 = mesh.getVertices()[ic] - mesh.getVertices()[ib];
-		ofVec3f no = e1.cross(e2);
+		ofVec3f e1 = a - b;
+		ofVec3f e2 = c - b;
+		ofVec3f no = e1;
+		no.cross(e2);
 
 		mesh.getNormals()[ia] += no;
 		mesh.getNormals()[ib] += no;
