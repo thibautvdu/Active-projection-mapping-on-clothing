@@ -66,11 +66,16 @@ void ofApp::setup() {
 	mGui.add(mCloseKernelSize.setup("closing kernel size", 9, 1, 9));
 	mGui.add(mMorphoUseEllipse.setup("ellipse for morpho operations",false));
 	mGui.add(mGarmentBodyPercent.setup("percent of clothing on body", 20, 0, 100)); // 30% is a good value for a t-shirt
+	mGui.add(mDepthSmoothingKernelSize.setup("depth smoothing size", 3, 1, 9));
+	mGui.add(mDepthSmoothingSigma.setup("depth smoothing sigma", 2, 1, 10));
 	mGui.add(mMeshGenerationStep.setup("undersampling the polygonal mesh", 2, 1, 20)); // in pixels
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
+	// Smooth the depth image
+	//mOfxKinect.setDepthSmoothing(true, mDepthSmoothingSigma, mDepthSmoothingKernelSize);
+
 	mOfxKinect.update();
 
 	// Model ROI
@@ -80,11 +85,11 @@ void ofApp::update() {
 
 	// Segmentation from the skeleton
 	if (mOfxKinect.isNewSkeleton()) {
-		NUI_DEPTH_IMAGE_PIXEL * pNuiDepthPixel = mOfxKinect.getNuiMappedDepthPixelsRef(); // The kinect segmentation map
+		ofShortPixels depthPlayerPixel = mOfxKinect.getDepthPlayerPixelsRef(); // The kinect segmentation map
 
 		for (int x = 0; x < mOfSegmentedImg.width; ++x) {
 			for (int y = 0; y < mOfSegmentedImg.height; ++y) {
-				USHORT playerId = (pNuiDepthPixel + x + y*mOfSegmentedImg.width)->playerIndex;
+				USHORT playerId = depthPlayerPixel[x + y*mOfSegmentedImg.width];
 
 				if (playerId != 0) {
 					ofColor bgra = mOfxKinect.getColorPixelsRef().getColor(x, y);

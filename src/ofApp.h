@@ -49,7 +49,9 @@ class ofApp : public ofBaseApp {
 		ofxIntSlider mGarmentSegmentationHighH, mGarmentSegmentationHighS, mGarmentSegmentationHighV; // Cloth color segmentation high thresh
 		ofxIntSlider mOpenKernelSize, mCloseKernelSize; // Morphological operators
 		ofxToggle mMorphoUseEllipse; // Morphological operators
-		ofxIntSlider mGarmentBodyPercent; // Contour discrimination
+		ofxIntSlider mGarmentBodyPercent; // Contour 
+		ofxIntSlider mDepthSmoothingKernelSize;
+		ofxIntSlider mDepthSmoothingSigma;
 		ofxIntSlider mMeshGenerationStep;
 		ofEasyCam mEasyCam;
 };
