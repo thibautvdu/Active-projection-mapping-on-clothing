@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include "cvHelper.h"
+#include "lscm.h"
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -50,6 +51,9 @@ void ofApp::setup() {
 	mContourFinder.setSortBySize(true);
 	mContourFinder.setUseTargetColor(false);
 
+	// Textures
+	mChessboardImage.loadImage("chessboard.jpg");
+
 	// OpenGL
 	ofDisableAlphaBlending();
 	ofSetFrameRate(30);
@@ -68,7 +72,7 @@ void ofApp::setup() {
 	mGui.add(mGarmentBodyPercent.setup("percent of clothing on body", 20, 0, 100)); // 30% is a good value for a t-shirt
 	mGui.add(mDepthSmoothingKernelSize.setup("depth smoothing size", 3, 1, 9));
 	mGui.add(mDepthSmoothingSigma.setup("depth smoothing sigma", 0, 0, 10));
-	mGui.add(mMeshGenerationStep.setup("undersampling the polygonal mesh", 2, 1, 20)); // in pixels
+	mGui.add(mMeshGenerationStep.setup("undersampling the polygonal mesh", 7, 1, 20)); // in pixels
 }
 
 //--------------------------------------------------------------
@@ -161,7 +165,8 @@ void ofApp::update() {
 			mGarmentRoi = mOfGarmentContourModelRoiRel.getBoundingBox();
 			mGarmentRoi.translate(mModelRoi.getTopLeft());
 			generateMesh(mCvGarmentMask(ofxCv::toCv(mGarmentRoi)), mCvGarmentContourModelRoiRel, mGarmentGeneratedMesh, mMeshGenerationStep, mGarmentRoi.getTopLeft());
-			computeNormals(mGarmentGeneratedMesh, false);
+			//computeNormals(mGarmentGeneratedMesh, true);
+			meshParameterizationLSCM(mGarmentGeneratedMesh);
 		}
 		mOfSegmentedImg.update();
 		mOfGarmentMask.update();
@@ -202,7 +207,9 @@ void ofApp::draw() {
 			ofPushMatrix();
 				ofEnableDepthTest();
 				ofScale(-1, -1, 1);
-				mGarmentGeneratedMesh.drawWireframe();
+				mChessboardImage.bind();
+				mGarmentGeneratedMesh.draw();
+				mChessboardImage.unbind();
 				ofDisableDepthTest();
 			ofPopMatrix();
 			mEasyCam.end();
@@ -232,7 +239,12 @@ void ofApp::generateMesh(cv::Mat& maskImage, const vector<cv::Point>& contour, o
 
 	mesh.clear();
 	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
+	mesh.enableTextures();
 
+	// Fill the mesh with the point known by kinect sensor and fill :
+	// meshIndexMap, recording which value is known, unknown or not part of the garment
+	// mapIndicestoInterpolate, storing all unknown points' position in the matrix
+	// mapReferenceIndices, storing all known points' position in the matrix
 	cv::Mat meshIndexMap;
 	meshIndexMap.create(meshRows, meshCols, CV_32S);
 	std::deque<cvHelper::Mat2Pos> mapIndicestoInterpolate;
@@ -248,6 +260,8 @@ void ofApp::generateMesh(cv::Mat& maskImage, const vector<cv::Point>& contour, o
 				ofVec3f worldCoordinates = mOfxKinect.getWorldCoordinates(x + offset.x, y + offset.y);
 				if (abs(worldCoordinates.z) > 0.1) {
 					mesh.addVertex(worldCoordinates);
+					mesh.addTexCoord(ofVec2f(0, 0));
+					mesh.addColor(ofColor(255, 255, 255));
 					*(meshIndexMap.ptr<int>(row)+col) = ++index;
 					mapReferenceIndices.push_back(cvHelper::Mat2Pos(row, col));
 				}
@@ -260,6 +274,9 @@ void ofApp::generateMesh(cv::Mat& maskImage, const vector<cv::Point>& contour, o
 			}
 		}
 	}
+
+	// Generate an empty texture mapping array
+	//mesh.addTexCoords(std::vector<ofVec2f>(mesh.getNumVertices(), ofVec2f(0, 0)));
 
 	// Interpolate missing depths
 	cvHelper::Mat2Pos currentInterpolatedCell;
@@ -336,8 +353,8 @@ void ofApp::computeNormals(ofMesh& mesh, bool bNormalize){
 
 		ofVec3f e1 = a - b;
 		ofVec3f e2 = c - b;
-		ofVec3f no = e1;
-		no.cross(e2);
+		ofVec3f no = e2;
+		no.cross(e1);
 
 		mesh.getNormals()[ia] += no;
 		mesh.getNormals()[ib] += no;
@@ -348,4 +365,19 @@ void ofApp::computeNormals(ofMesh& mesh, bool bNormalize){
 	for (int i = 0; i < mesh.getNormals().size(); i++) {
 		mesh.getNormals()[i].normalize();
 	}
+}
+
+void ofApp::meshParameterizationLSCM(ofMesh& mesh) {
+	LSCM lscm(mesh);
+	lscm.apply();
+	for (int i = 0; i < mesh.getNumVertices(); ++i) {
+		mesh.setTexCoord(i, mapVec2f(mesh.getTexCoord(i), ofVec2f(lscm.umin, lscm.vmin), ofVec2f(lscm.umax, lscm.vmax), ofVec2f(0, 0), ofVec2f(256, 256)));
+	}
+}
+
+ofVec2f ofApp::mapVec2f(ofVec2f value, ofVec2f inputMin, ofVec2f inputMax, ofVec2f outputMin, ofVec2f outputMax, bool clamp) {
+	float x = ofMap(value.x, inputMin.x, inputMax.x, outputMin.x, outputMax.x, clamp);
+	float y = ofMap(value.y, inputMin.y, inputMax.y, outputMin.y, outputMax.y, clamp);
+
+	return ofVec2f(x, y);
 }

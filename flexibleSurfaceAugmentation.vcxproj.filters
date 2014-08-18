@@ -94,6 +94,9 @@
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxToggle.cpp">
       <Filter>addons\ofxGui\src</Filter>
     </ClCompile>
+    <ClCompile Include="src\lscm.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -215,6 +218,15 @@
     </Filter>
     <Filter Include="addons\ofxGui\src">
       <UniqueIdentifier>{3f1bc882-39d6-48c2-8549-98a4b75a2dc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxOpenNL">
+      <UniqueIdentifier>{6d0da78e-84cd-4623-93ca-9a26dda546e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxOpenNL\src">
+      <UniqueIdentifier>{df051e5d-e169-43bf-af35-9e6ea191f768}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxOpenNL\src\NL">
+      <UniqueIdentifier>{9ba51c8f-53d5-4fa9-952d-b9b8ae3e50c5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -577,6 +589,39 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxGui\src\ofxToggle.h">
       <Filter>addons\ofxGui\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lscm.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl.h">
+      <Filter>addons\ofxOpenNL\src\NL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_blas.h">
+      <Filter>addons\ofxOpenNL\src\NL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_cnc_gpu_cuda.h">
+      <Filter>addons\ofxOpenNL\src\NL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_context.h">
+      <Filter>addons\ofxOpenNL\src\NL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_iterative_solvers.h">
+      <Filter>addons\ofxOpenNL\src\NL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_linkage.h">
+      <Filter>addons\ofxOpenNL\src\NL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_matrix.h">
+      <Filter>addons\ofxOpenNL\src\NL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_preconditioners.h">
+      <Filter>addons\ofxOpenNL\src\NL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_private.h">
+      <Filter>addons\ofxOpenNL\src\NL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_superlu.h">
+      <Filter>addons\ofxOpenNL\src\NL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -19,7 +19,9 @@ class ofApp : public ofBaseApp {
 		void mousePressed(int x, int y, int button);
 
 		void generateMesh(cv::Mat& maskImage, const vector<cv::Point>& contour, ofMesh& mesh, int step = 1, ofPoint offset = ofPoint(0,0));
-		void ofApp::computeNormals(ofMesh& mesh, bool bNormalize);
+		void computeNormals(ofMesh& mesh, bool bNormalize);
+		void meshParameterizationLSCM(ofMesh& mesh);
+		ofVec2f ofApp::mapVec2f(ofVec2f value, ofVec2f inputMin, ofVec2f inputMax, ofVec2f outputMin, ofVec2f outputMax, bool clamp = false);
 
 		// Kinect sensor
 		ofxKinectCommonBridge mOfxKinect;
@@ -42,6 +44,9 @@ class ofApp : public ofBaseApp {
 
 		// Mesh generation
 		ofMesh mGarmentGeneratedMesh;
+
+		// Textures
+		ofImage mChessboardImage;
 
 		// GUI
 		ofxPanel mGui;
