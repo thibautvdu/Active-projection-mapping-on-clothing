@@ -35,44 +35,37 @@ void LSCM::setup_lscm() {
 	}
 }
 
-// Note: no-need to triangulate the facet,
-// we can do that "virtually", by creating triangles
-// radiating around vertex 0 of the facet.
-// (however, this may be invalid for concave facets)
-void LSCM::setup_lscm(const ofVec3f v0, ofIndexType i0, const ofVec3f v1, ofIndexType i1, const ofVec3f v2, ofIndexType i2) {  //FIXME HERE
+void LSCM::setup_lscm(const Vector3& v0, const ofIndexType i0, const Vector3& v1, const ofIndexType i1, const Vector3& v2, const ofIndexType i2) {  //FIXME HERE
 	setup_conformal_map_relations(v0, i0, v1, i1, v2, i2);
 }
 
 // Computes the coordinates of the vertices of a triangle
 // in a local 2D orthonormal basis of the triangle's plane.
 void LSCM::project_triangle(
-	const ofVec3f p0,
-	const ofVec3f p1,
-	const ofVec3f p2,
-	ofVec2f& z0,
-	ofVec2f& z1,
-	ofVec2f& z2
+	const Vector3& p0,
+	const Vector3& p1,
+	const Vector3& p2,
+	Vector2& z0,
+	Vector2& z1,
+	Vector2& z2
 	) {
-	ofVec3f X = p1 - p0;
+	Vector3 X = p1 - p0;
 	X.normalize();
-	ofVec3f p2mp0 = (p2 - p0);
-	ofVec3f Z = ofVec3f(X.y * p2mp0.z - X.z * p2mp0.y, X.z * p2mp0.x - X.x * p2mp0.z, X.x * p2mp0.y - X.y * p2mp0.x);
+	Vector3 Z = X ^ (p2 - p0);
 	Z.normalize();
-	ofVec3f Y = ofVec3f(Z.y * X.z - Z.z * X.y, Z.z * X.x - Z.x * X.z, Z.x * X.y - Z.y * X.x);
-	const ofVec3f& O = p0;
+	Vector3 Y = Z ^ X;
+	const Vector3& O = p0;
 
-	float x0 = 0;
-	float y0 = 0;
-	float x1 = (p1 - O).length();
-	float y1 = 0;
-	ofVec3f x2vec = (p2 - O) * X;
-	float x2 = x2vec.x + x2vec.y + x2vec.z;
-	ofVec3f y2vec = (p2 - O) * Y;
-	float y2 = y2vec.x + y2vec.y + y2vec.z;
+	double x0 = 0;
+	double y0 = 0;
+	double x1 = (p1 - O).length();
+	double y1 = 0;
+	double x2 = (p2 - O) * X;
+	double y2 = (p2 - O) * Y;
 
-	z0 = ofVec2f(x0, y0);
-	z1 = ofVec2f(x1, y1);
-	z2 = ofVec2f(x2, y2);
+	z0 = Vector2(x0, y0);
+	z1 = Vector2(x1, y1);
+	z2 = Vector2(x2, y2);
 }
 
 // LSCM equation, geometric form :
@@ -86,13 +79,13 @@ void LSCM::project_triangle(
 //  the presence of degenerate triangles.
 
 void LSCM::setup_conformal_map_relations(
-	ofVec3f p0, int id0, ofVec3f p1, int id1, ofVec3f p2, int id2
+	const Vector3& p0, const ofIndexType id0, const Vector3& p1, const ofIndexType id1, const Vector3& p2, const ofIndexType id2
 	) {
 
-	ofVec2f z0, z1, z2;
+	Vector2 z0, z1, z2;
 	project_triangle(p0, p1, p2, z0, z1, z2);
-	ofVec2f z01 = z1 - z0;
-	ofVec2f z02 = z2 - z0;
+	Vector2 z01 = z1 - z0;
+	Vector2 z02 = z2 - z0;
 	double a = z01.x;
 	double b = z01.y;
 	double c = z02.x;
@@ -133,13 +126,14 @@ void LSCM::setup_conformal_map_relations(
 * copies u,v coordinates from OpenNL solver to the mesh.
 */
 void LSCM::solver_to_mesh() {
-	float u = nlGetVariable(0);
-	float v = nlGetVariable(1);
-	umax = u; umin = u; vmax = v; vmin = v;
+	umax = -1e30;
+	umin = 1e30;
+	vmax = -1e30;
+	vmin = 1e30;
 
 	for (unsigned int i = 0; i<mMesh->getNumVertices(); i++) {
-		u = nlGetVariable(2 * i);
-		v = nlGetVariable(2 * i + 1);
+		double u = nlGetVariable(2 * i);
+		double v = nlGetVariable(2 * i + 1);
 		mMesh->setTexCoord(i,ofVec2f(u, v));
 		umax = u > umax ? u : umax;
 		umin = u < umin ? u : umin;
@@ -153,8 +147,8 @@ void LSCM::solver_to_mesh() {
 */
 void LSCM::mesh_to_solver() {
 	for (unsigned int i = 0; i<mMesh->getNumVertices(); i++) {
-		float u = mMesh->getTexCoord(i).x;
-		float v = mMesh->getTexCoord(i).y;
+		double u = mMesh->getTexCoord(i).x;
+		double v = mMesh->getTexCoord(i).y;
 		nlSetVariable(2 * i, u);
 		nlSetVariable(2 * i + 1, v);
 		if (i == vxminLocked || i == vxmaxLocked) {
@@ -169,15 +163,15 @@ void LSCM::project() {
 	// Get bbox
 	unsigned int i;
 
-	float xmin = 1e5;
-	float ymin = 1e5;
-	float zmin = 1e5;
-	float xmax = -1e5;
-	float ymax = -1e5;
-	float zmax = -1e5;
+	double xmin = 1e30;
+	double ymin = 1e30;
+	double zmin = 1e30;
+	double xmax = -1e30;
+	double ymax = -1e30;
+	double zmax = -1e30;
 
 	for (i = 0; i<mMesh->getNumVertices(); i++) {
-		const ofVec3f v = mMesh->getVertex(i);
+		const Vector3& v = mMesh->getVertex(i);
 		xmin = std::min(v.x, xmin);
 		ymin = std::min(v.y, xmin);
 		zmin = std::min(v.z, xmin);
@@ -187,69 +181,62 @@ void LSCM::project() {
 		zmax = std::max(v.z, xmin);
 	}
 
-	float dx = xmax - xmin;
-	float dy = ymax - ymin;
-	float dz = zmax - zmin;
+	double dx = xmax - xmin;
+	double dy = ymax - ymin;
+	double dz = zmax - zmin;
 
-	ofVec3f V1, V2;
+	Vector3 V1, V2;
 
 	// Find shortest bbox axis
 	if (dx < dy && dx < dz) {
 		if (dy > dz) {
-			V1 = ofVec3f(0, 1, 0);
-			V2 = ofVec3f(0, 0, 1);
+			V1 = Vector3(0, 1, 0);
+			V2 = Vector3(0, 0, 1);
 		}
 		else {
-			V2 = ofVec3f(0, 1, 0);
-			V1 = ofVec3f(0, 0, 1);
+			V2 = Vector3(0, 1, 0);
+			V1 = Vector3(0, 0, 1);
 		}
 	}
 	else if (dy < dx && dy < dz) {
 		if (dx > dz) {
-			V1 = ofVec3f(1, 0, 0);
-			V2 = ofVec3f(0, 0, 1);
+			V1 = Vector3(1, 0, 0);
+			V2 = Vector3(0, 0, 1);
 		}
 		else {
-			V2 = ofVec3f(1, 0, 0);
-			V1 = ofVec3f(0, 0, 1);
+			V2 = Vector3(1, 0, 0);
+			V1 = Vector3(0, 0, 1);
 		}
 	}
-	else  {
+	else if (dz < dx && dz < dy) {
 		if (dx > dy) {
-			V1 = ofVec3f(1, 0, 0);
-			V2 = ofVec3f(0, 1, 0);
+			V1 = Vector3(1, 0, 0);
+			V2 = Vector3(0, 1, 0);
 		}
 		else {
-			V2 = ofVec3f(1, 0, 0);
-			V1 = ofVec3f(0, 1, 0);
+			V2 = Vector3(1, 0, 0);
+			V1 = Vector3(0, 1, 0);
 		}
 	}
 
 	// Project onto shortest bbox axis,
 	// and lock extrema vertices
 
-	int vxmin = 0;
-	float  umin = 1e5;
-	int vxmax = 0;
-	float  umax = -1e5;
+	double  umin = 1e30;
+	double  umax = -1e30;
 
 	for (i = 0; i<mMesh->getNumVertices(); i++) {
-		ofVec3f V = mMesh->getVertex(i);
-		ofVec3f VV1 = V * V1;
-		float u = VV1.x + VV1.y + VV1.z;
-		ofVec3f VV2 = V * V2;
-		float v = VV2.x + VV2.y + VV2.z;
+		const Vector3& V = mMesh->getVertex(i);
+		double u = V * V1;
+		double v = V * V2;
 		mMesh->setTexCoord(i,ofVec2f(u, v));
 		if (u < umin) {
-			vxmin = i;
+			vxminLocked = i;
 			umin = u;
 		}
 		if (u > umax) {
-			vxmax = i;
+			vxmaxLocked = i;
 			umax = u;
 		}
 	}
-
-	vxminLocked = vxmin;
-	vxmaxLocked = vxmax;
 }

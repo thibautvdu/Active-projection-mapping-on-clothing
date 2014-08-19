@@ -97,6 +97,9 @@
     <ClCompile Include="src\lscm.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\lscmUtilities.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -622,6 +625,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_superlu.h">
       <Filter>addons\ofxOpenNL\src\NL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lscmUtilities.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

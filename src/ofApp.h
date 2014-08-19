@@ -17,6 +17,7 @@ class ofApp : public ofBaseApp {
 		void exit();
 
 		void mousePressed(int x, int y, int button);
+		void keyPressed(int key);
 
 		void generateMesh(cv::Mat& maskImage, const vector<cv::Point>& contour, ofMesh& mesh, int step = 1, ofPoint offset = ofPoint(0,0));
 		void computeNormals(ofMesh& mesh, bool bNormalize);
@@ -59,6 +60,10 @@ class ofApp : public ofBaseApp {
 		ofxIntSlider mDepthSmoothingSigma;
 		ofxIntSlider mMeshGenerationStep;
 		ofEasyCam mEasyCam;
+
+		// Keys
+		bool mPause;
+		bool mSaveMesh;
 };
 
 #endif // FLEXIBLE_SURFACE_AUGMENTATION_OF_APP_H_

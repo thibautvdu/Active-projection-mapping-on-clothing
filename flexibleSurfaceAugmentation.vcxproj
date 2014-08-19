@@ -113,6 +113,7 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxSliderGroup.cpp" />
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxToggle.cpp" />
     <ClCompile Include="src\lscm.cpp" />
+    <ClCompile Include="src\lscmUtilities.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
     <ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvColorImage.cpp" />
@@ -159,6 +160,7 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
     <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_superlu.h" />
     <ClInclude Include="src\cvHelper.h" />
     <ClInclude Include="src\lscm.h" />
+    <ClInclude Include="src\lscmUtilities.h" />
     <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvBlob.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvColorImage.h" />

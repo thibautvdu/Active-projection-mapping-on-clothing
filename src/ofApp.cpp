@@ -73,10 +73,17 @@ void ofApp::setup() {
 	mGui.add(mDepthSmoothingKernelSize.setup("depth smoothing size", 3, 1, 9));
 	mGui.add(mDepthSmoothingSigma.setup("depth smoothing sigma", 0, 0, 10));
 	mGui.add(mMeshGenerationStep.setup("undersampling the polygonal mesh", 7, 1, 20)); // in pixels
+	
+	// Keys
+	mPause = false;
+	mSaveMesh = false;
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
+	if (mPause)
+		return;
+
 	// Smooth the depth image
 	if (mDepthSmoothingSigma != 0) {
 		mOfxKinect.setDepthSmoothing(true, mDepthSmoothingSigma, mDepthSmoothingKernelSize);
@@ -167,6 +174,12 @@ void ofApp::update() {
 			generateMesh(mCvGarmentMask(ofxCv::toCv(mGarmentRoi)), mCvGarmentContourModelRoiRel, mGarmentGeneratedMesh, mMeshGenerationStep, mGarmentRoi.getTopLeft());
 			//computeNormals(mGarmentGeneratedMesh, true);
 			meshParameterizationLSCM(mGarmentGeneratedMesh);
+
+			if (mSaveMesh) {
+				mGarmentGeneratedMesh.save("export.ply");
+				ofLog() << "Exported the 3D mesh";
+				mSaveMesh = false;
+			}
 		}
 		mOfSegmentedImg.update();
 		mOfGarmentMask.update();
@@ -226,8 +239,13 @@ void ofApp::exit() {
 
 void ofApp::mousePressed(int x, int y, int button) {
 	if (button == OF_MOUSE_BUTTON_MIDDLE) {
-		mGarmentGeneratedMesh.save("export.ply");
-		ofLog() << "Exported the 3D mesh";
+		mSaveMesh = true;
+	}
+}
+
+void ofApp::keyPressed(int key) {
+	if (key == ' ') {
+		mPause = !mPause;
 	}
 }
 
@@ -239,6 +257,7 @@ void ofApp::generateMesh(cv::Mat& maskImage, const vector<cv::Point>& contour, o
 
 	mesh.clear();
 	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
+	mesh.enableIndices();
 	mesh.enableTextures();
 
 	// Fill the mesh with the point known by kinect sensor and fill :
@@ -261,7 +280,6 @@ void ofApp::generateMesh(cv::Mat& maskImage, const vector<cv::Point>& contour, o
 				if (abs(worldCoordinates.z) > 0.1) {
 					mesh.addVertex(worldCoordinates);
 					mesh.addTexCoord(ofVec2f(0, 0));
-					mesh.addColor(ofColor(255, 255, 255));
 					*(meshIndexMap.ptr<int>(row)+col) = ++index;
 					mapReferenceIndices.push_back(cvHelper::Mat2Pos(row, col));
 				}
@@ -370,8 +388,13 @@ void ofApp::computeNormals(ofMesh& mesh, bool bNormalize){
 void ofApp::meshParameterizationLSCM(ofMesh& mesh) {
 	LSCM lscm(mesh);
 	lscm.apply();
+	float uRange = std::abs(lscm.umax - lscm.umin);
+	float vRange = std::abs(lscm.vmax - lscm.vmin);
+	float maxRange = std::max(uRange, vRange);
+	ofVec2f outputRange(256 * uRange / maxRange, 256 * vRange / maxRange);
+
 	for (int i = 0; i < mesh.getNumVertices(); ++i) {
-		mesh.setTexCoord(i, mapVec2f(mesh.getTexCoord(i), ofVec2f(lscm.umin, lscm.vmin), ofVec2f(lscm.umax, lscm.vmax), ofVec2f(0, 0), ofVec2f(256, 256)));
+		mesh.setTexCoord(i, mapVec2f(mesh.getTexCoord(i), ofVec2f(lscm.umin, lscm.vmin), ofVec2f(lscm.umax, lscm.vmax), ofVec2f(0, 0), outputRange));
 	}
 }
 
