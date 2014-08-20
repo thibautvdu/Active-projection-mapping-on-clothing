@@ -52,7 +52,7 @@ void ofApp::setup() {
 	mContourFinder.setUseTargetColor(false);
 
 	// Textures
-	mChessboardImage.loadImage("chessboard.jpg");
+	mChessboardImage.loadImage("chessboard.png");
 
 	// OpenGL
 	ofDisableAlphaBlending();
@@ -81,6 +81,11 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
+	if (mSaveMesh) {
+		mGarmentGeneratedMesh.save("export.ply");
+		ofLog() << "Exported the 3D mesh";
+		mSaveMesh = false;
+	}
 	if (mPause)
 		return;
 
@@ -174,12 +179,6 @@ void ofApp::update() {
 			generateMesh(mCvGarmentMask(ofxCv::toCv(mGarmentRoi)), mCvGarmentContourModelRoiRel, mGarmentGeneratedMesh, mMeshGenerationStep, mGarmentRoi.getTopLeft());
 			//computeNormals(mGarmentGeneratedMesh, true);
 			meshParameterizationLSCM(mGarmentGeneratedMesh);
-
-			if (mSaveMesh) {
-				mGarmentGeneratedMesh.save("export.ply");
-				ofLog() << "Exported the 3D mesh";
-				mSaveMesh = false;
-			}
 		}
 		mOfSegmentedImg.update();
 		mOfGarmentMask.update();
@@ -189,7 +188,7 @@ void ofApp::update() {
 //--------------------------------------------------------------
 void ofApp::draw() {
 	if (mOfxKinect.isFrameNew()) {
-		ofBackground(0);
+		ofBackground(ofColor::blue);
 
 		// Top Left
 		mOfxKinect.draw(0, 0);
@@ -215,8 +214,9 @@ void ofApp::draw() {
 			glPointSize(1);
 
 			mEasyCam.begin();
-			mEasyCam.setTarget(mGarmentGeneratedMesh.getCentroid());
-			ofSetColor(ofColor::blue);
+			if (!mPause) {
+				mEasyCam.setTarget(mGarmentGeneratedMesh.getCentroid());
+			}
 			ofPushMatrix();
 				ofEnableDepthTest();
 				ofScale(-1, -1, 1);
@@ -226,7 +226,6 @@ void ofApp::draw() {
 				ofDisableDepthTest();
 			ofPopMatrix();
 			mEasyCam.end();
-			ofSetColor(ofColor::white);
 		}
 	}
 	mGui.draw();
@@ -391,7 +390,8 @@ void ofApp::meshParameterizationLSCM(ofMesh& mesh) {
 	float uRange = std::abs(lscm.umax - lscm.umin);
 	float vRange = std::abs(lscm.vmax - lscm.vmin);
 	float maxRange = std::max(uRange, vRange);
-	ofVec2f outputRange(256 * uRange / maxRange, 256 * vRange / maxRange);
+	int textureSize = mChessboardImage.getTextureReference().getWidth();
+	ofVec2f outputRange(textureSize*uRange / maxRange, textureSize*vRange / maxRange);
 
 	for (int i = 0; i < mesh.getNumVertices(); ++i) {
 		mesh.setTexCoord(i, mapVec2f(mesh.getTexCoord(i), ofVec2f(lscm.umin, lscm.vmin), ofVec2f(lscm.umax, lscm.vmax), ofVec2f(0, 0), outputRange));
