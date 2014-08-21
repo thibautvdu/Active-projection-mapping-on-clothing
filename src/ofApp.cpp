@@ -176,7 +176,7 @@ void ofApp::update() {
 			// Update the ROI information of the garment
 			mGarmentRoi = mOfGarmentContourModelRoiRel.getBoundingBox();
 			mGarmentRoi.translate(mModelRoi.getTopLeft());
-			generateMesh(mCvGarmentMask(ofxCv::toCv(mGarmentRoi)), mCvGarmentContourModelRoiRel, mGarmentGeneratedMesh, mMeshGenerationStep, mGarmentRoi.getTopLeft());
+			generateMesh(mCvGarmentMask(ofxCv::toCv(mGarmentRoi)), mGarmentGeneratedMesh, mMeshGenerationStep, mGarmentRoi.getTopLeft());
 			//computeNormals(mGarmentGeneratedMesh, true);
 			meshParameterizationLSCM(mGarmentGeneratedMesh);
 		}
@@ -248,7 +248,7 @@ void ofApp::keyPressed(int key) {
 	}
 }
 
-void ofApp::generateMesh(cv::Mat& maskImage, const vector<cv::Point>& contour, ofMesh& mesh, int step, ofPoint offset){
+void ofApp::generateMesh(cv::Mat& maskImage, ofMesh& mesh, int step, ofPoint offset){
 	int width = maskImage.cols;
 	int height = maskImage.rows;
 	int meshRows = height / step;
@@ -338,6 +338,8 @@ void ofApp::generateMesh(cv::Mat& maskImage, const vector<cv::Point>& contour, o
 		mapIndicestoInterpolate.pop_front();
 		*(meshIndexMap.ptr<int>(currentInterpolatedCell.row) + currentInterpolatedCell.col) = -1;
 	}
+
+
 	
 	for (int i = 0; i < mapReferenceIndices.size(); ++i) {
 		if (mapReferenceIndices[i].row < meshRows - 1 && mapReferenceIndices[i].col < meshCols - 1) { // Don't process on the last col and row

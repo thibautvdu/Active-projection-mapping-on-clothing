@@ -19,7 +19,7 @@ class ofApp : public ofBaseApp {
 		void mousePressed(int x, int y, int button);
 		void keyPressed(int key);
 
-		void generateMesh(cv::Mat& maskImage, const vector<cv::Point>& contour, ofMesh& mesh, int step = 1, ofPoint offset = ofPoint(0,0));
+		void generateMesh(cv::Mat& maskImage, ofMesh& mesh, int step = 1, ofPoint offset = ofPoint(0,0));
 		void computeNormals(ofMesh& mesh, bool bNormalize);
 		void meshParameterizationLSCM(ofMesh& mesh);
 		ofVec2f ofApp::mapVec2f(ofVec2f value, ofVec2f inputMin, ofVec2f inputMax, ofVec2f outputMin, ofVec2f outputMax, bool clamp = false);
