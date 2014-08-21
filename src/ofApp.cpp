@@ -257,7 +257,6 @@ void ofApp::generateMesh(cv::Mat& maskImage, ofMesh& mesh, int step, ofPoint off
 	mesh.clear();
 	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
 	mesh.enableIndices();
-	mesh.enableTextures();
 
 	// Fill the mesh with the point known by kinect sensor and fill :
 	// meshIndexMap, recording which value is known, unknown or not part of the garment
@@ -277,9 +276,7 @@ void ofApp::generateMesh(cv::Mat& maskImage, ofMesh& mesh, int step, ofPoint off
 			if (!cvHelper::zeroAt(maskImage, y, x)) {
 				ofVec3f worldCoordinates = mOfxKinect.getWorldCoordinates(x + offset.x, y + offset.y);
 				if (abs(worldCoordinates.z) > 0.1) {
-					mesh.addVertex(worldCoordinates);
-					mesh.addTexCoord(ofVec2f(0, 0));
-					*(meshIndexMap.ptr<int>(row)+col) = ++index;
+					mesh.addVertex(worldCoordinates);					*(meshIndexMap.ptr<int>(row)+col) = ++index;
 					mapReferenceIndices.push_back(cvHelper::Mat2Pos(row, col));
 				}
 				else {
@@ -339,8 +336,10 @@ void ofApp::generateMesh(cv::Mat& maskImage, ofMesh& mesh, int step, ofPoint off
 		*(meshIndexMap.ptr<int>(currentInterpolatedCell.row) + currentInterpolatedCell.col) = -1;
 	}
 
-
-	
+	bool* indicesUsed = new bool[mesh.getNumVertices()];
+	for (int i = 0; i < mesh.getNumVertices(); ++i) {
+		indicesUsed[i] = false;
+	}
 	for (int i = 0; i < mapReferenceIndices.size(); ++i) {
 		if (mapReferenceIndices[i].row < meshRows - 1 && mapReferenceIndices[i].col < meshCols - 1) { // Don't process on the last col and row
 			int pointAIdx = *(meshIndexMap.ptr<int>(mapReferenceIndices[i].row) + mapReferenceIndices[i].col);
@@ -350,10 +349,29 @@ void ofApp::generateMesh(cv::Mat& maskImage, ofMesh& mesh, int step, ofPoint off
 
 			if (pointAIdx != -1 && pointBIdx != -1 && pointDIdx != -1 && pointBIdx != pointAIdx) {
 				mesh.addTriangle(pointAIdx, pointBIdx, pointDIdx);
+				indicesUsed[pointAIdx] = true;
+				indicesUsed[pointBIdx] = true;
+				indicesUsed[pointDIdx] = true;
 			}
-
 			if (pointBIdx != -1 && pointCIdx != -1 && pointDIdx != -1 && pointDIdx != pointCIdx) {
 				mesh.addTriangle(pointBIdx, pointCIdx, pointDIdx);
+				indicesUsed[pointBIdx] = true;
+				indicesUsed[pointCIdx] = true;
+				indicesUsed[pointDIdx] = true;
+			}
+
+
+		}
+	}
+
+	for (int i = mesh.getNumVertices(); i >= 0; --i) {
+		if (!indicesUsed[i]) {
+			mesh.removeVertex(i);
+
+			for (int g = 0; g < mesh.getNumIndices(); ++g) {
+				if (mesh.getIndex(g) > i) {
+					mesh.setIndex(g, mesh.getIndex(g) - 1);
+				}
 			}
 		}
 	}
@@ -387,6 +405,11 @@ void ofApp::computeNormals(ofMesh& mesh, bool bNormalize){
 }
 
 void ofApp::meshParameterizationLSCM(ofMesh& mesh) {
+	mesh.enableTextures();
+	ofVec2f* texCoords = new ofVec2f[mesh.getNumVertices()];
+	mesh.addTexCoords(texCoords, mesh.getNumVertices());
+	delete[] texCoords;
+
 	LSCM lscm(mesh);
 	lscm.apply();
 	float uRange = std::abs(lscm.umax - lscm.umin);
