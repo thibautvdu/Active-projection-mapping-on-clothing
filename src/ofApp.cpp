@@ -264,7 +264,6 @@ void ofApp::generateMesh(cv::Mat& maskImage, ofMesh& mesh, int step, ofPoint off
 	// mapReferenceIndices, storing all known points' position in the matrix
 	cv::Mat meshIndexMap;
 	meshIndexMap.create(meshRows, meshCols, CV_32S);
-	std::deque<cvHelper::Mat2Pos> mapIndicestoInterpolate;
 	std::vector<cvHelper::Mat2Pos> mapReferenceIndices;
 	int index = -1;
 	int x, y;
@@ -275,65 +274,45 @@ void ofApp::generateMesh(cv::Mat& maskImage, ofMesh& mesh, int step, ofPoint off
 
 			if (!cvHelper::zeroAt(maskImage, y, x)) {
 				ofVec3f worldCoordinates = mOfxKinect.getWorldCoordinates(x + offset.x, y + offset.y);
-				if (abs(worldCoordinates.z) > 0.1) {
-					mesh.addVertex(worldCoordinates);					*(meshIndexMap.ptr<int>(row)+col) = ++index;
-					mapReferenceIndices.push_back(cvHelper::Mat2Pos(row, col));
+
+				if (abs(worldCoordinates.z) < 0.1) { // Missing value, interpolate with the 8 neighboorhood
+					cv::Point radiusSearch[] = { cv::Point(0, 1), cv::Point(1, 1), cv::Point(1, 0), cv::Point(1, -1),
+						cv::Point(0, -1), cv::Point(-1, -1), cv::Point(-1, 0), cv::Point(-1, 1) };
+
+					cv::Point neighbour;
+					ofVec3f neighbourWorldCoordinates;
+					int knownNeighbour = 0;
+					for (int i = 0; i<8; ++i) {
+						neighbour = cv::Point(x,y) + (radiusSearch[i]*step);
+						if (neighbour.x > 0 && neighbour.x < width && neighbour.y > 0 && neighbour.y < height
+							&& !cvHelper::zeroAt(maskImage, neighbour.y, neighbour.x)) {
+							neighbourWorldCoordinates = mOfxKinect.getWorldCoordinates(neighbour.x + offset.x, neighbour.y + offset.y);
+
+							if (abs(neighbourWorldCoordinates.z) > 0.1){
+								worldCoordinates.z += neighbourWorldCoordinates.z;
+								++knownNeighbour;
+							}
+						}
+					}
+					if (knownNeighbour != 0) {
+						worldCoordinates = mOfxKinect.getWorldCoordinates(x + offset.x, y + offset.y, worldCoordinates.z / knownNeighbour);
+						mesh.addVertex(worldCoordinates);
+						*(meshIndexMap.ptr<int>(row)+col) = ++index;
+						mapReferenceIndices.push_back(cvHelper::Mat2Pos(row, col));
+					}
+					else {
+						*(meshIndexMap.ptr<int>(row)+col) = -1; // Discontinuity in the shape
+					}
 				}
 				else {
-					*(meshIndexMap.ptr<int>(row)+col) = -2; // No depth value, need interpolation in the mesh
-					mapIndicestoInterpolate.push_back(cvHelper::Mat2Pos(row, col));
+					mesh.addVertex(worldCoordinates);
+					*(meshIndexMap.ptr<int>(row)+col) = ++index;
+					mapReferenceIndices.push_back(cvHelper::Mat2Pos(row, col));
 				}
 			} else {
 				*(meshIndexMap.ptr<int>(row)+col) = -1; // Discontinuity in the shape
 			}
 		}
-	}
-
-	// Generate an empty texture mapping array
-	//mesh.addTexCoords(std::vector<ofVec2f>(mesh.getNumVertices(), ofVec2f(0, 0)));
-
-	// Interpolate missing depths
-	cvHelper::Mat2Pos currentInterpolatedCell;
-	cvHelper::Mat2Pos neighbour;
-	int neighbourValue;
-	cvHelper::Mat2Pos radiusSearch[] = { cvHelper::Mat2Pos(0, 1), cvHelper::Mat2Pos(1, 1), cvHelper::Mat2Pos(1, 0), cvHelper::Mat2Pos(1, -1),
-		cvHelper::Mat2Pos(0, -1), cvHelper::Mat2Pos(-1, -1), cvHelper::Mat2Pos(-1, 0), cvHelper::Mat2Pos(-1, 1) };
-	int loopingCounter =  -1;
-	bool detectedLoop = false;
-	while (!mapIndicestoInterpolate.empty() && !detectedLoop) {
-		currentInterpolatedCell = mapIndicestoInterpolate.front();
-		mapIndicestoInterpolate.pop_front();
-
-		// Look in the 8 neighbours
-		int i = 0;
-		bool found = false;
-		while (i < 8 && !found) {
-			neighbour = currentInterpolatedCell + radiusSearch[i];
-			if (neighbour.row > 0 && neighbour.row < meshRows && neighbour.col > 0 && neighbour.col < meshCols) {
-				neighbourValue = *(meshIndexMap.ptr<int>(neighbour.row) + neighbour.col);
-				if (neighbourValue >= 0){
-					*(meshIndexMap.ptr<int>(currentInterpolatedCell.row) + currentInterpolatedCell.col) = neighbourValue;
-					found = true;
-					loopingCounter = -1;
-				}
-			}
-			++i;
-		}
-		if (!found) {
-			mapIndicestoInterpolate.push_back(currentInterpolatedCell);
-			if (loopingCounter == -1) { // Changes have been made, reinit the infinite loop detection (isolated unknown blob)
-				loopingCounter = mapIndicestoInterpolate.size();
-			}
-			else if (--loopingCounter == 0) {
-				detectedLoop = true;
-			}
-		}
-	}
-
-	while (!mapIndicestoInterpolate.empty()) { // Class the eventual isolated unknown blob as a discontinuity
-		currentInterpolatedCell = mapIndicestoInterpolate.front();
-		mapIndicestoInterpolate.pop_front();
-		*(meshIndexMap.ptr<int>(currentInterpolatedCell.row) + currentInterpolatedCell.col) = -1;
 	}
 
 	bool* indicesUsed = new bool[mesh.getNumVertices()];
@@ -347,13 +326,13 @@ void ofApp::generateMesh(cv::Mat& maskImage, ofMesh& mesh, int step, ofPoint off
 			int pointCIdx = *(meshIndexMap.ptr<int>(mapReferenceIndices[i].row + 1) + mapReferenceIndices[i].col + 1);
 			int pointDIdx = *(meshIndexMap.ptr<int>(mapReferenceIndices[i].row + 1) + mapReferenceIndices[i].col);
 
-			if (pointAIdx != -1 && pointBIdx != -1 && pointDIdx != -1 && pointBIdx != pointAIdx) {
+			if (pointAIdx != -1 && pointBIdx != -1 && pointDIdx != -1) {
 				mesh.addTriangle(pointAIdx, pointBIdx, pointDIdx);
 				indicesUsed[pointAIdx] = true;
 				indicesUsed[pointBIdx] = true;
 				indicesUsed[pointDIdx] = true;
 			}
-			if (pointBIdx != -1 && pointCIdx != -1 && pointDIdx != -1 && pointDIdx != pointCIdx) {
+			if (pointBIdx != -1 && pointCIdx != -1 && pointDIdx != -1) {
 				mesh.addTriangle(pointBIdx, pointCIdx, pointDIdx);
 				indicesUsed[pointBIdx] = true;
 				indicesUsed[pointCIdx] = true;

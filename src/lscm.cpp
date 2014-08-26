@@ -37,12 +37,7 @@ void LSCM::setup_lscm() {
 
 void LSCM::setup_lscm(const Vector3& v0, const ofIndexType i0, const Vector3& v1, const ofIndexType i1, const Vector3& v2, const ofIndexType i2) {
 	// We ensure that the triangle vertices are clockwise ordered in the xy plane
-	if ((v1.x - v0.x)*(v0.y + v1.y) + (v2.x - v1.x)*(v1.y + v2.y) + (v0.x - v2.x)*(v2.y + v0.y) < 0) {
-		setup_conformal_map_relations(v1, i1, v0, i0, v2, i2);
-	}
-	else {
 		setup_conformal_map_relations(v0, i0, v1, i1, v2, i2);
-	}
 }
 
 // Computes the coordinates of the vertices of a triangle
@@ -179,12 +174,12 @@ void LSCM::project() {
 	for (i = 0; i<mMesh->getNumVertices(); i++) {
 		const Vector3& v = mMesh->getVertex(i);
 		xmin = std::min(v.x, xmin);
-		ymin = std::min(v.y, xmin);
-		zmin = std::min(v.z, xmin);
+		ymin = std::min(v.y, ymin);
+		zmin = std::min(v.z, zmin);
 
-		xmax = std::max(v.x, xmin);
-		ymax = std::max(v.y, xmin);
-		zmax = std::max(v.z, xmin);
+		xmax = std::max(v.x, xmax);
+		ymax = std::max(v.y, ymax);
+		zmax = std::max(v.z, zmax);
 	}
 
 	double dx = xmax - xmin;
