@@ -6,9 +6,6 @@
 
 namespace cvHelper {
 
-	std::string getImageType(const cv::Mat& image);
-	bool zeroAt(cv::Mat& mat, int row, int col);
-
 	class Mat2Pos {
 		public:
 			int row, col;
@@ -41,6 +38,9 @@ namespace cvHelper {
 				return copy;
 			}
 	};
+
+	std::string getImageType(const cv::Mat& image);
+	bool zeroAt(cv::Mat& mat, int row, int col);
 }
 
 #endif // FLEXIBLE_SURFACE_AUGMENTATION_CV_HELPER_H_

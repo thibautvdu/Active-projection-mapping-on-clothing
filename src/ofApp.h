@@ -56,8 +56,6 @@ class ofApp : public ofBaseApp {
 		ofxIntSlider mOpenKernelSize, mCloseKernelSize; // Morphological operators
 		ofxToggle mMorphoUseEllipse; // Morphological operators
 		ofxIntSlider mGarmentBodyPercent; // Contour 
-		ofxIntSlider mDepthSmoothingKernelSize;
-		ofxIntSlider mDepthSmoothingSigma;
 		ofxIntSlider mMeshGenerationStep;
 		ofEasyCam mEasyCam;
 
