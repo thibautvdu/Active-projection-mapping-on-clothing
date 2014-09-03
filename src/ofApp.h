@@ -7,6 +7,7 @@
 #include "ofxCv.h"
 #include "ofxKinectCommonBridge.h"
 #include "ofxGui.h"
+#include "ofSemiImplicitActiveMesh.h"
 
 class ofApp : public ofBaseApp {
 
@@ -19,7 +20,6 @@ class ofApp : public ofBaseApp {
 		void mousePressed(int x, int y, int button);
 		void keyPressed(int key);
 
-		void generateMesh(cv::Mat& maskImage, ofMesh& mesh, int step = 1, ofPoint offset = ofPoint(0,0));
 		void computeNormals(ofMesh& mesh, bool bNormalize);
 		void meshParameterizationLSCM(ofMesh& mesh);
 		ofVec2f ofApp::mapVec2f(ofVec2f value, ofVec2f inputMin, ofVec2f inputMax, ofVec2f outputMin, ofVec2f outputMax, bool clamp = false);
@@ -40,11 +40,12 @@ class ofApp : public ofBaseApp {
 		cv::Mat mCvGarmentMask;
 		ofxCv::ContourFinder mContourFinder;
 		std::vector<cv::Point> mCvGarmentContourModelRoiRel;
-		ofPolyline mOfGarmentContourModelRoiRel;
+		ofPolyline mOfGarmentContourModel;
 		ofRectangle mGarmentRoi;
 
 		// Mesh generation
-		ofMesh mGarmentGeneratedMesh;
+		ofDeformationTracking::ofSemiImplicitActiveMesh mGarmentGeneratedMesh;
+		bool mAskRegeneration;
 
 		// Textures
 		ofImage mChessboardImage;
@@ -56,7 +57,11 @@ class ofApp : public ofBaseApp {
 		ofxIntSlider mOpenKernelSize, mCloseKernelSize; // Morphological operators
 		ofxToggle mMorphoUseEllipse; // Morphological operators
 		ofxIntSlider mGarmentBodyPercent; // Contour 
-		ofxIntSlider mMeshGenerationStep;
+
+		ofxFloatSlider mMeshBoundaryWeight;
+		ofxFloatSlider mMeshDepthWeight;
+		ofxFloatSlider mMeshAdaptationRate;
+
 		ofEasyCam mEasyCam;
 
 		// Keys

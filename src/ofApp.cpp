@@ -51,6 +51,10 @@ void ofApp::setup() {
 	mContourFinder.setSortBySize(true);
 	mContourFinder.setUseTargetColor(false);
 
+	// Mesh
+	mGarmentGeneratedMesh = ofDeformationTracking::ofSemiImplicitActiveMesh(12, 12);
+	mAskRegeneration = false;
+
 	// Textures
 	mChessboardImage.loadImage("chessboard.png");
 
@@ -70,7 +74,10 @@ void ofApp::setup() {
 	mGui.add(mCloseKernelSize.setup("closing kernel size", 9, 1, 9));
 	mGui.add(mMorphoUseEllipse.setup("ellipse for morpho operations",false));
 	mGui.add(mGarmentBodyPercent.setup("percent of clothing on body", 20, 0, 100)); // 30% is a good value for a t-shirt
-	mGui.add(mMeshGenerationStep.setup("undersampling the polygonal mesh", 7, 1, 20)); // in pixels
+
+	mGui.add(mMeshBoundaryWeight.setup("tracking mesh boundary weight", 0.8, 0.1, 2));
+	mGui.add(mMeshDepthWeight.setup("tracking mesh depth weight", 0.6, 0.001, 2));
+	mGui.add(mMeshAdaptationRate.setup("tracking mesh adaptation rate", 2, 0.1, 4));
 	
 	// Keys
 	mPause = false;
@@ -79,6 +86,7 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
+	// EVENTS
 	if (mSaveMesh) {
 		mGarmentGeneratedMesh.save("export.ply");
 		ofLog() << "Exported the 3D mesh";
@@ -86,6 +94,16 @@ void ofApp::update() {
 	}
 	if (mPause)
 		return;
+	if (abs(mGarmentGeneratedMesh.getBoundaryWeight() - mMeshBoundaryWeight) > 0.001) {
+		mGarmentGeneratedMesh.setBoundaryWeight(mMeshBoundaryWeight);
+	}
+	if (abs(mGarmentGeneratedMesh.getDepthWeight() - mMeshDepthWeight) > 0.001) {
+		mGarmentGeneratedMesh.setDepthWeight(mMeshDepthWeight);
+	}
+	if (abs(mGarmentGeneratedMesh.getAdaptationRate() - mMeshAdaptationRate) > 0.001) {
+		mGarmentGeneratedMesh.setAdaptationRate(mMeshAdaptationRate);
+	}
+	// !EVENTS
 
 	mOfxKinect.update();
 
@@ -145,30 +163,40 @@ void ofApp::update() {
 			mContourFinder.findContours(cvGarmentMaskRoi);
 			if (mContourFinder.getContours().size() != 0) {
 				mCvGarmentContourModelRoiRel = mContourFinder.getContour(0);
-				mOfGarmentContourModelRoiRel = mContourFinder.getPolyline(0);
+				mOfGarmentContourModel = mContourFinder.getPolyline(0);
+				for (int i = 0; i < mOfGarmentContourModel.size(); ++i) {
+					mOfGarmentContourModel[i] += mModelRoi.getTopLeft();
+				}
+
 				mOfGarmentMask.setColor(ofColor::black); // reset the mask as opencv only draw on the ROI
 				ofxCv::fillPoly(mCvGarmentContourModelRoiRel, cvGarmentMaskRoi);
+
+				// Update the ROI information of the garment
+				mGarmentRoi = mOfGarmentContourModel.getBoundingBox();
 			}
 			else {
 				ofLog(OF_LOG_ERROR) << "Couldn't retrieve big enough contour";
 				mCvGarmentContourModelRoiRel.clear();
-				mOfGarmentContourModelRoiRel.clear();
+				mOfGarmentContourModel.clear();
 			}
 		}
 		else {
 			ofLog(OF_LOG_ERROR) << "Found skeleton but couldn't detect garment";
 			mCvGarmentContourModelRoiRel.clear();
-			mOfGarmentContourModelRoiRel.clear();
+			mOfGarmentContourModel.clear();
 		}
 
-		// Generate the point of cloud
-		if (mOfGarmentContourModelRoiRel.size() != 0) {
-			// Update the ROI information of the garment
-			mGarmentRoi = mOfGarmentContourModelRoiRel.getBoundingBox();
-			mGarmentRoi.translate(mModelRoi.getTopLeft());
-			generateMesh(mCvGarmentMask(ofxCv::toCv(mGarmentRoi)), mGarmentGeneratedMesh, mMeshGenerationStep, mGarmentRoi.getTopLeft());
-			//computeNormals(mGarmentGeneratedMesh, true);
-			meshParameterizationLSCM(mGarmentGeneratedMesh);
+		// Generate the mesh
+		if (mOfGarmentContourModel.size() != 0) {
+			if (!mGarmentGeneratedMesh.isGenerated() && mAskRegeneration) {
+				mGarmentGeneratedMesh.generateMesh(mOfGarmentContourModel);
+				//computeNormals(mGarmentGeneratedMesh, true);
+				//meshParameterizationLSCM(mGarmentGeneratedMesh);
+				mAskRegeneration = false;
+			}
+			else if (mGarmentGeneratedMesh.isGenerated()) {
+				mGarmentGeneratedMesh.updateMesh(mOfGarmentContourModel);
+			}
 		}
 		mOfSegmentedImg.update();
 		mOfGarmentMask.update();
@@ -185,8 +213,9 @@ void ofApp::draw() {
 
 		ofPushMatrix();
 		ofSetColor(ofColor::red);
-		ofTranslate(mModelRoi.getTopLeft());
-		mOfGarmentContourModelRoiRel.draw();
+		ofRectangle bb = mOfGarmentContourModel.getBoundingBox();
+		ofSetColor(ofColor::blue);
+		mOfGarmentContourModel.draw();
 		ofPopMatrix();
 
 		ofSetColor(ofColor::white);
@@ -203,18 +232,19 @@ void ofApp::draw() {
 		if (mGarmentGeneratedMesh.hasVertices()) {
 			glPointSize(1);
 
-			mEasyCam.begin();
+			//mEasyCam.begin();
 			if (!mPause) {
-				mEasyCam.setTarget(mGarmentGeneratedMesh.getCentroid());
+				//mEasyCam.setTarget(mGarmentGeneratedMesh.getCentroid());
 			}
 			ofPushMatrix();
 				ofEnableDepthTest();
-				mChessboardImage.bind();
-				mGarmentGeneratedMesh.draw();
-				mChessboardImage.unbind();
+				//mChessboardImage.bind();
+				
+				mGarmentGeneratedMesh.drawWireframe();
+				//mChessboardImage.unbind();
 				ofDisableDepthTest();
 			ofPopMatrix();
-			mEasyCam.end();
+			//mEasyCam.end();
 		}
 	}
 	mGui.draw();
@@ -235,172 +265,8 @@ void ofApp::keyPressed(int key) {
 	if (key == ' ') {
 		mPause = !mPause;
 	}
-}
-
-void ofApp::generateMesh(cv::Mat& maskImage, ofMesh& mesh, int step, ofPoint offset){
-	int width = maskImage.cols;
-	int height = maskImage.rows;
-	int meshRows = height / step;
-	int meshCols = width / step;
-
-	mesh.clear();
-	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
-	mesh.enableIndices();
-
-	// Generate a lying mesh on the contour
-	cv::Mat meshIndices;
-	meshIndices.create(meshRows, meshCols, CV_32S);
-	int index = -1;
-	cv::Point2i a, b, c, d;
-	for (int row = 0; row < meshRows; row++) {
-		for (int col = 0; col < meshCols; col++) {
-			a = cv::Point2i(col*step, row*step);
-			b = cv::Point2i((col + 1)*step, row*step);
-			c = cv::Point2i((col + 1)*step, (row + 1)*step);
-			d = cv::Point2i(col*step, (row + 1)*step);
-
-			if (cvHelper::zeroAt(maskImage, a.y, a.x)) { // Snapp the point to the contour if one of the square vertice is in the contour mask
-				cv::Point2i snapDirection = cv::Point2i(0, 0);
-
-				if (b.y > 0  && b.x > 0 && b.y < height && b.x < width && !cvHelper::zeroAt(maskImage, b.y, b.x)) {
-					snapDirection.x += 1;
-				}
-				if (d.y > 0 && d.x > 0 && d.y < height && d.x < width && !cvHelper::zeroAt(maskImage, d.y, d.x)) {
-					snapDirection.y += 1;
-				}
-				if (c.y > 0 && c.x > 0 && c.y < height && c.x < width && !cvHelper::zeroAt(maskImage, c.y, c.x)) {
-					snapDirection.x += 1;
-					snapDirection.y += 1;
-				}
-
-				if (snapDirection != cv::Point2i(0, 0)) {
-					snapDirection = (snapDirection == cv::Point2i(2, 2)) ? cv::Point2i(1, 1) : snapDirection;
-
-					while (cvHelper::zeroAt(maskImage, a.y, a.x)) {
-						a += snapDirection;
-					}
-
-					ofVec3f worldCoordinates = mOfxKinect.getWorldCoordinates(a.x + offset.x, a.y + offset.y) * ofVec3f(-1, -1, 1);
-					if (abs(worldCoordinates.z) > 0.1) {
-						mesh.addVertex(worldCoordinates);
-					}
-					else {
-						mesh.addVertex(ofVec3f(a.x + offset.x, a.y + offset.y, 0));
-					}
-					*(meshIndices.ptr<int>(row)+col) = ++index;
-				}
-				else{
-					*(meshIndices.ptr<int>(row)+col) = -1; // Discontinuity in the contour
-				}
-			}
-			else {
-				ofVec3f worldCoordinates = mOfxKinect.getWorldCoordinates(a.x + offset.x, a.y + offset.y) * ofVec3f(-1, -1, 1);
-				if (abs(worldCoordinates.z) > 0.1) {
-					mesh.addVertex(worldCoordinates);
-				}
-				else {
-					mesh.addVertex(ofVec3f(a.x + offset.x, a.y + offset.y, 0));
-				}
-				*(meshIndices.ptr<int>(row)+col) = ++index;
-			}
-		}
-	}
-
-
-	// Link the points in a mesh
-	bool* indicesUsed = new bool[mesh.getNumVertices()];
-	for (int i = 0; i < mesh.getNumVertices(); ++i) {
-		indicesUsed[i] = false;
-	}
-	for (int row = 0; row < meshRows - 1; row++) {
-		for (int col = 0; col < meshCols - 1; col++) {
-			int pointAIdx = *(meshIndices.ptr<int>(row) + col);
-			int pointBIdx = *(meshIndices.ptr<int>(row) + col + 1);
-			int pointCIdx = *(meshIndices.ptr<int>(row + 1) + col + 1);
-			int pointDIdx = *(meshIndices.ptr<int>(row + 1) + col);
-
-			if (pointAIdx != -1 && pointBIdx != -1 && pointDIdx != -1) {
-				mesh.addTriangle(pointAIdx, pointBIdx, pointDIdx);
-				indicesUsed[pointAIdx] = true;
-				indicesUsed[pointBIdx] = true;
-				indicesUsed[pointDIdx] = true;
-			}
-			if (pointBIdx != -1 && pointCIdx != -1 && pointDIdx != -1) {
-				mesh.addTriangle(pointBIdx, pointCIdx, pointDIdx);
-				indicesUsed[pointBIdx] = true;
-				indicesUsed[pointCIdx] = true;
-				indicesUsed[pointDIdx] = true;
-			}
-		}
-	}
-
-
-	// Remove the eventual unused vertices
-	for (int i = mesh.getNumVertices(); i >= 0; --i) {
-		if (!indicesUsed[i]) {
-			mesh.removeVertex(i);
-
-			for (int g = 0; g < mesh.getNumIndices(); ++g) {
-				if (mesh.getIndex(g) > i) {
-					mesh.setIndex(g, mesh.getIndex(g) - 1);
-				}
-			}
-		}
-	}
-
-	// Average the missing depths
-	ofShortPixels& depthPixels = mOfxKinect.getDepthPixelsRef();
-	ofRectangle roi(offset.x, offset.y, width, height);
-	cv::Mat cvDepthPixels = ofxCv::toCv(depthPixels);
-	cvDepthPixels = cvDepthPixels(ofxCv::toCv(roi));
-
-	cv::Mat cvDepthPixelsInPainted = cvDepthPixels.clone();
-	cv::Mat cvZeroMask;
-	cvZeroMask.create(cvDepthPixelsInPainted.rows, cvDepthPixelsInPainted.cols, cvDepthPixelsInPainted.type());
-
-	for (int row = 0; row < cvDepthPixelsInPainted.rows; ++row) {
-		USHORT* pRow = cvDepthPixelsInPainted.ptr<USHORT>(row);
-		for (int col = 0; col < cvDepthPixelsInPainted.cols; ++col) {
-			if (*(pRow + col) == 0) {
-				*(cvZeroMask.ptr<USHORT>(row)+col) = 0;
-			}
-			else if (cvHelper::zeroAt(maskImage, row, col)) {
-				*(cvZeroMask.ptr<USHORT>(row)+col) = 0;
-				*(pRow + col) = 0;
-			}
-			else {
-				*(cvZeroMask.ptr<USHORT>(row)+col) = 65535;
-			}
-		}
-	}
-
-	int depthInpaintingKernelSize = 1;
-	bool unknownValue = true;
-	while (unknownValue) {
-		depthInpaintingKernelSize += 2;
-		cv::GaussianBlur(cvZeroMask, cvZeroMask, cv::Size(depthInpaintingKernelSize, depthInpaintingKernelSize), 1);
-		cv::GaussianBlur(cvDepthPixelsInPainted, cvDepthPixelsInPainted, cv::Size(depthInpaintingKernelSize, depthInpaintingKernelSize), 1);
-		cvDepthPixelsInPainted = 65535 * (cvDepthPixelsInPainted / cvZeroMask);
-
-		ofVec3f meshPoint;
-		unknownValue = false;
-		for (int i = 0; i < mesh.getNumVertices(); ++i) {
-			meshPoint = mesh.getVertex(i);
-			if (abs(meshPoint.z) < 0.1) {
-				meshPoint = mOfxKinect.getWorldCoordinates(meshPoint.x, meshPoint.y, *(cvDepthPixelsInPainted.ptr<USHORT>(meshPoint.y - offset.y) + (USHORT)(meshPoint.x - offset.x))) * ofVec3f(-1, -1, 1);
-				
-				if (abs(meshPoint.z) < 0.1 && depthInpaintingKernelSize < 9) {
-					unknownValue = true;
-				}
-				else if (depthInpaintingKernelSize > 9) {
-					ofLogError("ofApp::generateMesh") << "Couldn't inpaint the mesh";
-					break;
-				}
-				else {
-					mesh.setVertex(i, meshPoint);
-				}
-			}
-		}
+	else if (key == 'g') {
+		mAskRegeneration = true;
 	}
 }
 

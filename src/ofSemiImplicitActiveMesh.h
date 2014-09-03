@@ -4,7 +4,8 @@
 #include "ofMesh.h"
 #include "ofImage.h"
 #include "ofPolyline.h"
-#include <Eigen/Dense>
+#include <Eigen/Sparse>
+#include <Eigen/SparseLU>
 
 namespace ofDeformationTracking {
 
@@ -12,32 +13,65 @@ namespace ofDeformationTracking {
 	An object oriented implementation of "3D Non-Rigid Deformable Surface Estimation Without Feature
 	Correspondence" by Bryan Willimon, Ian Walker, and Stan Birchfield
 	*/
-	class ofSemiImplicitActiveMesh : ofMesh {
+	class ofSemiImplicitActiveMesh : public ofMesh {
 
 		public :
-			ofSemiImplicitActiveMesh(float dWeight, float bWeight, int meshXRes, int meshYRes) : mDepthWeight(dWeight), mBoundaryWeight(bWeight), 
-				mMeshXResolution(meshXRes), mMeshYResolution(meshYRes) {};
+			ofSemiImplicitActiveMesh() : ofMesh() {
+				mNeedComputation = false;
+
+				mMeshXResolution = 10;
+				mMeshYResolution = 10;
+
+				mGenerated = false;
+				mGenerationAreaThresh = 10;
+
+				mAdaptationRate = 0.5;
+				mBoundaryWeight = 0.2;
+				mDepthWeight = 0.6;
+
+				mpSolver = new Eigen::SparseLU<Eigen::SparseMatrix<double, Eigen::ColMajor>>();
+			}
+
+			ofSemiImplicitActiveMesh(int meshXRes, int meshYRes) : mMeshXResolution(meshXRes), mMeshYResolution(meshYRes) {
+				mNeedComputation = false;
+
+				mGenerated = false;
+				mGenerationAreaThresh = 10;
+
+				mAdaptationRate = 0.5;
+				mBoundaryWeight = 0.2;
+				mDepthWeight = 0.6;
+
+				mpSolver = new Eigen::SparseLU<Eigen::SparseMatrix<double, Eigen::ColMajor>>();
+			};
 
 			// GETTERS/SETTERS
-			void setDepthWeight(float weight) { this->mDepthWeight = weight; }
-			float getDepthWeight() const { return this->mDepthWeight; }
+			void setDepthWeight(float weight) { mDepthWeight = weight; }
+			float getDepthWeight() const { return mDepthWeight; }
 
-			void setBoundaryWeight(float weight) { this->mBoundaryWeight = weight; }
-			float getBoundaryWeight() const { return this->mBoundaryWeight; }
+			void setBoundaryWeight(float weight) { mBoundaryWeight = weight; }
+			float getBoundaryWeight() const { return mBoundaryWeight; }
 
-			void setMeshXResolution(int res) { this->mMeshXResolution = res; }
-			int getMeshXResolution() const { return this->mMeshXResolution; }
-			void setMeshYResolution(int res) { this->mMeshXResolution = res; }
-			int getMeshYResolution() const { return this->mMeshXResolution; }
-			void setGenerationAreaThresh(float thresh) { this->mGenerationAreaThresh = thresh; }
+			void setAdaptationRate(float rate) {
+				mAdaptationRate = rate;
+				mNeedComputation = true;
+			}
+			float getAdaptationRate() const { return mAdaptationRate; }
+
+			void setMeshXResolution(int res) { mMeshXResolution = res; }
+			int getMeshXResolution() const { return mMeshXResolution; }
+			void setMeshYResolution(int res) { mMeshXResolution = res; }
+			int getMeshYResolution() const { return mMeshXResolution; }
+			void setGenerationAreaThresh(float thresh) { mGenerationAreaThresh = thresh; }
 			float getGenerationAreaThresh(float thresh) const { return mGenerationAreaThresh; }
 
-			const ofMesh& getKinectRelativeMeshRef() const { return this->mKinectRelativeMesh; }
+			// FLAGS
+			bool isGenerated() { return mGenerated; }
+
+			const ofMesh& getKinectRelativeMeshRef() const { return mKinectRelativeMesh; }
 
 			// INITIALIZATION
 			void generateMesh(const ofPolyline& imageContour);
-			void generateMesh(const ofPolyline& imageContour, const ofImage& contourMask, const ofRectangle roi = ofRectangle(0,0,0,0));
-			int intersectionArea(const ofPolyline& contour1, const ofPolyline& contour2);
 
 			// COMPUTATION
 			void updateMesh(const ofPolyline& imageContour);
@@ -48,17 +82,27 @@ namespace ofDeformationTracking {
 			int mMeshXResolution;
 			int mMeshYResolution;
 			float mGenerationAreaThresh;
+			vector<bool> mBoundaryVertices; // index -> is boundary vertice
 
 			// ENERGY MIN. PARAMETERS
 			float mDepthWeight;
 			float mBoundaryWeight;
+			float mAdaptationRate;
 
-			Eigen::MatrixXi mK;
+			Eigen::SparseMatrix<double> mK;
+			Eigen::SparseMatrix<double> mA;
+			Eigen::SparseLU<Eigen::SparseMatrix<double, Eigen::ColMajor>>* mpSolver;
 
 			// ofMesh this ( = image relative mesh + kinect relative depth only)
-			ofMesh mPrevious; // Previous mesh for semi implicit scheme
 			ofMesh mKinectRelativeMesh;
 
+			// FLAGS
+			bool mGenerated;
+			bool mNeedComputation;
+
+			// COMPUTATION METHODS
+			void computeSolver();
+			int intersectionArea(const ofPolyline& contour1, const ofPolyline& contour2);
 	};
 
 }

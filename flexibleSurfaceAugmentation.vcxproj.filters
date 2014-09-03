@@ -100,7 +100,7 @@
     <ClCompile Include="src\lscmUtilities.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\semiImplicitActiveMesh.cpp">
+    <ClCompile Include="src\ofSemiImplicitActiveMesh.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -237,119 +237,119 @@
     <Filter Include="addons\ofxEigen">
       <UniqueIdentifier>{9b4345d8-b430-4b38-a3bf-b44420e44b72}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxEigen\src">
-      <UniqueIdentifier>{3199d7aa-d1d1-429e-a9ab-557c067f4fc3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen">
+    <Filter Include="addons\ofxEigen\Eigen">
       <UniqueIdentifier>{c796d8f9-7f1d-478e-b043-2a6fc3e05de5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\Cholesky">
+    <Filter Include="addons\ofxEigen\Eigen\src">
+      <UniqueIdentifier>{7a102f00-1003-4701-9302-cfc2d9806fa6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\Cholesky">
       <UniqueIdentifier>{81d01085-0670-40c1-86b5-17e0cf3f0b5e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\Core">
-      <UniqueIdentifier>{d688b0c9-0b0f-491d-a16f-4366a2650b6e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\CholmodSupport">
+    <Filter Include="addons\ofxEigen\Eigen\src\CholmodSupport">
       <UniqueIdentifier>{1bbf03f5-08f1-49b1-a9be-8b11c3548c67}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\Eigen2Support">
-      <UniqueIdentifier>{ab0093f7-2df2-4481-bfe6-5b6482fe22ee}</UniqueIdentifier>
+    <Filter Include="addons\ofxEigen\Eigen\src\Core">
+      <UniqueIdentifier>{d688b0c9-0b0f-491d-a16f-4366a2650b6e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\Geometry">
-      <UniqueIdentifier>{bf71b825-8b75-4e95-86b4-cd6581073c9b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\Eigenvalues">
-      <UniqueIdentifier>{32f21394-7b4f-441c-8036-c561204dc37d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\Householder">
-      <UniqueIdentifier>{9a49ffb9-824b-4a03-8d33-6bfbe8b5747c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\IterativeLinearSolvers">
-      <UniqueIdentifier>{2d72845e-84dd-4638-bbcd-9388b0b813fe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\Jacobi">
-      <UniqueIdentifier>{af950d93-d55d-4da7-944c-30ed26f7c52e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\LU">
-      <UniqueIdentifier>{4feda0c8-ef92-4599-8769-a365e1ce8ee9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\MetisSupport">
-      <UniqueIdentifier>{634f9869-f220-47d0-9f79-3db9b809bc02}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\misc">
-      <UniqueIdentifier>{ffd8592c-8a41-4aa1-88ee-20c2ac3795ad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\OrderingMethods">
-      <UniqueIdentifier>{0e2ebdd8-c387-42bd-88c3-14b167956360}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\PardisoSupport">
-      <UniqueIdentifier>{624a4a10-291b-45a6-9559-eae813675163}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\PaStiXSupport">
-      <UniqueIdentifier>{1ae473a6-00fe-49ee-9297-75f2277bdb88}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\plugins">
-      <UniqueIdentifier>{35fb7859-4fc6-4455-a613-7bcc268456bf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\QR">
-      <UniqueIdentifier>{d448c65f-900b-48e9-b2ad-abfba6d3d81f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\SparseCholesky">
-      <UniqueIdentifier>{8545e4ca-5548-474e-8f43-614890e7fa35}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\SparseCore">
-      <UniqueIdentifier>{a5e73815-fc1e-4c45-a272-aac74002ded3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\SparseLU">
-      <UniqueIdentifier>{11c4096c-b15f-4dbe-b318-28ac6423bbcc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\SparseQR">
-      <UniqueIdentifier>{3a15112b-04af-426d-ae6c-5d8cbaf1d8ca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\SPQRSupport">
-      <UniqueIdentifier>{697a6951-3ebf-4651-be6e-38172e7f5c88}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\StlSupport">
-      <UniqueIdentifier>{89f873a7-21a6-4ba8-9b6c-b240d03575ec}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\SuperLUSupport">
-      <UniqueIdentifier>{31fe68dd-8d23-47ac-a93a-85d6daac0c74}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\SVD">
-      <UniqueIdentifier>{01507078-8b10-4e64-ae6a-577c52dbded1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\UmfPackSupport">
-      <UniqueIdentifier>{9f2d3be3-8707-482a-ab34-3e40e28c08b9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\Core\arch">
+    <Filter Include="addons\ofxEigen\Eigen\src\Core\arch">
       <UniqueIdentifier>{b4a11ffd-840c-42ca-8f71-b6045e8dc7ed}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\Core\products">
-      <UniqueIdentifier>{d5564015-7e56-4f7d-8446-a0084f7586c1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\Core\util">
-      <UniqueIdentifier>{5e532ab6-d334-4b45-8319-c085424e3965}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\Core\arch\AltiVec">
+    <Filter Include="addons\ofxEigen\Eigen\src\Core\arch\AltiVec">
       <UniqueIdentifier>{0b3e7e05-6f8e-4c2a-8bd1-ab0d3b9c98c6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\Core\arch\Default">
+    <Filter Include="addons\ofxEigen\Eigen\src\Core\arch\Default">
       <UniqueIdentifier>{8480187d-d9ed-4049-8e1a-9d51e21e99d9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\Core\arch\NEON">
+    <Filter Include="addons\ofxEigen\Eigen\src\Core\arch\NEON">
       <UniqueIdentifier>{1bc65f6b-d4de-4fda-a2f7-13790820939c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\Core\arch\SSE">
+    <Filter Include="addons\ofxEigen\Eigen\src\Core\arch\SSE">
       <UniqueIdentifier>{d0cb566f-2874-45d5-af07-e3c4930eb94f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\Eigen2Support\Geometry">
+    <Filter Include="addons\ofxEigen\Eigen\src\Core\products">
+      <UniqueIdentifier>{d5564015-7e56-4f7d-8446-a0084f7586c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\Core\util">
+      <UniqueIdentifier>{5e532ab6-d334-4b45-8319-c085424e3965}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\Eigen2Support">
+      <UniqueIdentifier>{ab0093f7-2df2-4481-bfe6-5b6482fe22ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\Eigen2Support\Geometry">
       <UniqueIdentifier>{2fddc2c2-13d3-4267-b2ce-f8533d0a98dd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\Geometry\arch">
+    <Filter Include="addons\ofxEigen\Eigen\src\Eigenvalues">
+      <UniqueIdentifier>{32f21394-7b4f-441c-8036-c561204dc37d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\Geometry">
+      <UniqueIdentifier>{bf71b825-8b75-4e95-86b4-cd6581073c9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\Geometry\arch">
       <UniqueIdentifier>{363b7043-9317-4e6e-9413-06a1cfcafb61}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxEigen\src\Eigen\LU\arch">
+    <Filter Include="addons\ofxEigen\Eigen\src\Householder">
+      <UniqueIdentifier>{9a49ffb9-824b-4a03-8d33-6bfbe8b5747c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\IterativeLinearSolvers">
+      <UniqueIdentifier>{2d72845e-84dd-4638-bbcd-9388b0b813fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\Jacobi">
+      <UniqueIdentifier>{af950d93-d55d-4da7-944c-30ed26f7c52e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\LU">
+      <UniqueIdentifier>{4feda0c8-ef92-4599-8769-a365e1ce8ee9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\LU\arch">
       <UniqueIdentifier>{31ce3b22-dfd5-43b7-8154-d921f567194c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\MetisSupport">
+      <UniqueIdentifier>{634f9869-f220-47d0-9f79-3db9b809bc02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\misc">
+      <UniqueIdentifier>{ffd8592c-8a41-4aa1-88ee-20c2ac3795ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\UmfPackSupport">
+      <UniqueIdentifier>{9f2d3be3-8707-482a-ab34-3e40e28c08b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\SVD">
+      <UniqueIdentifier>{01507078-8b10-4e64-ae6a-577c52dbded1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\SuperLUSupport">
+      <UniqueIdentifier>{31fe68dd-8d23-47ac-a93a-85d6daac0c74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\StlSupport">
+      <UniqueIdentifier>{89f873a7-21a6-4ba8-9b6c-b240d03575ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\SPQRSupport">
+      <UniqueIdentifier>{697a6951-3ebf-4651-be6e-38172e7f5c88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\SparseQR">
+      <UniqueIdentifier>{3a15112b-04af-426d-ae6c-5d8cbaf1d8ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\SparseLU">
+      <UniqueIdentifier>{11c4096c-b15f-4dbe-b318-28ac6423bbcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\SparseCore">
+      <UniqueIdentifier>{a5e73815-fc1e-4c45-a272-aac74002ded3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\SparseCholesky">
+      <UniqueIdentifier>{8545e4ca-5548-474e-8f43-614890e7fa35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\QR">
+      <UniqueIdentifier>{d448c65f-900b-48e9-b2ad-abfba6d3d81f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\plugins">
+      <UniqueIdentifier>{35fb7859-4fc6-4455-a613-7bcc268456bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\PaStiXSupport">
+      <UniqueIdentifier>{1ae473a6-00fe-49ee-9297-75f2277bdb88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\PardisoSupport">
+      <UniqueIdentifier>{624a4a10-291b-45a6-9559-eae813675163}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxEigen\Eigen\src\OrderingMethods">
+      <UniqueIdentifier>{0e2ebdd8-c387-42bd-88c3-14b167956360}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -749,773 +749,871 @@
     <ClInclude Include="src\lscmUtilities.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\semiImplicitActiveMesh.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Cholesky\LDLT.h">
-      <Filter>addons\ofxEigen\src\Eigen\Cholesky</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Cholesky</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Cholesky\LLT.h">
-      <Filter>addons\ofxEigen\src\Eigen\Cholesky</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Cholesky</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Cholesky\LLT_MKL.h">
-      <Filter>addons\ofxEigen\src\Eigen\Cholesky</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Cholesky</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\CholmodSupport\CholmodSupport.h">
-      <Filter>addons\ofxEigen\src\Eigen\CholmodSupport</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\CholmodSupport</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Array.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\ArrayBase.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\ArrayWrapper.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Assign.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Assign_MKL.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\BandMatrix.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Block.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\BooleanRedux.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\CommaInitializer.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\CoreIterators.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\CwiseBinaryOp.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\CwiseNullaryOp.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\CwiseUnaryOp.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\CwiseUnaryView.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\DenseBase.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\DenseCoeffsBase.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\DenseStorage.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Diagonal.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\DiagonalMatrix.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\DiagonalProduct.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Dot.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\EigenBase.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Flagged.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\ForceAlignedAccess.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Functors.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Fuzzy.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\GeneralProduct.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\GenericPacketMath.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\GlobalFunctions.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\IO.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Map.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\MapBase.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\MathFunctions.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Matrix.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\MatrixBase.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\NestByValue.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\NoAlias.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\NumTraits.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\PermutationMatrix.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\PlainObjectBase.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\ProductBase.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Random.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Redux.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Ref.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Replicate.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\ReturnByValue.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Reverse.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Select.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\SelfAdjointView.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\SelfCwiseBinaryOp.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\SolveTriangular.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\StableNorm.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Stride.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Swap.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Transpose.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Transpositions.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\TriangularMatrix.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\VectorBlock.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\VectorwiseOp.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Core\Visitor.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\GeneralMatrixMatrix_MKL.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\GeneralMatrixMatrixTriangular.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\GeneralMatrixMatrixTriangular_MKL.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\GeneralMatrixVector.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\GeneralMatrixVector_MKL.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\Parallelizer.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\SelfadjointMatrixMatrix.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\SelfadjointMatrixMatrix_MKL.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\SelfadjointMatrixVector.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\SelfadjointMatrixVector_MKL.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\SelfadjointProduct.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\SelfadjointRank2Update.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\TriangularMatrixMatrix.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\TriangularMatrixMatrix_MKL.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\TriangularMatrixVector.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\TriangularMatrixVector_MKL.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\TriangularSolverMatrix.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\TriangularSolverMatrix_MKL.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\TriangularSolverVector.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\CoeffBasedProduct.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\GeneralBlockPanelKernel.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\products\GeneralMatrixMatrix.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\products</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\products</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\util\Macros.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\util</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\util\Memory.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\util</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\util\Meta.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\util</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\util\MKL_support.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\util</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\util\NonMPL2.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\util</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\util\ReenableStupidWarnings.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\util</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\util\StaticAssert.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\util</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\util\XprHelper.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\util</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\util\BlasUtil.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\util</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\util\Constants.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\util</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\util\DisableStupidWarnings.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\util</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\util\ForwardDeclarations.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\util</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\arch\SSE\Complex.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\arch\SSE</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\arch\SSE</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\arch\SSE\MathFunctions.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\arch\SSE</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\arch\SSE</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\arch\SSE\PacketMath.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\arch\SSE</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\arch\SSE</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\arch\NEON\Complex.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\arch\NEON</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\arch\NEON</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\arch\NEON\PacketMath.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\arch\NEON</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\arch\NEON</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\arch\Default\Settings.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\arch\Default</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\arch\Default</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\arch\AltiVec\Complex.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\arch\AltiVec</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\arch\AltiVec</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\arch\AltiVec\PacketMath.h">
-      <Filter>addons\ofxEigen\src\Eigen\Core\arch\AltiVec</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Core\arch\AltiVec</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\Meta.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\Minor.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\QR.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\SVD.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\TriangularSolver.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\VectorBlock.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\Block.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\Cwise.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\CwiseOperators.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\Lazy.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\LeastSquares.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\LU.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\Macros.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\MathFunctions.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\Memory.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\Geometry\All.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\Geometry\AngleAxis.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\Geometry\Hyperplane.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\Geometry\ParametrizedLine.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\Geometry\Quaternion.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\Geometry\Rotation2D.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\Geometry\RotationBase.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\Geometry\Scaling.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\Geometry\Transform.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\Geometry\Translation.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigen2Support\Geometry\AlignedBox.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigen2Support\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigen2Support\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigenvalues\GeneralizedEigenSolver.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigenvalues</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigenvalues</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigenvalues\GeneralizedSelfAdjointEigenSolver.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigenvalues</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigenvalues</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigenvalues\HessenbergDecomposition.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigenvalues</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigenvalues</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigenvalues\MatrixBaseEigenvalues.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigenvalues</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigenvalues</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigenvalues\RealQZ.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigenvalues</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigenvalues</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigenvalues\RealSchur.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigenvalues</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigenvalues</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigenvalues\RealSchur_MKL.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigenvalues</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigenvalues</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigenvalues\SelfAdjointEigenSolver.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigenvalues</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigenvalues</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigenvalues\SelfAdjointEigenSolver_MKL.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigenvalues</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigenvalues</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigenvalues\Tridiagonalization.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigenvalues</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigenvalues</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigenvalues\ComplexEigenSolver.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigenvalues</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigenvalues</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigenvalues\ComplexSchur.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigenvalues</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigenvalues</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigenvalues\ComplexSchur_MKL.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigenvalues</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigenvalues</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Eigenvalues\EigenSolver.h">
-      <Filter>addons\ofxEigen\src\Eigen\Eigenvalues</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Eigenvalues</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Geometry\AngleAxis.h">
-      <Filter>addons\ofxEigen\src\Eigen\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Geometry\EulerAngles.h">
-      <Filter>addons\ofxEigen\src\Eigen\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Geometry\Homogeneous.h">
-      <Filter>addons\ofxEigen\src\Eigen\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Geometry\Hyperplane.h">
-      <Filter>addons\ofxEigen\src\Eigen\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Geometry\OrthoMethods.h">
-      <Filter>addons\ofxEigen\src\Eigen\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Geometry\ParametrizedLine.h">
-      <Filter>addons\ofxEigen\src\Eigen\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Geometry\Quaternion.h">
-      <Filter>addons\ofxEigen\src\Eigen\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Geometry\Rotation2D.h">
-      <Filter>addons\ofxEigen\src\Eigen\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Geometry\RotationBase.h">
-      <Filter>addons\ofxEigen\src\Eigen\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Geometry\Scaling.h">
-      <Filter>addons\ofxEigen\src\Eigen\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Geometry\Transform.h">
-      <Filter>addons\ofxEigen\src\Eigen\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Geometry\Translation.h">
-      <Filter>addons\ofxEigen\src\Eigen\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Geometry\Umeyama.h">
-      <Filter>addons\ofxEigen\src\Eigen\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Geometry\AlignedBox.h">
-      <Filter>addons\ofxEigen\src\Eigen\Geometry</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Geometry\arch\Geometry_SSE.h">
-      <Filter>addons\ofxEigen\src\Eigen\Geometry\arch</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Geometry\arch</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Householder\Householder.h">
-      <Filter>addons\ofxEigen\src\Eigen\Householder</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Householder</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Householder\HouseholderSequence.h">
-      <Filter>addons\ofxEigen\src\Eigen\Householder</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Householder</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Householder\BlockHouseholder.h">
-      <Filter>addons\ofxEigen\src\Eigen\Householder</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Householder</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\IterativeLinearSolvers\IncompleteLUT.h">
-      <Filter>addons\ofxEigen\src\Eigen\IterativeLinearSolvers</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\IterativeLinearSolvers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\IterativeLinearSolvers\IterativeSolverBase.h">
-      <Filter>addons\ofxEigen\src\Eigen\IterativeLinearSolvers</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\IterativeLinearSolvers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\IterativeLinearSolvers\BasicPreconditioners.h">
-      <Filter>addons\ofxEigen\src\Eigen\IterativeLinearSolvers</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\IterativeLinearSolvers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\IterativeLinearSolvers\BiCGSTAB.h">
-      <Filter>addons\ofxEigen\src\Eigen\IterativeLinearSolvers</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\IterativeLinearSolvers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\IterativeLinearSolvers\ConjugateGradient.h">
-      <Filter>addons\ofxEigen\src\Eigen\IterativeLinearSolvers</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\IterativeLinearSolvers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Jacobi\Jacobi.h">
-      <Filter>addons\ofxEigen\src\Eigen\Jacobi</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\Jacobi</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\LU\Determinant.h">
-      <Filter>addons\ofxEigen\src\Eigen\LU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\LU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\LU\FullPivLU.h">
-      <Filter>addons\ofxEigen\src\Eigen\LU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\LU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\LU\Inverse.h">
-      <Filter>addons\ofxEigen\src\Eigen\LU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\LU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\LU\PartialPivLU.h">
-      <Filter>addons\ofxEigen\src\Eigen\LU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\LU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\LU\PartialPivLU_MKL.h">
-      <Filter>addons\ofxEigen\src\Eigen\LU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\LU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\LU\arch\Inverse_SSE.h">
-      <Filter>addons\ofxEigen\src\Eigen\LU\arch</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\LU\arch</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\MetisSupport\MetisSupport.h">
-      <Filter>addons\ofxEigen\src\Eigen\MetisSupport</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\MetisSupport</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\misc\Kernel.h">
-      <Filter>addons\ofxEigen\src\Eigen\misc</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\misc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\misc\Solve.h">
-      <Filter>addons\ofxEigen\src\Eigen\misc</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\misc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\misc\SparseSolve.h">
-      <Filter>addons\ofxEigen\src\Eigen\misc</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\misc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\misc\blas.h">
-      <Filter>addons\ofxEigen\src\Eigen\misc</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\misc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\misc\Image.h">
-      <Filter>addons\ofxEigen\src\Eigen\misc</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\misc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\OrderingMethods\Ordering.h">
-      <Filter>addons\ofxEigen\src\Eigen\OrderingMethods</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\OrderingMethods</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\OrderingMethods\Amd.h">
-      <Filter>addons\ofxEigen\src\Eigen\OrderingMethods</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\OrderingMethods</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\OrderingMethods\Eigen_Colamd.h">
-      <Filter>addons\ofxEigen\src\Eigen\OrderingMethods</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\OrderingMethods</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\PardisoSupport\PardisoSupport.h">
-      <Filter>addons\ofxEigen\src\Eigen\PardisoSupport</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\PardisoSupport</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\PaStiXSupport\PaStiXSupport.h">
-      <Filter>addons\ofxEigen\src\Eigen\PaStiXSupport</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\PaStiXSupport</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\plugins\CommonCwiseUnaryOps.h">
-      <Filter>addons\ofxEigen\src\Eigen\plugins</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\plugins</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\plugins\MatrixCwiseBinaryOps.h">
-      <Filter>addons\ofxEigen\src\Eigen\plugins</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\plugins</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\plugins\MatrixCwiseUnaryOps.h">
-      <Filter>addons\ofxEigen\src\Eigen\plugins</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\plugins</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\plugins\ArrayCwiseBinaryOps.h">
-      <Filter>addons\ofxEigen\src\Eigen\plugins</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\plugins</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\plugins\ArrayCwiseUnaryOps.h">
-      <Filter>addons\ofxEigen\src\Eigen\plugins</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\plugins</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\plugins\BlockMethods.h">
-      <Filter>addons\ofxEigen\src\Eigen\plugins</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\plugins</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\plugins\CommonCwiseBinaryOps.h">
-      <Filter>addons\ofxEigen\src\Eigen\plugins</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\plugins</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\QR\ColPivHouseholderQR_MKL.h">
-      <Filter>addons\ofxEigen\src\Eigen\QR</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\QR</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\QR\FullPivHouseholderQR.h">
-      <Filter>addons\ofxEigen\src\Eigen\QR</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\QR</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\QR\HouseholderQR.h">
-      <Filter>addons\ofxEigen\src\Eigen\QR</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\QR</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\QR\HouseholderQR_MKL.h">
-      <Filter>addons\ofxEigen\src\Eigen\QR</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\QR</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\QR\ColPivHouseholderQR.h">
-      <Filter>addons\ofxEigen\src\Eigen\QR</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\QR</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCholesky\SimplicialCholesky.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCholesky</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCholesky</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCholesky\SimplicialCholesky_impl.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCholesky</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCholesky</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\SparseCwiseBinaryOp.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\SparseCwiseUnaryOp.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\SparseDenseProduct.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\SparseDiagonalProduct.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\SparseDot.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\SparseFuzzy.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\SparseMatrix.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\SparseMatrixBase.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\SparsePermutation.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\SparseProduct.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\SparseRedux.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\SparseSelfAdjointView.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\SparseSparseProductWithPruning.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\SparseTranspose.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\SparseTriangularView.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\SparseUtil.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\SparseVector.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\SparseView.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\TriangularSolver.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\AmbiVector.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\CompressedStorage.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\ConservativeSparseSparseProduct.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\MappedSparseMatrix.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\SparseBlock.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseCore\SparseColEtree.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseCore</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseCore</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseLU\SparseLU_gemm_kernel.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseLU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseLU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseLU\SparseLU_heap_relax_snode.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseLU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseLU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseLU\SparseLU_kernel_bmod.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseLU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseLU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseLU\SparseLU_Memory.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseLU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseLU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseLU\SparseLU_panel_bmod.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseLU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseLU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseLU\SparseLU_panel_dfs.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseLU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseLU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseLU\SparseLU_pivotL.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseLU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseLU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseLU\SparseLU_pruneL.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseLU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseLU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseLU\SparseLU_relax_snode.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseLU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseLU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseLU\SparseLU_Structs.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseLU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseLU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseLU\SparseLU_SupernodalMatrix.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseLU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseLU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseLU\SparseLU_Utils.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseLU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseLU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseLU\SparseLUImpl.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseLU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseLU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseLU\SparseLU.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseLU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseLU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseLU\SparseLU_column_bmod.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseLU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseLU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseLU\SparseLU_column_dfs.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseLU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseLU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseLU\SparseLU_copy_to_ucol.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseLU</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseLU</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SparseQR\SparseQR.h">
-      <Filter>addons\ofxEigen\src\Eigen\SparseQR</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SparseQR</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SPQRSupport\SuiteSparseQRSupport.h">
-      <Filter>addons\ofxEigen\src\Eigen\SPQRSupport</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SPQRSupport</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\StlSupport\StdDeque.h">
-      <Filter>addons\ofxEigen\src\Eigen\StlSupport</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\StlSupport</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\StlSupport\StdList.h">
-      <Filter>addons\ofxEigen\src\Eigen\StlSupport</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\StlSupport</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\StlSupport\StdVector.h">
-      <Filter>addons\ofxEigen\src\Eigen\StlSupport</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\StlSupport</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\StlSupport\details.h">
-      <Filter>addons\ofxEigen\src\Eigen\StlSupport</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\StlSupport</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SuperLUSupport\SuperLUSupport.h">
-      <Filter>addons\ofxEigen\src\Eigen\SuperLUSupport</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SuperLUSupport</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SVD\JacobiSVD.h">
-      <Filter>addons\ofxEigen\src\Eigen\SVD</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SVD</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SVD\JacobiSVD_MKL.h">
-      <Filter>addons\ofxEigen\src\Eigen\SVD</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SVD</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\SVD\UpperBidiagonalization.h">
-      <Filter>addons\ofxEigen\src\Eigen\SVD</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\SVD</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\UmfPackSupport\UmfPackSupport.h">
-      <Filter>addons\ofxEigen\src\Eigen\UmfPackSupport</Filter>
+      <Filter>addons\ofxEigen\Eigen\src\UmfPackSupport</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofSemiImplicitActiveMesh.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\IterativeLinearSolvers">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\Jacobi">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\LeastSquares">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\LU">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\MetisSupport">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\OrderingMethods">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\PardisoSupport">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\PaStiXSupport">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\QR">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\QtAlignedMalloc">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\Sparse">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\SparseCholesky">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\SparseCore">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\SparseLU">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\SparseQR">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\SPQRSupport">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\StdDeque">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\StdList">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\StdVector">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\SuperLUSupport">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\SVD">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\UmfPackSupport">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\Array">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\Cholesky">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\CholmodSupport">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\Core">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\Dense">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\Eigen">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\Eigen2Support">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\Eigenvalues">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\Geometry">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="..\..\..\addons\ofxEigen\Eigen\Householder">
+      <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
   </ItemGroup>
 </Project>
