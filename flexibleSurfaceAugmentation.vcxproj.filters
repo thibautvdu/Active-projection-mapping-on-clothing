@@ -103,6 +103,15 @@
     <ClCompile Include="src\ofSemiImplicitActiveMesh.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxKinectProjectorToolkit\src\ofxKinectProjectorToolkit.cpp">
+      <Filter>addons\ofxKinectProjectorToolkit\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\unicode\unicode.cpp">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\unicode</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofUtilities.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -350,6 +359,36 @@
     </Filter>
     <Filter Include="addons\ofxEigen\Eigen\src\OrderingMethods">
       <UniqueIdentifier>{0e2ebdd8-c387-42bd-88c3-14b167956360}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxKinectProjectorToolkit">
+      <UniqueIdentifier>{ec9957df-fc56-4f49-a258-05429c7bbeb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxKinectProjectorToolkit\src">
+      <UniqueIdentifier>{fd4e2a58-50e4-4da1-bda1-9871abe17afd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxKinectProjectorToolkit\libs">
+      <UniqueIdentifier>{cc8a0b0d-2916-4e58-94c8-7e036fe68a4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxKinectProjectorToolkit\libs\dlib">
+      <UniqueIdentifier>{159d5ab0-71ba-470a-8f2f-d27c81392a01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxKinectProjectorToolkit\libs\dlib\geometry">
+      <UniqueIdentifier>{84c23180-198c-4e55-83ed-0df3672c7add}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxKinectProjectorToolkit\libs\dlib\interfaces">
+      <UniqueIdentifier>{c43d151e-ff00-4d6f-944b-1eec48a918d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxKinectProjectorToolkit\libs\dlib\matrix">
+      <UniqueIdentifier>{5f76153f-d203-42ea-9e43-469b2465116e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxKinectProjectorToolkit\libs\dlib\memory_manager_stateless">
+      <UniqueIdentifier>{d060aaf0-ca96-4d96-abdf-afa3c35f76a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxKinectProjectorToolkit\libs\dlib\unicode">
+      <UniqueIdentifier>{4c7589c4-fd65-48d1-ba98-a16c6c83b2a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack">
+      <UniqueIdentifier>{c935a0dc-dfd0-408d-822e-553e8dbd17e7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1512,6 +1551,225 @@
       <Filter>addons\ofxEigen\Eigen\src\UmfPackSupport</Filter>
     </ClInclude>
     <ClInclude Include="src\ofSemiImplicitActiveMesh.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\src\ofxKinectProjectorToolkit.h">
+      <Filter>addons\ofxKinectProjectorToolkit\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\algs.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\dassert.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\enable_if.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\error.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\is_kind.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\noncopyable.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\platform.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\serialize.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\stack_trace.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\uintn.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\unicode.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\windows_magic.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\geometry\border_enumerator.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\geometry\border_enumerator_abstract.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\geometry\rectangle.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\geometry\rectangle_abstract.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\geometry\vector.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\geometry\vector_abstract.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\interfaces\cmd_line_parser_option.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\interfaces\enumerable.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\interfaces\map_pair.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\interfaces\remover.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\cblas_constants.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_abstract.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_assign.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_assign_fwd.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_blas_bindings.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_cholesky.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_conj_trans.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_conv.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_conv_abstract.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_data_layout.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_data_layout_abstract.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_default_mul.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_eigenvalue.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_exp.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_exp_abstract.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_expressions.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_fwd.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_la.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_la_abstract.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_lu.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_math_functions.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_math_functions_abstract.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_op.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_qr.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_subexp.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_subexp_abstract.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_trsm.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_utilities.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\matrix_utilities_abstract.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\symmetric_matrix_cache.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\symmetric_matrix_cache_abstract.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack\fortran_id.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack\gees.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack\geev.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack\geqrf.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack\gesdd.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack\gesvd.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack\getrf.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack\ormqr.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack\potrf.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack\syev.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack\syevr.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\memory_manager_stateless\memory_manager_stateless_kernel_1.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\memory_manager_stateless</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\memory_manager_stateless\memory_manager_stateless_kernel_2.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\memory_manager_stateless</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\memory_manager_stateless\memory_manager_stateless_kernel_abstract.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\memory_manager_stateless</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\unicode\unicode.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\unicode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\unicode\unicode_abstract.h">
+      <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\unicode</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofUtilities.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

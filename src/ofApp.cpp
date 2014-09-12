@@ -4,10 +4,12 @@
 #include "cvHelper.h"
 #include "lscm.h"
 
-//--------------------------------------------------------------
+/* OF ROUTINES	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
+
 void ofApp::setup() {
+	// HARDWARE INIT	/	/	/	/	/	/	/	/	/	/	/	/
+
 	// Kinect
-	mKcbKinect = mOfxKinect.getHandle();
 	mKinectColorImgWidth = 640;
 	mKinectColorImgHeight = 480;
 	mKinectDepthImgWidth = 640;
@@ -37,13 +39,31 @@ void ofApp::setup() {
 		exit();
 	}
 
-	// Images allocation
+	// Projector
+	mKinectProjectorToolkit.loadCalibration("calibration.xml");
+	mProjectorWindow = ofUtilities::ofVirtualWindow(1920, 1080, 1024, 768);
+
+	// HARDWARE INIT	-	-	-	-	-	-	-	-	-	-	-	-
+
+
+	// OPEN GL	/	/	/	/	/	/	/	/	/	/	/	/	/	/
+
+	ofDisableAlphaBlending();
+	ofSetFrameRate(30);
+
+	// OPEN GL	-	-	-	-	-	-	-	-	-	-	-	-	-	-
+
+
+	// KINECT SCREEN SPACE	/	/	/	/	/	/	/	/	/	/	/	/
+
+	// Background segmentation
+	mOfSegmentedImg.setUseTexture(false); // Not meant to be displayed
 	mOfSegmentedImg.allocate(mKinectColorImgWidth, mKinectColorImgHeight, OF_IMAGE_COLOR);
 	mCvSegmentedImg = ofxCv::toCv(mOfSegmentedImg);
 	mOfGarmentMask.allocate(mKinectColorImgWidth, mKinectColorImgHeight, OF_IMAGE_GRAYSCALE);
 	mCvGarmentMask = ofxCv::toCv(mOfGarmentMask);
 
-	// Computer vision tools
+	// Cloth segmentation and contour detection
 	mContourFinder.setAutoThreshold(false);
 	mContourFinder.setFindHoles(false);
 	mContourFinder.setInvert(false);
@@ -51,18 +71,27 @@ void ofApp::setup() {
 	mContourFinder.setSortBySize(true);
 	mContourFinder.setUseTargetColor(false);
 
+	// KINECT SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-	-
+
+
+	// KINECT WORLD SPACE	/	/	/	/	/	/	/	/	/	/	/	/
+
 	// Mesh
 	mGarmentGeneratedMesh = ofDeformationTracking::ofSemiImplicitActiveMesh(12, 12);
-	mAskRegeneration = false;
+
+	// KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-
+
+
+	// PROJECTOR SCREEN SPACE	/	/	/	/	/	/	/	/	/	/	/
 
 	// Textures
 	mChessboardImage.loadImage("chessboard.png");
 
-	// OpenGL
-	ofDisableAlphaBlending();
-	ofSetFrameRate(30);
+	// PROJECTOR SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-
 
-	// GUI-
+
+	// GUI	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
+
 	mGui.setup();
 	mGui.add(mGarmentSegmentationLowH.setup("low hue thresh", 70, 0, 179));
 	mGui.add(mGarmentSegmentationLowS.setup("low saturation thresh", 0, 0, 255));
@@ -74,7 +103,6 @@ void ofApp::setup() {
 	mGui.add(mCloseKernelSize.setup("closing kernel size", 9, 1, 9));
 	mGui.add(mMorphoUseEllipse.setup("ellipse for morpho operations",false));
 	mGui.add(mGarmentBodyPercent.setup("percent of clothing on body", 20, 0, 100)); // 30% is a good value for a t-shirt
-
 	mGui.add(mMeshBoundaryWeight.setup("tracking mesh boundary weight", 0.8, 0.1, 2));
 	mGui.add(mMeshDepthWeight.setup("tracking mesh depth weight", 0.6, 0.001, 2));
 	mGui.add(mMeshAdaptationRate.setup("tracking mesh adaptation rate", 2, 0.1, 4));
@@ -82,11 +110,14 @@ void ofApp::setup() {
 	// Keys
 	mPause = false;
 	mSaveMesh = false;
+	mAskRegeneration = false;
+
+	// GUI	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 }
 
-//--------------------------------------------------------------
 void ofApp::update() {
-	// EVENTS
+	// EVENTS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
+
 	if (mSaveMesh) {
 		mGarmentGeneratedMesh.save("export.ply");
 		ofLog() << "Exported the 3D mesh";
@@ -103,9 +134,16 @@ void ofApp::update() {
 	if (abs(mGarmentGeneratedMesh.getAdaptationRate() - mMeshAdaptationRate) > 0.001) {
 		mGarmentGeneratedMesh.setAdaptationRate(mMeshAdaptationRate);
 	}
-	// !EVENTS
+
+	// EVENTS	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
+
+
+	// HARDWARE	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
 	mOfxKinect.update();
+
+	// HARDWARE	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
+
 
 	// Model ROI
 	mModelRoi = ofRectangle(mOfSegmentedImg.width, mOfSegmentedImg.height, 0, 0);
@@ -162,40 +200,39 @@ void ofApp::update() {
 			mContourFinder.setMinArea(modelBodyPixelsCount*mGarmentBodyPercent / 100.f);
 			mContourFinder.findContours(cvGarmentMaskRoi);
 			if (mContourFinder.getContours().size() != 0) {
-				mCvGarmentContourModelRoiRel = mContourFinder.getContour(0);
-				mOfGarmentContourModel = mContourFinder.getPolyline(0);
-				for (int i = 0; i < mOfGarmentContourModel.size(); ++i) {
-					mOfGarmentContourModel[i] += mModelRoi.getTopLeft();
+				mOfGarmentContour = mContourFinder.getPolyline(0);
+				for (int i = 0; i < mOfGarmentContour.size(); ++i) {
+					mOfGarmentContour[i] += mModelRoi.getTopLeft();
 				}
 
 				mOfGarmentMask.setColor(ofColor::black); // reset the mask as opencv only draw on the ROI
-				ofxCv::fillPoly(mCvGarmentContourModelRoiRel, cvGarmentMaskRoi);
+				ofxCv::fillPoly(mContourFinder.getContour(0), cvGarmentMaskRoi);
 
 				// Update the ROI information of the garment
-				mGarmentRoi = mOfGarmentContourModel.getBoundingBox();
+				mGarmentRoi = mOfGarmentContour.getBoundingBox();
+
+				drawProjectorImage();
 			}
 			else {
 				ofLog(OF_LOG_ERROR) << "Couldn't retrieve big enough contour";
-				mCvGarmentContourModelRoiRel.clear();
-				mOfGarmentContourModel.clear();
+				mOfGarmentContour.clear();
 			}
 		}
 		else {
 			ofLog(OF_LOG_ERROR) << "Found skeleton but couldn't detect garment";
-			mCvGarmentContourModelRoiRel.clear();
-			mOfGarmentContourModel.clear();
+			mOfGarmentContour.clear();
 		}
 
 		// Generate the mesh
-		if (mOfGarmentContourModel.size() != 0) {
+		if (mOfGarmentContour.size() != 0) {
 			if (!mGarmentGeneratedMesh.isGenerated() && mAskRegeneration) {
-				mGarmentGeneratedMesh.generateMesh(mOfGarmentContourModel);
+				//mGarmentGeneratedMesh.generateMesh(mOfGarmentContourModel);
 				//computeNormals(mGarmentGeneratedMesh, true);
 				//meshParameterizationLSCM(mGarmentGeneratedMesh);
-				mAskRegeneration = false;
+				//mAskRegeneration = false;
 			}
 			else if (mGarmentGeneratedMesh.isGenerated()) {
-				mGarmentGeneratedMesh.updateMesh(mOfGarmentContourModel);
+				//mGarmentGeneratedMesh.updateMesh(mOfGarmentContourModel);
 			}
 		}
 		mOfSegmentedImg.update();
@@ -203,32 +240,31 @@ void ofApp::update() {
 	} // mOfxKinect.isNewSkeleton()
 }
 
-//--------------------------------------------------------------
 void ofApp::draw() {
 	if (mOfxKinect.isFrameNew()) {
-		ofBackground(ofColor::blue);
+
+		// COMPUTER SCREEN	/	/	/	/	/	/	/	/	/	/	/	/	/
+
+		ofBackground(ofColor::white);
+		mProjectorWindow.background(ofColor::black);
 
 		// Top Left
 		mOfxKinect.draw(0, 0);
 
 		ofPushMatrix();
-		ofSetColor(ofColor::red);
-		ofRectangle bb = mOfGarmentContourModel.getBoundingBox();
-		ofSetColor(ofColor::blue);
-		mOfGarmentContourModel.draw();
+			ofSetColor(ofColor::blue);
+			mOfGarmentContour.draw();
+			ofSetColor(255);
 		ofPopMatrix();
-
-		ofSetColor(ofColor::white);
 
 		// Top Right
 		mOfxKinect.drawDepth(mKinectColorImgWidth, 0);
 
 		// Bottom Left
-		//mOfSegmentedImg.draw(0, mKinectColorImgHeight);
 		mOfGarmentMask.draw(0, mKinectColorImgHeight);
 
 		// Bottom Right
-		//mOfGarmentMask.draw(mKinectColorImgWidth, mKinectColorImgHeight);
+		/*
 		if (mGarmentGeneratedMesh.hasVertices()) {
 			glPointSize(1);
 
@@ -245,12 +281,32 @@ void ofApp::draw() {
 				ofDisableDepthTest();
 			ofPopMatrix();
 			//mEasyCam.end();
+
+		}*/
+
+		// GUI
+		mGui.draw();
+
+		// COMPUTER SCREEN	-	-	-	-	-	-	-	-	-	-	-	-	-
+
+		 
+		// PROJECTOR SCREEN	/	/	/	/	/	/	/	/	/	/	/	/	/
+
+		if (mOfGarmentContour.size() != 0) {
+			mProjectorWindow.begin();
+				ofPath projectorGarmentPath = ofUtilities::polylineToPath(projectorGarmentContour);
+				projectorGarmentPath.setFilled(true);
+				projectorGarmentPath.setFillColor(ofColor::red);
+				projectorGarmentPath.draw();
+			mProjectorWindow.end();
 		}
+
+		// PROJECTOR SCREEN	-	-	-	-	-	-	-	-	-	-	-	-	-
 	}
-	mGui.draw();
 }
 
-//--------------------------------------------------------------
+/* OF ROUTINES	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
+
 void ofApp::exit() {
 	mOfxKinect.stop();
 }
@@ -270,31 +326,27 @@ void ofApp::keyPressed(int key) {
 	}
 }
 
-void ofApp::computeNormals(ofMesh& mesh, bool bNormalize){
-	for (int i = 0; i < mesh.getVertices().size(); i++) mesh.addNormal(ofPoint(0, 0, 0));
+/* OF ROUTINES	-	-	-	-	-	-	-	-	-	-	-	-	-	*/
 
-	for (int i = 0; i < mesh.getIndices().size(); i += 3){
-		const int ia = mesh.getIndices()[i];
-		const int ib = mesh.getIndices()[i + 1];
-		const int ic = mesh.getIndices()[i + 2];
-		ofVec3f a = mesh.getVertices()[ia];
-		ofVec3f b = mesh.getVertices()[ib];
-		ofVec3f c = mesh.getVertices()[ic];
 
-		ofVec3f e1 = a - b;
-		ofVec3f e2 = c - b;
-		ofVec3f no = e2;
-		no.cross(e1);
+/* METHODS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 
-		mesh.getNormals()[ia] += no;
-		mesh.getNormals()[ib] += no;
-		mesh.getNormals()[ic] += no;
+void ofApp::drawProjectorImage() {
+	projectorGarmentContour.clear();
+	ofVec3f worldCoordinates;
+	ofVec2f projectorCoordinates;
+	for (int i = 0; i < mOfGarmentContour.size(); ++i) {
+		worldCoordinates = mOfxKinect.getWorldCoordinates(mOfGarmentContour[i].x, mOfGarmentContour[i].y);
+		if (abs(worldCoordinates.z) > 0.1) {
+			projectorCoordinates = mKinectProjectorToolkit.getProjectedPoint(worldCoordinates);
+
+			projectorCoordinates.x = ofMap(projectorCoordinates.x, 0, 1, 0, mProjectorWindow.getWidth());
+			projectorCoordinates.y = ofMap(projectorCoordinates.y, 0, 1, 0, mProjectorWindow.getHeight());
+
+			projectorGarmentContour.addVertex(projectorCoordinates);
+		}
 	}
-
-	if (bNormalize)
-	for (int i = 0; i < mesh.getNormals().size(); i++) {
-		mesh.getNormals()[i].normalize();
-	}
+	projectorGarmentContour.close();
 }
 
 void ofApp::meshParameterizationLSCM(ofMesh& mesh) {
@@ -312,13 +364,8 @@ void ofApp::meshParameterizationLSCM(ofMesh& mesh) {
 	ofVec2f outputRange(textureSize*uRange / maxRange, textureSize*vRange / maxRange);
 
 	for (int i = 0; i < mesh.getNumVertices(); ++i) {
-		mesh.setTexCoord(i, mapVec2f(mesh.getTexCoord(i), ofVec2f(lscm.umin, lscm.vmin), ofVec2f(lscm.umax, lscm.vmax), ofVec2f(0, 0), outputRange));
+		mesh.setTexCoord(i, ofUtilities::mapVec2f(mesh.getTexCoord(i), ofVec2f(lscm.umin, lscm.vmin), ofVec2f(lscm.umax, lscm.vmax), ofVec2f(0, 0), outputRange));
 	}
 }
 
-ofVec2f ofApp::mapVec2f(ofVec2f value, ofVec2f inputMin, ofVec2f inputMax, ofVec2f outputMin, ofVec2f outputMax, bool clamp) {
-	float x = ofMap(value.x, inputMin.x, inputMax.x, outputMin.x, outputMax.x, clamp);
-	float y = ofMap(value.y, inputMin.y, inputMax.y, outputMin.y, outputMax.y, clamp);
-
-	return ofVec2f(x, y);
-}
+/* METHODS	-	-	-	-	-	-	-	-	-	-	-	-	-	-	*/

@@ -7,50 +7,81 @@
 #include "ofxCv.h"
 #include "ofxKinectCommonBridge.h"
 #include "ofxGui.h"
+#include "ofxKinectProjectorToolkit.h"
 #include "ofSemiImplicitActiveMesh.h"
+#include "ofUtilities.h"
 
 class ofApp : public ofBaseApp {
 
 	public:
+
+		/* OF ROUTINES	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 		void setup();
 		void update();
 		void draw();
 		void exit();
 
+		/* OF INPUTS	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 		void mousePressed(int x, int y, int button);
 		void keyPressed(int key);
 
-		void computeNormals(ofMesh& mesh, bool bNormalize);
+		/* METHODS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
+		void drawProjectorImage();
 		void meshParameterizationLSCM(ofMesh& mesh);
-		ofVec2f ofApp::mapVec2f(ofVec2f value, ofVec2f inputMin, ofVec2f inputMax, ofVec2f outputMin, ofVec2f outputMax, bool clamp = false);
 
-		// Kinect sensor
+
+		/* VARIABLES	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
+
+		// HARDWARE HANDLERS	/	/	/	/	/	/	/	/	/	/	/	/
+
 		ofxKinectCommonBridge mOfxKinect;
-		KCBHANDLE mKcbKinect;
 		int mKinectColorImgWidth, mKinectColorImgHeight;
 		int mKinectDepthImgWidth, mKinectDepthImgHeight;
+
+		ofxKinectProjectorToolkit mKinectProjectorToolkit;
+		ofUtilities::ofVirtualWindow mProjectorWindow;
+
+		// HARDWARE HANDLERS	-	-	-	-	-	-	-	-	-	-	-	-
+
+
+		// KINECT SCREEN SPACE	/	/	/	/	/	/	/	/	/	/	/	/
 
 		// Background segmentation
 		ofImage mOfSegmentedImg;
 		cv::Mat mCvSegmentedImg;
 		ofRectangle mModelRoi;
-		
+
 		// Cloth segmentation and contour detection
 		ofImage mOfGarmentMask;
 		cv::Mat mCvGarmentMask;
-		ofxCv::ContourFinder mContourFinder;
-		std::vector<cv::Point> mCvGarmentContourModelRoiRel;
-		ofPolyline mOfGarmentContourModel;
 		ofRectangle mGarmentRoi;
+
+		ofxCv::ContourFinder mContourFinder;
+		ofPolyline mOfGarmentContour;
+
+		// KINECT SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-	-
+
+
+		// KINECT WORLD SPACE	/	/	/	/	/	/	/	/	/	/	/	/
 
 		// Mesh generation
 		ofDeformationTracking::ofSemiImplicitActiveMesh mGarmentGeneratedMesh;
-		bool mAskRegeneration;
+
+		// KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-
+
+
+		// PROJECTOR SCREEN SPACE	/	/	/	/	/	/	/	/	/	/	/
+
+		ofPolyline projectorGarmentContour;
 
 		// Textures
 		ofImage mChessboardImage;
 
-		// GUI
+		// PROJECTOR SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-
+
+
+		// GUI	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
+
 		ofxPanel mGui;
 		ofxIntSlider mGarmentSegmentationLowH, mGarmentSegmentationLowS, mGarmentSegmentationLowV; // Cloth color segmentation low thresh
 		ofxIntSlider mGarmentSegmentationHighH, mGarmentSegmentationHighS, mGarmentSegmentationHighV; // Cloth color segmentation high thresh
@@ -67,6 +98,9 @@ class ofApp : public ofBaseApp {
 		// Keys
 		bool mPause;
 		bool mSaveMesh;
+		bool mAskRegeneration;
+
+		// GUI	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 };
 
 #endif // FLEXIBLE_SURFACE_AUGMENTATION_OF_APP_H_
