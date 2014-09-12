@@ -41,7 +41,7 @@ void ofApp::setup() {
 
 	// Projector
 	mKinectProjectorToolkit.loadCalibration("calibration.xml");
-	mProjectorWindow = ofUtilities::ofVirtualWindow(1920, 1080, 1024, 768);
+	mProjectorWindow = ofUtilities::ofVirtualWindow(1920, 0, 1024, 768);
 
 	// HARDWARE INIT	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -113,6 +113,9 @@ void ofApp::setup() {
 	mAskRegeneration = false;
 
 	// GUI	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
+
+	mOfGarmentMask.loadImage("mask.tif");
+	mOfGarmentMask.setImageType(OF_IMAGE_GRAYSCALE);
 }
 
 void ofApp::update() {
@@ -151,7 +154,7 @@ void ofApp::update() {
 	int modelBodyPixelsCount = 0; // Used to discriminate contours, more robust than bounding box if the model extend their arms, etc.
 
 	// Segmentation from the skeleton
-	if (mOfxKinect.isNewSkeleton()) {
+	if (/*mOfxKinect.isNewSkeleton()*/ 1) {
 		ofShortPixels depthPlayerPixel = mOfxKinect.getDepthPlayerPixelsRef(); // The kinect segmentation map
 
 		for (int x = 0; x < mOfSegmentedImg.width; ++x) {
@@ -176,14 +179,15 @@ void ofApp::update() {
 		}
 	
 		// Cloth segmentation and contour acquisition
-		if (modelBodyPixelsCount != 0) {
+		if (/*modelBodyPixelsCount != 0*/ 1) {
 			// Update the ROI information of the model
-			mModelRoi.width = modelRoiXBottomRight - mModelRoi.x;
-			mModelRoi.height = modelRoiYBottomRight - mModelRoi.y;
-			cv::Mat cvSegmentedImgRoi = mCvSegmentedImg(ofxCv::toCv(mModelRoi));
-			cv::Mat cvGarmentMaskRoi = mCvGarmentMask(ofxCv::toCv(mModelRoi));
+			//mModelRoi.width = modelRoiXBottomRight - mModelRoi.x;
+			//mModelRoi.height = modelRoiYBottomRight - mModelRoi.y;
+			//cv::Mat cvSegmentedImgRoi = mCvSegmentedImg(ofxCv::toCv(mModelRoi));
+			//cv::Mat cvGarmentMaskRoi = mCvGarmentMask(ofxCv::toCv(mModelRoi));
 
 			// OPENCV
+			/*
 			// Color segmentation
 			cv::Mat cvSegmentedImgHsv;
 			cv::cvtColor(cvSegmentedImgRoi, cvSegmentedImgHsv, CV_RGB2HSV);
@@ -195,18 +199,22 @@ void ofApp::update() {
 			cv::morphologyEx(cvGarmentMaskRoi, cvGarmentMaskRoi, cv::MORPH_OPEN, openingOperator);
 			cv::morphologyEx(cvGarmentMaskRoi, cvGarmentMaskRoi, cv::MORPH_CLOSE, closingOperator);
 			// !OPENCV
+			*/
 
 			// Find the biggest correct contour
 			mContourFinder.setMinArea(modelBodyPixelsCount*mGarmentBodyPercent / 100.f);
-			mContourFinder.findContours(cvGarmentMaskRoi);
+			//mContourFinder.findContours(cvGarmentMaskRoi);
+			mContourFinder.findContours(mCvGarmentMask);
 			if (mContourFinder.getContours().size() != 0) {
 				mOfGarmentContour = mContourFinder.getPolyline(0);
+				/*
 				for (int i = 0; i < mOfGarmentContour.size(); ++i) {
 					mOfGarmentContour[i] += mModelRoi.getTopLeft();
-				}
+				}*/
 
 				mOfGarmentMask.setColor(ofColor::black); // reset the mask as opencv only draw on the ROI
-				ofxCv::fillPoly(mContourFinder.getContour(0), cvGarmentMaskRoi);
+				//ofxCv::fillPoly(mContourFinder.getContour(0), cvGarmentMaskRoi);
+				ofxCv::fillPoly(mContourFinder.getContour(0), mCvGarmentMask);
 
 				// Update the ROI information of the garment
 				mGarmentRoi = mOfGarmentContour.getBoundingBox();
@@ -251,11 +259,9 @@ void ofApp::draw() {
 		// Top Left
 		mOfxKinect.draw(0, 0);
 
-		ofPushMatrix();
-			ofSetColor(ofColor::blue);
-			mOfGarmentContour.draw();
-			ofSetColor(255);
-		ofPopMatrix();
+		ofSetColor(ofColor::blue);
+		mOfGarmentContour.draw();
+		ofSetColor(255);
 
 		// Top Right
 		mOfxKinect.drawDepth(mKinectColorImgWidth, 0);
@@ -333,12 +339,24 @@ void ofApp::keyPressed(int key) {
 
 void ofApp::drawProjectorImage() {
 	projectorGarmentContour.clear();
-	ofVec3f worldCoordinates;
 	ofVec2f projectorCoordinates;
+
+	std::vector<ofVec3f> worldPoints;
+	ofVec3f worldPoint;
+	float averageDepth = 0;
 	for (int i = 0; i < mOfGarmentContour.size(); ++i) {
-		worldCoordinates = mOfxKinect.getWorldCoordinates(mOfGarmentContour[i].x, mOfGarmentContour[i].y);
-		if (abs(worldCoordinates.z) > 0.1) {
-			projectorCoordinates = mKinectProjectorToolkit.getProjectedPoint(worldCoordinates);
+		worldPoint = mOfxKinect.getWorldCoordinates(mOfGarmentContour[i].x, mOfGarmentContour[i].y);
+
+		if (abs(worldPoint.z) > 0.1) {
+			worldPoints.push_back(worldPoint);
+			averageDepth += worldPoint.z;
+		}
+	}
+	averageDepth /= worldPoints.size();
+
+	for (int i = 0; i < worldPoints.size(); ++i) {
+		if (abs(worldPoints[i].z - averageDepth) < 500) {
+			projectorCoordinates = mKinectProjectorToolkit.getProjectedPoint(worldPoints[i]);
 
 			projectorCoordinates.x = ofMap(projectorCoordinates.x, 0, 1, 0, mProjectorWindow.getWidth());
 			projectorCoordinates.y = ofMap(projectorCoordinates.y, 0, 1, 0, mProjectorWindow.getHeight());
