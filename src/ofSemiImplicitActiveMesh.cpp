@@ -60,9 +60,9 @@ namespace ofDeformationTracking {
 		}
 
 		// Remove the eventual unused vertices and fill the boundary vertices vector
-		mBoundaryVertices.resize(this->getNumVertices());
+		mIsBoundaryVertices.resize(this->getNumVertices());
 		for (int i = 0; i < this->getNumVertices(); ++i) {
-			mBoundaryVertices[i] = false;
+			mIsBoundaryVertices[i] = false;
 		}
 
 		for (int i = this->getNumVertices() - 1; i >= 0; --i) {
@@ -70,7 +70,7 @@ namespace ofDeformationTracking {
 				this->removeVertex(i);
 				kHelperMap[i] = -1;
 				this->removeColor(i);
-				mBoundaryVertices.erase(mBoundaryVertices.begin() + i);
+				mIsBoundaryVertices.erase(mIsBoundaryVertices.begin() + i);
 
 				for (int j = 0; j < this->getNumIndices(); ++j) {
 					if (this->getIndex(j) > i) {
@@ -82,15 +82,20 @@ namespace ofDeformationTracking {
 				}
 			}
 			else if(indicesUsed[i] <= 3 ){
-				mBoundaryVertices[i] = true;
+				mIsBoundaryVertices[i] = true;
 				this->setColor(i, ofColor::red);
 			}
 		}
 		delete[] indicesUsed;
 
+		for (int i = 0; i < mIsBoundaryVertices.size(); ++i) {
+			if (mIsBoundaryVertices[i])
+				mMeshBoundaryIndices.push_back(i);
+		}
+
 		// Fill the K matrix
 		std::vector<Eigen::Triplet<double> > kValues;
-		kValues.reserve((this->getNumVertices() - mBoundaryVertices.size()) * 9);
+		kValues.reserve((this->getNumVertices() - mIsBoundaryVertices.size()) * 9);
 		int index = -1;
 		for (int row = 2; row < rows; row++) {
 			for (int col = 0; col < columns - 2; col++) {
@@ -164,40 +169,62 @@ namespace ofDeformationTracking {
 	}
 
 	// COMPUTATION
-	void ofSemiImplicitActiveMesh::updateMesh(const ofPolyline& imageContour) {
+	void ofSemiImplicitActiveMesh::updateMesh(const ofPolyline& imgContourRef, const ofxKinectCommonBridge& ofxKinect) {
 		if (mNeedComputation) {
 			computeSolver();
 		}
 
-		// Get closests points for each boundary vertex and construct the mesh contour
-		ofPolyline meshContour; std::vector<int> meshContourToMeshMapping;
-		ofVec3f* closestImgPtForce = new ofVec3f[this->getNumVertices()]; // 0 for non boundary vertices
-		for (int i = 0; i < this->getNumVertices(); ++i) { closestImgPtForce[i] = ofVec3f::zero(); }
-		for (int i = 0; i < this->getNumVertices(); ++i) {
-			if (mBoundaryVertices[i]) {
-				closestImgPtForce[i] = imageContour.getClosestPoint(this->getVertex(i)) - this->getVertex(i);
-				meshContour.addVertex(this->getVertex(i));
-				meshContourToMeshMapping.push_back(i);
-			}
+		ofPolyline imgContour(imgContourRef);
+		float depth;
+		for (int i = 0; i < imgContour.size(); ++i) {
+			depth = ofxKinect.getDepthAt((int)imgContour[i].x, (int)imgContour[i].y);
+			if (abs(depth) > 0.1)
+				imgContour[i].z = depth;
 		}
-		meshContour.close();
+
+		// Get closest points for each boundary vertex and construct the mesh contour
+		ofPolyline meshImgContour;
+		float* closestImgPtForceX = new float[this->getNumVertices()]; // 0 for non boundary vertices
+		float* closestImgPtForceY = new float[this->getNumVertices()]; // 0 for non boundary vertices
+		float* closestImgPtForceZ = new float[this->getNumVertices()]; // 0 for non boundary vertices
+		ofVec3f closestImgContourPoint;
+		for (int i = 0; i < this->getNumVertices(); ++i) { closestImgPtForceX[i] = 0; closestImgPtForceY[i] = 0; closestImgPtForceZ[i] = 0; }
+		for (int i = 0; i < mMeshBoundaryIndices.size(); ++i) {
+			closestImgContourPoint = imgContour.getClosestPoint(this->getVertex(mMeshBoundaryIndices[i]));
+			closestImgPtForceX[mMeshBoundaryIndices[i]] = closestImgContourPoint.x - this->getVertex(mMeshBoundaryIndices[i]).x;
+			closestImgPtForceY[mMeshBoundaryIndices[i]] = closestImgContourPoint.y - this->getVertex(mMeshBoundaryIndices[i]).y;
+
+			if (abs(closestImgContourPoint.z) > 0.1) {
+				closestImgPtForceZ[mMeshBoundaryIndices[i]] = closestImgContourPoint.z - this->getVertex(mMeshBoundaryIndices[i]).z;
+			}
+
+			meshImgContour.addVertex(this->getVertex(mMeshBoundaryIndices[i]));
+		}
+		meshImgContour.close();
 
 		// Closests vertices for every image boundary point
 		unsigned int nearestIdx; ofVec3f nearestPoint;
-		ofVec3f* imgPtToMeshContourForce = new ofVec3f[this->getNumVertices()]; // 0 for non boundary vertices
-		for (int i = 0; i < this->getNumVertices(); ++i) { imgPtToMeshContourForce[i] = ofVec3f::zero(); }
-		for (int i = 0; i < imageContour.size(); ++i) {
-			nearestPoint = meshContour.getClosestPoint(imageContour[i], &nearestIdx);
-			nearestIdx = meshContourToMeshMapping[nearestIdx];
-			imgPtToMeshContourForce[nearestIdx] += imageContour[i] - nearestPoint;
+		float* imgPtToMeshContourForceX = new float[this->getNumVertices()]; // 0 for non boundary vertices
+		float* imgPtToMeshContourForceY = new float[this->getNumVertices()]; // 0 for non boundary vertices
+		float* imgPtToMeshContourForceZ = new float[this->getNumVertices()]; // 0 for non boundary vertices
+		for (int i = 0; i < this->getNumVertices(); ++i) { imgPtToMeshContourForceX[i] = 0; imgPtToMeshContourForceY[i] = 0; imgPtToMeshContourForceZ[i] = 0; }
+		for (int i = 0; i < imgContour.size(); ++i) {
+			nearestPoint = meshImgContour.getClosestPoint(imgContour[i], &nearestIdx);
+			nearestIdx = mMeshBoundaryIndices[nearestIdx];
+			imgPtToMeshContourForceX[nearestIdx] += imgContour[i].x - nearestPoint.x;
+			imgPtToMeshContourForceY[nearestIdx] += imgContour[i].y - nearestPoint.y;
+
+			if (abs(imgContour[i].z) > 0.1) {
+				imgPtToMeshContourForceZ[nearestIdx] += imgContour[i].z - nearestPoint.z;
+			}
 		}
 
 
 		Eigen::VectorXd bX(this->getNumVertices());
 		for (int i = 0; i < this->getNumVertices(); ++i) {
 
-			if (mBoundaryVertices[i]) {
-				bX[i] = mAdaptationRate*this->getVertex(i).x + mBoundaryWeight*(closestImgPtForce[i].x +imgPtToMeshContourForce[i].x);
+			if (mIsBoundaryVertices[i]) {
+				bX[i] = mAdaptationRate*this->getVertex(i).x + mBoundaryWeight*(closestImgPtForceX[i] +imgPtToMeshContourForceX[i]);
 			}
 			else {
 				bX[i] = mAdaptationRate*this->getVertex(i).x;
@@ -207,16 +234,13 @@ namespace ofDeformationTracking {
 		Eigen::VectorXd bY(this->getNumVertices());
 		for (int i = 0; i < this->getNumVertices(); ++i) {
 
-			if (mBoundaryVertices[i]) {
-				bY[i] = mAdaptationRate*this->getVertex(i).y + mBoundaryWeight*(closestImgPtForce[i].y + imgPtToMeshContourForce[i].y);
+			if (mIsBoundaryVertices[i]) {
+				bY[i] = mAdaptationRate*this->getVertex(i).y + mBoundaryWeight*(closestImgPtForceY[i] + imgPtToMeshContourForceY[i]);
 			}
 			else {
 				bY[i] = mAdaptationRate*this->getVertex(i).y;
 			}
 		}
-
-		delete[] closestImgPtForce;
-		delete[] imgPtToMeshContourForce;
 
 		Eigen::VectorXd X, Y;
 		X = mpSolver->solve(bX);
@@ -228,8 +252,32 @@ namespace ofDeformationTracking {
 			ofLogError("ofSemiImplicitActiveMesh::generateMesh") << "Couldn't solve bY";
 		}
 
+		Eigen::VectorXd bZ(this->getNumVertices());
+		float newDepth = 0;
 		for (int i = 0; i < this->getNumVertices(); ++i) {
-			this->setVertex(i, ofVec3f(X[i], Y[i], 0));
+
+			if (mIsBoundaryVertices[i]) {
+				bZ[i] = mAdaptationRate*this->getVertex(i).z + (mBoundaryWeight + mDepthWeight)*(closestImgPtForceZ[i] + imgPtToMeshContourForceZ[i]);
+			}
+			else {
+				newDepth = ofxKinect.getDepthAt(X[i], Y[i]);
+
+				if (abs(newDepth) > 0.1) {
+					bZ[i] = mAdaptationRate*this->getVertex(i).z + mDepthWeight*(newDepth - this->getVertex(i).z);
+				}
+			}
+		}
+
+		Eigen::VectorXd Z = mpSolver->solve(bZ);
+		if (!mpSolver->info() == Eigen::Success) {
+			ofLogError("ofSemiImplicitActiveMesh::generateMesh") << "Couldn't solve bZ";
+		}
+
+		delete[] closestImgPtForceX; delete[] closestImgPtForceY; delete[] closestImgPtForceZ;
+		delete[] imgPtToMeshContourForceX; delete[] imgPtToMeshContourForceY; delete[] imgPtToMeshContourForceZ;
+
+		for (int i = 0; i < this->getNumVertices(); ++i) {
+			this->setVertex(i, ofVec3f(X[i], Y[i], Z[i]));
 		}
 	}
 }

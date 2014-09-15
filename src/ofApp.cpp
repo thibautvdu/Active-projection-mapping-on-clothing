@@ -77,7 +77,7 @@ void ofApp::setup() {
 	// KINECT WORLD SPACE	/	/	/	/	/	/	/	/	/	/	/	/
 
 	// Mesh
-	mGarmentGeneratedMesh = ofDeformationTracking::ofSemiImplicitActiveMesh(12, 12);
+	mGarmentGeneratedMesh = ofDeformationTracking::ofSemiImplicitActiveMesh(25, 25);
 
 	// KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -103,9 +103,9 @@ void ofApp::setup() {
 	mGui.add(mCloseKernelSize.setup("closing kernel size", 9, 1, 9));
 	mGui.add(mMorphoUseEllipse.setup("ellipse for morpho operations",false));
 	mGui.add(mGarmentBodyPercent.setup("percent of clothing on body", 20, 0, 100)); // 30% is a good value for a t-shirt
-	mGui.add(mMeshBoundaryWeight.setup("tracking mesh boundary weight", 0.8, 0.1, 2));
+	mGui.add(mMeshBoundaryWeight.setup("tracking mesh boundary weight", 0.8, 2, 10));
 	mGui.add(mMeshDepthWeight.setup("tracking mesh depth weight", 0.6, 0.001, 2));
-	mGui.add(mMeshAdaptationRate.setup("tracking mesh adaptation rate", 2, 0.1, 4));
+	mGui.add(mMeshAdaptationRate.setup("tracking mesh adaptation rate", 5, 1, 10));
 	
 	// Keys
 	mPause = false;
@@ -233,14 +233,14 @@ void ofApp::update() {
 
 		// Generate the mesh
 		if (mOfGarmentContour.size() != 0) {
-			if (!mGarmentGeneratedMesh.isGenerated() && mAskRegeneration) {
-				//mGarmentGeneratedMesh.generateMesh(mOfGarmentContourModel);
+			if (mAskRegeneration) {
+				mGarmentGeneratedMesh.generateMesh(mOfGarmentContour);
 				//computeNormals(mGarmentGeneratedMesh, true);
 				//meshParameterizationLSCM(mGarmentGeneratedMesh);
-				//mAskRegeneration = false;
+				mAskRegeneration = false;
 			}
 			else if (mGarmentGeneratedMesh.isGenerated()) {
-				//mGarmentGeneratedMesh.updateMesh(mOfGarmentContourModel);
+				mGarmentGeneratedMesh.updateMesh(mOfGarmentContour,mOfxKinect);
 			}
 		}
 		mOfSegmentedImg.update();
@@ -261,6 +261,7 @@ void ofApp::draw() {
 
 		ofSetColor(ofColor::blue);
 		mOfGarmentContour.draw();
+		//mGarmentGeneratedMesh.drawWireframe();
 		ofSetColor(255);
 
 		// Top Right
@@ -270,25 +271,21 @@ void ofApp::draw() {
 		mOfGarmentMask.draw(0, mKinectColorImgHeight);
 
 		// Bottom Right
-		/*
 		if (mGarmentGeneratedMesh.hasVertices()) {
-			glPointSize(1);
-
-			//mEasyCam.begin();
+			mEasyCam.begin();
 			if (!mPause) {
-				//mEasyCam.setTarget(mGarmentGeneratedMesh.getCentroid());
+				mEasyCam.setTarget(mGarmentGeneratedMesh.getCentroid());
 			}
 			ofPushMatrix();
+				ofTranslate(mKinectColorImgWidth, mKinectColorImgHeight);
 				ofEnableDepthTest();
 				//mChessboardImage.bind();
-				
 				mGarmentGeneratedMesh.drawWireframe();
 				//mChessboardImage.unbind();
 				ofDisableDepthTest();
 			ofPopMatrix();
-			//mEasyCam.end();
-
-		}*/
+			mEasyCam.end();
+		}
 
 		// GUI
 		mGui.draw();

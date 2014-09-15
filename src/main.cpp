@@ -6,14 +6,14 @@
 int main() {
 
 	ofSetCurrentRenderer(ofGLProgrammableRenderer::TYPE);
-	ofSetupOpenGL(500, 500, OF_WINDOW);	// setup the GL context
+	ofSetupOpenGL(1200, 800, OF_WINDOW);	// setup the GL context
 
 	// Cover all the screens with one fullscreen window
-	ofAppBaseWindow* window = ofGetWindowPtr();
-	ofAppGLFWWindow* GLFWWindow = (ofAppGLFWWindow*)window;
+	//ofAppBaseWindow* window = ofGetWindowPtr();
+	//ofAppGLFWWindow* GLFWWindow = (ofAppGLFWWindow*)window;
 
-	GLFWWindow->setMultiDisplayFullscreen(true);
-	window->setFullscreen(true);
+	//GLFWWindow->setMultiDisplayFullscreen(true);
+	//window->setFullscreen(true);
 
 	// this kicks off the running of my app
 	// can be OF_WINDOW or OF_FULLSCREEN

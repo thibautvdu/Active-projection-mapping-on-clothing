@@ -6,6 +6,7 @@
 #include "ofPolyline.h"
 #include <Eigen/Sparse>
 #include <Eigen/SparseLU>
+#include "ofxKinectCommonBridge.h"
 
 namespace ofDeformationTracking {
 
@@ -74,7 +75,7 @@ namespace ofDeformationTracking {
 			void generateMesh(const ofPolyline& imageContour);
 
 			// COMPUTATION
-			void updateMesh(const ofPolyline& imageContour);
+			void updateMesh(const ofPolyline& imageContour, const ofxKinectCommonBridge& ofxKinect);
 
 		private :
 
@@ -82,7 +83,8 @@ namespace ofDeformationTracking {
 			int mMeshXResolution;
 			int mMeshYResolution;
 			float mGenerationAreaThresh;
-			vector<bool> mBoundaryVertices; // index -> is boundary vertice
+			vector<bool> mIsBoundaryVertices; // index -> is boundary vertice
+			vector<int> mMeshBoundaryIndices;
 
 			// ENERGY MIN. PARAMETERS
 			float mDepthWeight;
