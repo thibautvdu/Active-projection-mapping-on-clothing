@@ -234,13 +234,13 @@ void ofApp::update() {
 		// Generate the mesh
 		if (mOfGarmentContour.size() != 0) {
 			if (mAskRegeneration) {
-				mGarmentGeneratedMesh.generateMesh(mOfGarmentContour);
+				mGarmentGeneratedMesh.generateMesh(mOfGarmentContour, mOfGarmentMask.getPixelsRef(), mOfxKinect);
 				//computeNormals(mGarmentGeneratedMesh, true);
 				//meshParameterizationLSCM(mGarmentGeneratedMesh);
 				mAskRegeneration = false;
 			}
 			else if (mGarmentGeneratedMesh.isGenerated()) {
-				mGarmentGeneratedMesh.updateMesh(mOfGarmentContour,mOfxKinect);
+				mGarmentGeneratedMesh.updateMesh(mOfGarmentContour,mOfGarmentMask.getPixelsRef(),mOfxKinect);
 			}
 		}
 		mOfSegmentedImg.update();
@@ -280,7 +280,7 @@ void ofApp::draw() {
 				ofTranslate(mKinectColorImgWidth, mKinectColorImgHeight);
 				ofEnableDepthTest();
 				//mChessboardImage.bind();
-				mGarmentGeneratedMesh.drawWireframe();
+				mGarmentGeneratedMesh.draw();
 				//mChessboardImage.unbind();
 				ofDisableDepthTest();
 			ofPopMatrix();

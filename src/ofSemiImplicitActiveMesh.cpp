@@ -1,14 +1,15 @@
 #include "ofSemiImplicitActiveMesh.h"
+#include "ofxCv.h"
 
 namespace ofDeformationTracking {
 
 	// INITIALIZATION
-	void ofSemiImplicitActiveMesh::generateMesh(const ofPolyline& imageContour) {
+	void ofSemiImplicitActiveMesh::generateMesh(const ofPolyline& imgContour, ofPixels contourMask, const ofxKinectCommonBridge& ofxKinect) {
 		this->clear();
 		this->setMode(OF_PRIMITIVE_TRIANGLES);
 		this->enableIndices();
 
-		const ofRectangle roi = imageContour.getBoundingBox();
+		const ofRectangle roi = imgContour.getBoundingBox();
 
 		int rows = mMeshYResolution;
 		int columns = mMeshXResolution;
@@ -44,7 +45,7 @@ namespace ofDeformationTracking {
 				rectangleFace.addVertex(pointD);
 				rectangleFace.close();
 
-				if (intersectionArea(rectangleFace, imageContour) * 100 / rectangleFace.getArea() > mGenerationAreaThresh){
+				if (intersectionArea(rectangleFace, imgContour) * 100 / rectangleFace.getArea() > mGenerationAreaThresh){
 					// Triangle face 1
 					this->addTriangle((row)*columns + col, (row)*columns + col + 1, (row + 1)*columns + col);
 
@@ -129,7 +130,31 @@ namespace ofDeformationTracking {
 		mK = KCols.transpose()*KCols;
 
 		computeSolver();
+
+		// Initialize the depths to an average value
+		ofShortPixels depthPixels = ofxKinect.getDepthPixels();
+		cv::Mat cvDepthPixelsRoi = ofxCv::toCv(depthPixels)(ofxCv::toCv(roi));
+		cv::Mat cvContourMaskRoi = ofxCv::toCv(contourMask)(ofxCv::toCv(roi));
+		USHORT *p_row, *p_maskRow;
+		int nbValues = 0;
+		ULONG sumDepth = 0;
+		for (int row = 0; row < cvDepthPixelsRoi.rows; row++) {
+			p_row = cvDepthPixelsRoi.ptr<USHORT>(row);
+			p_maskRow = cvContourMaskRoi.ptr<USHORT>(row);
+			for (int col = 0; col < cvDepthPixelsRoi.cols; col++) {
+				if (*(p_maskRow + col) != 0 && *(p_row + col) != 0) {
+					nbValues++;
+					sumDepth += *(p_row + col);
+				}
+			}
+		}
 		
+		float avgDepth = sumDepth / nbValues;
+
+		for (int i = 0; i < this->getNumVertices(); ++i) {
+			this->setVertex(i, ofxKinect.getWorldCoordinates((int)this->getVertex(i).x, (int)this->getVertex(i).y, avgDepth));
+		}
+
 		mGenerated = true;
 	}
 
@@ -169,54 +194,117 @@ namespace ofDeformationTracking {
 	}
 
 	// COMPUTATION
-	void ofSemiImplicitActiveMesh::updateMesh(const ofPolyline& imgContourRef, const ofxKinectCommonBridge& ofxKinect) {
+	void ofSemiImplicitActiveMesh::updateMesh(const ofPolyline& imgContour, ofPixels contourMask, const ofxKinectCommonBridge& ofxKinect) {
 		if (mNeedComputation) {
 			computeSolver();
 		}
 
-		ofPolyline imgContour(imgContourRef);
-		float depth;
-		for (int i = 0; i < imgContour.size(); ++i) {
-			depth = ofxKinect.getDepthAt((int)imgContour[i].x, (int)imgContour[i].y);
-			if (abs(depth) > 0.1)
-				imgContour[i].z = depth;
+		ofRectangle roi = imgContour.getBoundingBox();
+		ofShortPixels depthPixelsInpaint = ofxKinect.getDepthPixels();
+		cv::Mat cvDepthPixelsRoiInpaint = ofxCv::toCv(depthPixelsInpaint)(ofxCv::toCv(roi));
+		cv::Mat cvContourMaskRoi = ofxCv::toCv(contourMask)(ofxCv::toCv(roi));
+
+		/* We ensure to have all the needed depth values for the contour */
+		// Get the 0 mask and suppress depth values outside of the contour
+		bool unknownValue = false;
+		cv::Mat cvZeroMask(cvDepthPixelsRoiInpaint.size(), cvDepthPixelsRoiInpaint.type());
+		USHORT *p_row, *p_maskRow, *p_contourMaskRow;
+		for (int row = 0; row < cvDepthPixelsRoiInpaint.rows; row++) {
+			p_row = cvDepthPixelsRoiInpaint.ptr<USHORT>(row);
+			p_maskRow = cvZeroMask.ptr<USHORT>(row);
+			p_contourMaskRow = cvContourMaskRoi.ptr<USHORT>(row);
+			for (int col = 0; col < cvDepthPixelsRoiInpaint.cols; col++) {
+				if (*(p_contourMaskRow + col) != 0) {
+					if (*(p_row + col) == 0) {
+						*(p_maskRow + col) = 0;
+						unknownValue = true;
+					}
+					else {
+						*(p_maskRow + col) = 65535;
+					}
+				}
+				else {
+					*(p_row + col) = 0;
+					*(p_maskRow + col) = 0;
+				}
+			}
 		}
 
-		// Get closest points for each boundary vertex and construct the mesh contour
-		ofPolyline meshImgContour;
-		float* closestImgPtForceX = new float[this->getNumVertices()]; // 0 for non boundary vertices
-		float* closestImgPtForceY = new float[this->getNumVertices()]; // 0 for non boundary vertices
-		float* closestImgPtForceZ = new float[this->getNumVertices()]; // 0 for non boundary vertices
-		ofVec3f closestImgContourPoint;
-		for (int i = 0; i < this->getNumVertices(); ++i) { closestImgPtForceX[i] = 0; closestImgPtForceY[i] = 0; closestImgPtForceZ[i] = 0; }
-		for (int i = 0; i < mMeshBoundaryIndices.size(); ++i) {
-			closestImgContourPoint = imgContour.getClosestPoint(this->getVertex(mMeshBoundaryIndices[i]));
-			closestImgPtForceX[mMeshBoundaryIndices[i]] = closestImgContourPoint.x - this->getVertex(mMeshBoundaryIndices[i]).x;
-			closestImgPtForceY[mMeshBoundaryIndices[i]] = closestImgContourPoint.y - this->getVertex(mMeshBoundaryIndices[i]).y;
+		int kernelSize = 1;
+		while (unknownValue) {
+			kernelSize += 2;
+			cv::GaussianBlur(cvZeroMask, cvZeroMask, cv::Size(kernelSize, kernelSize), 1);
+			cv::GaussianBlur(cvDepthPixelsRoiInpaint, cvDepthPixelsRoiInpaint, cv::Size(kernelSize, kernelSize), 1);
+			cvDepthPixelsRoiInpaint = 65535 * (cvDepthPixelsRoiInpaint / cvZeroMask);
 
-			if (abs(closestImgContourPoint.z) > 0.1) {
-				closestImgPtForceZ[mMeshBoundaryIndices[i]] = closestImgContourPoint.z - this->getVertex(mMeshBoundaryIndices[i]).z;
+			unknownValue = false;
+			for (int row = 0; row < cvDepthPixelsRoiInpaint.rows; ++row) {
+				p_row = cvDepthPixelsRoiInpaint.ptr<USHORT>(row);
+				p_contourMaskRow = cvContourMaskRoi.ptr<USHORT>(row);
+				for (int col = 0; col < cvDepthPixelsRoiInpaint.cols; ++col) {
+					if (*(p_row + col) == 0 && *(p_contourMaskRow + col) != 0) {
+						unknownValue = true;
+					}
+				}
 			}
 
-			meshImgContour.addVertex(this->getVertex(mMeshBoundaryIndices[i]));
+			if (!unknownValue) {
+				ofLogNotice("ofApp::generateMesh") << "Correctly inpainted the mesh";
+			}
+			else if (kernelSize > 9) {
+				ofLogError("ofApp::generateMesh") << "Couldn't inpaint the mesh";
+				unknownValue = false;
+			}
 		}
-		meshImgContour.close();
+
+		ofShortPixels depthPixelsCorrected = ofxKinect.getDepthPixels(); // 0 outisde of the mask, inpainted values for missing inner depths
+		cv::Mat cvDepthPixelsCorrected = ofxCv::toCv(depthPixelsCorrected);
+		USHORT *p_rowCorrected;
+		for (int row = 0; row < cvDepthPixelsCorrected.rows; ++row) {
+			p_rowCorrected = cvDepthPixelsCorrected.ptr<USHORT>(row);
+			for (int col = 0; col < cvDepthPixelsCorrected.cols; ++col) {
+				if (row >(int)roi.getTopLeft().y && row < (int)roi.getTopLeft().y + roi.getHeight()
+					&& col >(int)roi.getTopLeft().x && col < (int)roi.getTopLeft().x + roi.getWidth()) {
+					if (*(p_rowCorrected + col) == 0) {
+						*(p_rowCorrected + col) = *(cvDepthPixelsRoiInpaint.ptr<USHORT>(row-(int)roi.getTopLeft().y) + col - (int)roi.getTopLeft().x);
+					}
+				}
+				else {
+					*(p_rowCorrected + col) = 0;
+				}
+			}
+		}
+		/* !We ensure to have all the needed depth values for the contour */
+
+		ofPolyline worldContour;
+		float depth;
+		for (int i = 0; i < imgContour.size(); ++i) {
+			depth = depthPixelsCorrected[(int)imgContour[i].y*depthPixelsCorrected.getWidth() + (int)imgContour[i].x];
+			worldContour.addVertex(ofxKinect.getWorldCoordinates((int)imgContour[i].x, (int)imgContour[i].y, depth));
+		}
+		worldContour.close();
+
+		// Get closest points for each boundary vertex and construct the mesh contour
+		ofPolyline meshWorldContour;
+		ofVec3f* closestImgPtForce = new ofVec3f[this->getNumVertices()]; // 0 for non boundary vertices
+		ofVec3f closestImgContourPoint;
+		for (int i = 0; i < this->getNumVertices(); ++i) { closestImgPtForce[i] = ofVec3f::zero(); }
+		for (int i = 0; i < mMeshBoundaryIndices.size(); ++i) {
+			closestImgContourPoint = worldContour.getClosestPoint(this->getVertex(mMeshBoundaryIndices[i]));
+			closestImgPtForce[mMeshBoundaryIndices[i]] = closestImgContourPoint - this->getVertex(mMeshBoundaryIndices[i]);
+
+			meshWorldContour.addVertex(this->getVertex(mMeshBoundaryIndices[i]));
+		}
+		meshWorldContour.close();
 
 		// Closests vertices for every image boundary point
 		unsigned int nearestIdx; ofVec3f nearestPoint;
-		float* imgPtToMeshContourForceX = new float[this->getNumVertices()]; // 0 for non boundary vertices
-		float* imgPtToMeshContourForceY = new float[this->getNumVertices()]; // 0 for non boundary vertices
-		float* imgPtToMeshContourForceZ = new float[this->getNumVertices()]; // 0 for non boundary vertices
-		for (int i = 0; i < this->getNumVertices(); ++i) { imgPtToMeshContourForceX[i] = 0; imgPtToMeshContourForceY[i] = 0; imgPtToMeshContourForceZ[i] = 0; }
+		ofVec3f* imgPtToMeshContourForce = new ofVec3f[this->getNumVertices()]; // 0 for non boundary vertices
+		for (int i = 0; i < this->getNumVertices(); ++i) { imgPtToMeshContourForce[i] = ofVec3f::zero(); }
 		for (int i = 0; i < imgContour.size(); ++i) {
-			nearestPoint = meshImgContour.getClosestPoint(imgContour[i], &nearestIdx);
+			nearestPoint = meshWorldContour.getClosestPoint(worldContour[i], &nearestIdx);
 			nearestIdx = mMeshBoundaryIndices[nearestIdx];
-			imgPtToMeshContourForceX[nearestIdx] += imgContour[i].x - nearestPoint.x;
-			imgPtToMeshContourForceY[nearestIdx] += imgContour[i].y - nearestPoint.y;
-
-			if (abs(imgContour[i].z) > 0.1) {
-				imgPtToMeshContourForceZ[nearestIdx] += imgContour[i].z - nearestPoint.z;
-			}
+			imgPtToMeshContourForce[nearestIdx] += worldContour[i] - nearestPoint;
 		}
 
 
@@ -224,7 +312,7 @@ namespace ofDeformationTracking {
 		for (int i = 0; i < this->getNumVertices(); ++i) {
 
 			if (mIsBoundaryVertices[i]) {
-				bX[i] = mAdaptationRate*this->getVertex(i).x + mBoundaryWeight*(closestImgPtForceX[i] +imgPtToMeshContourForceX[i]);
+				bX[i] = mAdaptationRate*this->getVertex(i).x + mBoundaryWeight*(closestImgPtForce[i].x +imgPtToMeshContourForce[i].x);
 			}
 			else {
 				bX[i] = mAdaptationRate*this->getVertex(i).x;
@@ -235,7 +323,7 @@ namespace ofDeformationTracking {
 		for (int i = 0; i < this->getNumVertices(); ++i) {
 
 			if (mIsBoundaryVertices[i]) {
-				bY[i] = mAdaptationRate*this->getVertex(i).y + mBoundaryWeight*(closestImgPtForceY[i] + imgPtToMeshContourForceY[i]);
+				bY[i] = mAdaptationRate*this->getVertex(i).y + mBoundaryWeight*(closestImgPtForce[i].y + imgPtToMeshContourForce[i].y);
 			}
 			else {
 				bY[i] = mAdaptationRate*this->getVertex(i).y;
@@ -251,20 +339,24 @@ namespace ofDeformationTracking {
 		if (!mpSolver->info() == Eigen::Success) {
 			ofLogError("ofSemiImplicitActiveMesh::generateMesh") << "Couldn't solve bY";
 		}
-
+		
 		Eigen::VectorXd bZ(this->getNumVertices());
-		float newDepth = 0;
+		USHORT newDepth = 0;
+		ofVec3f projectedPoint;
 		for (int i = 0; i < this->getNumVertices(); ++i) {
+			bZ[i] = 0;
 
 			if (mIsBoundaryVertices[i]) {
-				bZ[i] = mAdaptationRate*this->getVertex(i).z + (mBoundaryWeight + mDepthWeight)*(closestImgPtForceZ[i] + imgPtToMeshContourForceZ[i]);
+				bZ[i] += mBoundaryWeight*(closestImgPtForce[i].z + imgPtToMeshContourForce[i].z);
+			}
+
+			projectedPoint = ofxKinect.project(this->getVertex(i));
+			newDepth = depthPixelsCorrected[(int)projectedPoint.y * depthPixelsCorrected.getWidth() + (int)projectedPoint.x];
+			if (newDepth != 0) {
+				bZ[i] += mAdaptationRate*this->getVertex(i).z + mDepthWeight*((float)newDepth - this->getVertex(i).z);
 			}
 			else {
-				newDepth = ofxKinect.getDepthAt(X[i], Y[i]);
-
-				if (abs(newDepth) > 0.1) {
-					bZ[i] = mAdaptationRate*this->getVertex(i).z + mDepthWeight*(newDepth - this->getVertex(i).z);
-				}
+				bZ[i] += (mAdaptationRate+mDepthWeight)*this->getVertex(i).z;
 			}
 		}
 
@@ -273,11 +365,12 @@ namespace ofDeformationTracking {
 			ofLogError("ofSemiImplicitActiveMesh::generateMesh") << "Couldn't solve bZ";
 		}
 
-		delete[] closestImgPtForceX; delete[] closestImgPtForceY; delete[] closestImgPtForceZ;
-		delete[] imgPtToMeshContourForceX; delete[] imgPtToMeshContourForceY; delete[] imgPtToMeshContourForceZ;
+		delete[] closestImgPtForce;
+		delete[] imgPtToMeshContourForce;
 
 		for (int i = 0; i < this->getNumVertices(); ++i) {
 			this->setVertex(i, ofVec3f(X[i], Y[i], Z[i]));
+			ofLog() << this->getVertex(i);
 		}
 	}
 }

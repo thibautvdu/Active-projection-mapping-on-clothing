@@ -72,10 +72,10 @@ namespace ofDeformationTracking {
 			const ofMesh& getKinectRelativeMeshRef() const { return mKinectRelativeMesh; }
 
 			// INITIALIZATION
-			void generateMesh(const ofPolyline& imageContour);
+			void generateMesh(const ofPolyline& imgContour, ofPixels contourMask, const ofxKinectCommonBridge& ofxKinect);
 
 			// COMPUTATION
-			void updateMesh(const ofPolyline& imageContour, const ofxKinectCommonBridge& ofxKinect);
+			void updateMesh(const ofPolyline& imgContour, ofPixels contourMask, const ofxKinectCommonBridge& ofxKinect);
 
 		private :
 
