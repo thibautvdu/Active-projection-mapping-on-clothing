@@ -27,12 +27,6 @@ void ofApp::setup() {
 		exit();
 	}
 
-	bool initSkeletonStream = mOfxKinect.initSkeletonStream(false);
-	if (!initSkeletonStream) {
-		ofLog(OF_LOG_FATAL_ERROR) << "Couldn't init the kinect's skeleton stream";
-		exit();
-	}
-
 	bool kinectStarted = mOfxKinect.start();
 	if (!kinectStarted) {
 		ofLog(OF_LOG_FATAL_ERROR) << "Couldn't start the kinect";
@@ -77,7 +71,7 @@ void ofApp::setup() {
 	// KINECT WORLD SPACE	/	/	/	/	/	/	/	/	/	/	/	/
 
 	// Mesh
-	mGarmentGeneratedMesh = ofDeformationTracking::ofSemiImplicitActiveMesh(50, 50);
+	mGarmentGeneratedMesh = ofDeformationTracking::ofSemiImplicitActiveMesh(30, 30);
 
 	// KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -114,7 +108,7 @@ void ofApp::setup() {
 
 	// GUI	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 
-	mOfGarmentMask.loadImage("reduced_mask.tif");
+	mOfGarmentMask.loadImage("full_mask.tif");
 	mOfGarmentMask.setImageType(OF_IMAGE_GRAYSCALE);
 }
 
@@ -237,11 +231,13 @@ void ofApp::update() {
 			if (mAskRegeneration) {
 				mGarmentGeneratedMesh.generateMesh(mOfGarmentContour, mOfGarmentMask.getPixelsRef(), mOfxKinect);
 				//computeNormals(mGarmentGeneratedMesh, true);
-				//meshParameterizationLSCM(mGarmentGeneratedMesh);
 				mAskRegeneration = false;
 			}
 			else if (mGarmentGeneratedMesh.isGenerated()) {
 				mGarmentGeneratedMesh.updateMesh(mOfGarmentContour,mOfGarmentMask.getPixelsRef(),mOfxKinect);
+				if (mGarmentGeneratedMesh.getWorldMeshRef().getNumTexCoords() == 0) {
+					meshParameterizationLSCM(mGarmentGeneratedMesh.getWorldMeshRef());
+				}
 			}
 		}
 		mOfSegmentedImg.update();
@@ -302,7 +298,9 @@ void ofApp::draw() {
 			ofMesh worldMesh = mGarmentGeneratedMesh.getWorldMeshRef();
 			toProjectorSpace(worldMesh);
 			mProjectorWindow.begin();
-			worldMesh.drawWireframe();
+			mChessboardImage.bind();
+			worldMesh.draw();
+			mChessboardImage.unbind();
 			/*
 				ofPath projectorGarmentPath = ofUtilities::polylineToPath(projectorGarmentContour);
 				projectorGarmentPath.setFilled(true);

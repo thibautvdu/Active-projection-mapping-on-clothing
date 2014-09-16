@@ -20,8 +20,7 @@ namespace ofDeformationTracking {
 			ofSemiImplicitActiveMesh() : ofMesh() {
 				mNeedComputation = false;
 
-				mMeshXResolution = 10;
-				mMeshYResolution = 10;
+				mMeshXResolution = mMeshYResolution = 10;
 
 				mGenerated = false;
 				mGenerationAreaThresh = 20;
@@ -31,6 +30,8 @@ namespace ofDeformationTracking {
 				mDepthWeight = 0.6;
 
 				m_maxDepthDiff = 500;
+
+				m_minDepth = m_maxDepth = 0;
 
 				mpSolver = new Eigen::SparseLU<Eigen::SparseMatrix<double, Eigen::ColMajor>>();
 			}
@@ -44,6 +45,8 @@ namespace ofDeformationTracking {
 				mAdaptationRate = 0.5;
 				mBoundaryWeight = 0.2;
 				mDepthWeight = 0.6;
+
+				m_minDepth = m_maxDepth = 0;
 
 				m_maxDepthDiff = 500;
 

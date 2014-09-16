@@ -152,7 +152,6 @@ namespace ofDeformationTracking {
 		}
 		
 		m_meshAvgDepth = sumDepth / nbValues;
-		m_maxDepth = m_meshAvgDepth; m_minDepth = m_meshAvgDepth;
 
 		for (int i = 0; i < this->getNumVertices(); ++i) {
 			this->setVertex(i, ofVec3f(this->getVertex(i).x, this->getVertex(i).y, m_meshAvgDepth));
@@ -319,7 +318,9 @@ namespace ofDeformationTracking {
 		ofColor depthColor;
 		for (int i = 0; i < mKinectRelativeMesh.getNumVertices(); ++i) {
 			mKinectRelativeMesh.setVertex(i, ofxKinect.getWorldCoordinates((int)this->getVertex(i).x, (int)this->getVertex(i).y, this->getVertex(i).z));
-			depthColor = ofColor(min((ofMap(this->getVertex(i).z, m_minDepth, m_maxDepth, 0, 1)*850),(float)255), 0, 255);
+			if (m_minDepth != m_maxDepth) {
+				depthColor = ofColor(ofMap(this->getVertex(i).z, m_minDepth, m_minDepth + (m_maxDepth - m_minDepth) / 2, 0, 255, true), ofMap(this->getVertex(i).z, m_minDepth + (m_maxDepth - m_minDepth) / 2, m_maxDepth, 0, 255, true), 255);
+			}
 			mKinectRelativeMesh.setColor(i, depthColor);
 		}
 	}
