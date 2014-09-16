@@ -77,7 +77,7 @@ void ofApp::setup() {
 	// KINECT WORLD SPACE	/	/	/	/	/	/	/	/	/	/	/	/
 
 	// Mesh
-	mGarmentGeneratedMesh = ofDeformationTracking::ofSemiImplicitActiveMesh(25, 25);
+	mGarmentGeneratedMesh = ofDeformationTracking::ofSemiImplicitActiveMesh(50, 50);
 
 	// KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -103,8 +103,8 @@ void ofApp::setup() {
 	mGui.add(mCloseKernelSize.setup("closing kernel size", 9, 1, 9));
 	mGui.add(mMorphoUseEllipse.setup("ellipse for morpho operations",false));
 	mGui.add(mGarmentBodyPercent.setup("percent of clothing on body", 20, 0, 100)); // 30% is a good value for a t-shirt
-	mGui.add(mMeshBoundaryWeight.setup("tracking mesh boundary weight", 0.8, 2, 10));
-	mGui.add(mMeshDepthWeight.setup("tracking mesh depth weight", 0.6, 0.001, 2));
+	mGui.add(mMeshBoundaryWeight.setup("tracking mesh boundary weight", 0, 0.1, 2));
+	mGui.add(mMeshDepthWeight.setup("tracking mesh depth weight", 0, 0.1, 5));
 	mGui.add(mMeshAdaptationRate.setup("tracking mesh adaptation rate", 5, 1, 10));
 	
 	// Keys
@@ -114,7 +114,7 @@ void ofApp::setup() {
 
 	// GUI	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 
-	mOfGarmentMask.loadImage("mask.tif");
+	mOfGarmentMask.loadImage("reduced_mask.tif");
 	mOfGarmentMask.setImageType(OF_IMAGE_GRAYSCALE);
 }
 
@@ -122,7 +122,8 @@ void ofApp::update() {
 	// EVENTS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
 	if (mSaveMesh) {
-		mGarmentGeneratedMesh.save("export.ply");
+		//mGarmentGeneratedMesh.save("export.ply");
+		mGarmentGeneratedMesh.getWorldMeshRef().save("export.ply");
 		ofLog() << "Exported the 3D mesh";
 		mSaveMesh = false;
 	}
@@ -272,15 +273,16 @@ void ofApp::draw() {
 
 		// Bottom Right
 		if (mGarmentGeneratedMesh.hasVertices()) {
+			ofMesh worldMesh = mGarmentGeneratedMesh.getWorldMeshRef();
 			mEasyCam.begin();
 			if (!mPause) {
-				mEasyCam.setTarget(mGarmentGeneratedMesh.getCentroid());
+				mEasyCam.setTarget(worldMesh.getCentroid());
 			}
 			ofPushMatrix();
 				ofTranslate(mKinectColorImgWidth, mKinectColorImgHeight);
 				ofEnableDepthTest();
 				//mChessboardImage.bind();
-				mGarmentGeneratedMesh.draw();
+				worldMesh.drawWireframe();
 				//mChessboardImage.unbind();
 				ofDisableDepthTest();
 			ofPopMatrix();
@@ -296,11 +298,17 @@ void ofApp::draw() {
 		// PROJECTOR SCREEN	/	/	/	/	/	/	/	/	/	/	/	/	/
 
 		if (mOfGarmentContour.size() != 0) {
+			mGarmentGeneratedMesh.computeWorldMesh(mOfxKinect);
+			ofMesh worldMesh = mGarmentGeneratedMesh.getWorldMeshRef();
+			toProjectorSpace(worldMesh);
 			mProjectorWindow.begin();
+			worldMesh.drawWireframe();
+			/*
 				ofPath projectorGarmentPath = ofUtilities::polylineToPath(projectorGarmentContour);
 				projectorGarmentPath.setFilled(true);
 				projectorGarmentPath.setFillColor(ofColor::red);
 				projectorGarmentPath.draw();
+			*/
 			mProjectorWindow.end();
 		}
 
@@ -362,6 +370,19 @@ void ofApp::drawProjectorImage() {
 		}
 	}
 	projectorGarmentContour.close();
+}
+
+void ofApp::toProjectorSpace(ofMesh& mesh) {
+	ofVec2f projectorCoordinates;
+
+	for (int i = 0; i < mesh.getNumVertices(); ++i) {
+		projectorCoordinates = mKinectProjectorToolkit.getProjectedPoint(mesh.getVertex(i));
+
+		projectorCoordinates.x = ofMap(projectorCoordinates.x, 0, 1, 0, mProjectorWindow.getWidth());
+		projectorCoordinates.y = ofMap(projectorCoordinates.y, 0, 1, 0, mProjectorWindow.getHeight());
+
+		mesh.setVertex(i, ofVec3f(projectorCoordinates.x, projectorCoordinates.y, 0));
+	}
 }
 
 void ofApp::meshParameterizationLSCM(ofMesh& mesh) {

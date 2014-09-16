@@ -27,6 +27,7 @@ class ofApp : public ofBaseApp {
 
 		/* METHODS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 		void drawProjectorImage();
+		void ofApp::toProjectorSpace(ofMesh& mesh);
 		void meshParameterizationLSCM(ofMesh& mesh);
 
 

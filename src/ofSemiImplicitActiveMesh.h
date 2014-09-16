@@ -24,11 +24,13 @@ namespace ofDeformationTracking {
 				mMeshYResolution = 10;
 
 				mGenerated = false;
-				mGenerationAreaThresh = 10;
+				mGenerationAreaThresh = 20;
 
 				mAdaptationRate = 0.5;
 				mBoundaryWeight = 0.2;
 				mDepthWeight = 0.6;
+
+				m_maxDepthDiff = 500;
 
 				mpSolver = new Eigen::SparseLU<Eigen::SparseMatrix<double, Eigen::ColMajor>>();
 			}
@@ -37,11 +39,13 @@ namespace ofDeformationTracking {
 				mNeedComputation = false;
 
 				mGenerated = false;
-				mGenerationAreaThresh = 10;
+				mGenerationAreaThresh = 20;
 
 				mAdaptationRate = 0.5;
 				mBoundaryWeight = 0.2;
 				mDepthWeight = 0.6;
+
+				m_maxDepthDiff = 500;
 
 				mpSolver = new Eigen::SparseLU<Eigen::SparseMatrix<double, Eigen::ColMajor>>();
 			};
@@ -54,8 +58,10 @@ namespace ofDeformationTracking {
 			float getBoundaryWeight() const { return mBoundaryWeight; }
 
 			void setAdaptationRate(float rate) {
-				mAdaptationRate = rate;
-				mNeedComputation = true;
+				if (abs(rate - mAdaptationRate) > 0.01) {
+					mAdaptationRate = rate;
+					mNeedComputation = true;
+				}
 			}
 			float getAdaptationRate() const { return mAdaptationRate; }
 
@@ -65,6 +71,8 @@ namespace ofDeformationTracking {
 			int getMeshYResolution() const { return mMeshXResolution; }
 			void setGenerationAreaThresh(float thresh) { mGenerationAreaThresh = thresh; }
 			float getGenerationAreaThresh(float thresh) const { return mGenerationAreaThresh; }
+
+			ofMesh& getWorldMeshRef() { return mKinectRelativeMesh; }
 
 			// FLAGS
 			bool isGenerated() { return mGenerated; }
@@ -76,6 +84,7 @@ namespace ofDeformationTracking {
 
 			// COMPUTATION
 			void updateMesh(const ofPolyline& imgContour, ofPixels contourMask, const ofxKinectCommonBridge& ofxKinect);
+			void computeWorldMesh(const ofxKinectCommonBridge &ofxKinect);
 
 		private :
 
@@ -97,6 +106,11 @@ namespace ofDeformationTracking {
 
 			// ofMesh this ( = image relative mesh + kinect relative depth only)
 			ofMesh mKinectRelativeMesh;
+
+			// VARIOUS
+			float m_meshAvgDepth; // Used to discriminate incoherent values sent by kinect
+			float m_maxDepthDiff; // Should correspond to the size of the tracked object on z
+			float m_maxDepth, m_minDepth;
 
 			// FLAGS
 			bool mGenerated;
