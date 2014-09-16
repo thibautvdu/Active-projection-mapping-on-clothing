@@ -204,87 +204,24 @@ namespace ofDeformationTracking {
 			computeSolver();
 		}
 
+		// Left to right flooding on the ROI
 		ofRectangle roi = imgContour.getBoundingBox();
-		ofShortPixels depthPixelsInpaint = ofxKinect.getDepthPixels();
-		cv::Mat cvDepthPixelsRoiInpaint = ofxCv::toCv(depthPixelsInpaint)(ofxCv::toCv(roi));
-		cv::Mat cvContourMaskRoi = ofxCv::toCv(contourMask)(ofxCv::toCv(roi));
+		ofShortPixels depthPixelsFilled = ofxKinect.getDepthPixels();
+		int depthW = depthPixelsFilled.getWidth(); int depthH = depthPixelsFilled.getHeight();
 
-		/* We ensure to have all the needed depth values for the contour */
-		// Get the 0 mask and suppress depth values outside of the contour
-		bool unknownValue = false;
-		cv::Mat cvZeroMask(cvDepthPixelsRoiInpaint.size(), cvDepthPixelsRoiInpaint.type());
-		USHORT *p_row, *p_maskRow, *p_contourMaskRow;
-		for (int row = 0; row < cvDepthPixelsRoiInpaint.rows; row++) {
-			p_row = cvDepthPixelsRoiInpaint.ptr<USHORT>(row);
-			p_maskRow = cvZeroMask.ptr<USHORT>(row);
-			p_contourMaskRow = cvContourMaskRoi.ptr<USHORT>(row);
-			for (int col = 0; col < cvDepthPixelsRoiInpaint.cols; col++) {
-				if (*(p_contourMaskRow + col) != 0) {
-					if (*(p_row + col) == 0) {
-						*(p_maskRow + col) = 0;
-						unknownValue = true;
-					}
-					else {
-						*(p_maskRow + col) = 65535;
-					}
-				}
-				else {
-					*(p_row + col) = 0;
-					*(p_maskRow + col) = 0;
-				}
+		USHORT lastValid;
+		int startX = min((int)roi.getBottomRight().x + 1, depthW - 1);
+		for (int y = roi.getTopLeft().y; y < roi.getBottomRight().y; ++y) {
+			lastValid = 0;
+			for (int x = startX; x >= 0; --x){
+				lastValid = depthPixelsFilled[y*depthW + x] = depthPixelsFilled[y*depthW + x] == 0 ? lastValid : depthPixelsFilled[y*depthW + x];
 			}
 		}
-
-		int kernelSize = 1;
-		while (unknownValue) {
-			kernelSize += 2;
-			cv::GaussianBlur(cvZeroMask, cvZeroMask, cv::Size(kernelSize, kernelSize), 1);
-			cv::GaussianBlur(cvDepthPixelsRoiInpaint, cvDepthPixelsRoiInpaint, cv::Size(kernelSize, kernelSize), 1);
-			cvDepthPixelsRoiInpaint = 65535 * (cvDepthPixelsRoiInpaint / cvZeroMask);
-
-			unknownValue = false;
-			for (int row = 0; row < cvDepthPixelsRoiInpaint.rows; ++row) {
-				p_row = cvDepthPixelsRoiInpaint.ptr<USHORT>(row);
-				p_contourMaskRow = cvContourMaskRoi.ptr<USHORT>(row);
-				for (int col = 0; col < cvDepthPixelsRoiInpaint.cols; ++col) {
-					if (*(p_row + col) == 0 && *(p_contourMaskRow + col) != 0) {
-						unknownValue = true;
-					}
-				}
-			}
-
-			if (!unknownValue) {
-				ofLogNotice("ofApp::generateMesh") << "Correctly inpainted the mesh";
-			}
-			else if (kernelSize > 9) {
-				ofLogError("ofApp::generateMesh") << "Couldn't inpaint the mesh";
-				unknownValue = false;
-			}
-		}
-
-		ofShortPixels depthPixelsCorrected = ofxKinect.getDepthPixels(); // 0 outisde of the mask, inpainted values for missing inner depths
-		cv::Mat cvDepthPixelsCorrected = ofxCv::toCv(depthPixelsCorrected);
-		USHORT *p_rowCorrected;
-		for (int row = 0; row < cvDepthPixelsCorrected.rows; ++row) {
-			p_rowCorrected = cvDepthPixelsCorrected.ptr<USHORT>(row);
-			for (int col = 0; col < cvDepthPixelsCorrected.cols; ++col) {
-				if (row >= (int)roi.getTopLeft().y && row <= (int)roi.getBottomRight().y
-					&& col >= (int)roi.getTopLeft().x && col <= (int)roi.getBottomRight().x) {
-					if (*(p_rowCorrected + col) == 0) {
-						*(p_rowCorrected + col) = *(cvDepthPixelsRoiInpaint.ptr<USHORT>(row-(int)roi.getTopLeft().y) + col - (int)roi.getTopLeft().x);
-					}
-				}
-				else {
-					*(p_rowCorrected + col) = 0;
-				}
-			}
-		}
-		/* !We ensure to have all the needed depth values for the contour */
 
 		ofPolyline depthContour;
 		USHORT depth;
 		for (int i = 0; i < imgContour.size(); ++i) {
-			depth = depthPixelsCorrected[(int)imgContour[i].y*depthPixelsCorrected.getWidth() + (int)imgContour[i].x];
+			depth = depthPixelsFilled[(int)imgContour[i].y*depthPixelsFilled.getWidth() + (int)imgContour[i].x];
 			depthContour.addVertex(imgContour[i].x, imgContour[i].y, (float)depth);
 		}
 		depthContour.close();
@@ -355,7 +292,7 @@ namespace ofDeformationTracking {
 				bZ[i] += mBoundaryWeight*(closestImgPtForce[i].z + imgPtToMeshContourForce[i].z);
 			}
 
-			newDepth = depthPixelsCorrected[(int)Y[i] * depthPixelsCorrected.getWidth() + (int)X[i]];
+			newDepth = depthPixelsFilled[(int)Y[i] * depthPixelsFilled.getWidth() + (int)X[i]];
 			if (newDepth != 0 && abs(newDepth - m_meshAvgDepth) < m_maxDepthDiff) {
 				bZ[i] += mDepthWeight*((float)newDepth - this->getVertex(i).z);
 			}
