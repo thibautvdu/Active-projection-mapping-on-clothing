@@ -81,13 +81,13 @@ class ofApp : public ofBaseApp {
 
 		// GUI	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
-		ofEasyCam mEasyCam;
 		ofxPanel m_gui;
 
 		// Keys
 		bool m_askPause;
 		bool m_askSaveMesh;
 		bool m_askBgLearning;
+		bool m_askBgExport;
 
 		// GUI	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 };

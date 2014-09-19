@@ -83,7 +83,7 @@ void ofApp::setup() {
 	// GUI	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
 	m_gui.setup();
-	m_gui.add(m_bgLearningCycleGui.setup("bg learning iterations", 5, 1, 10));
+	m_gui.add(m_bgLearningCycleGui.setup("bg learning iterations", 10, 1, 50));
 	m_gui.add(m_nearClipGui.setup("near clip",1.500,0,8.000));
 	m_gui.add(m_farClipGui.setup("far clip", 3.000, 0, 8.000));
 
@@ -99,8 +99,18 @@ void ofApp::update() {
 
 	if (m_askSaveMesh) {
 		m_modelBlob.mesh.save("export.ply");
-		ofLog() << "Exported the 3D mesh";
+		ofLogNotice("ofApp::update") << "Exported the 3D mesh";
 		m_askSaveMesh = false;
+	}
+	if (m_askBgExport) {
+		if (m_learntBg) {
+			ofSaveImage(m_depthBg, "background_export.tif");
+			ofLogNotice("ofApp::update") << "Exported the learnt background";
+		}
+		else {
+			ofLogNotice("ofApp::update") << "Can't export the background, press b to learn background";
+		}
+		m_askBgExport = false;
 	}
 	if (m_askPause)
 		return;
@@ -118,34 +128,45 @@ void ofApp::update() {
 	// PROCESS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 	if (mOfxKinect.isFrameNew()) {
 		// Background learning
-			if (m_askBgLearning) {
-				m_bgLearningCycleCount = m_bgLearningCycleGui;
-				m_learntBg = false;
-				m_askBgLearning = false;
+		/*
+		if (m_askBgLearning) {
+			m_bgLearningCycleCount = m_bgLearningCycleGui;
+			m_learntBg = false;
+			m_askBgLearning = false;
 
-				ofLogNotice("ofApp::update()") << "Learning background . . .";
-				m_depthBg = mOfxKinect.getDepthPixels();
+			ofLogNotice("ofApp::update()") << "Learning background . . .";
+			m_depthBg = mOfxKinect.getDepthPixels();
+			m_cvDepthBg = ofxCv::toCv(m_depthBg);
+			--m_bgLearningCycleCount;
+
+			if (m_bgLearningCycleCount == 0) {
+				m_learntBg = true;
+				ofLogNotice("ofApp::update()") << "Background learning complete";
+			}
+		}
+		else if (m_bgLearningCycleCount != 0) {
+			for (int i = 0; i < m_depthBg.getWidth()*m_depthBg.getHeight(); ++i) {
+				if (0 == m_depthBg[i]) {
+					m_depthBg[i] = mOfxKinect.getDepthPixelsRef()[i];
+				}
+			}
+
+			--m_bgLearningCycleCount;
+			if (m_bgLearningCycleCount == 0) {
+				m_learntBg = true;
+				ofLogNotice("ofApp::update()") << "Background learning complete";
+			}
+		}
+		*/
+		if (!m_learntBg) {
+			bool importedPixels = ofLoadImage(m_depthBg, "background_export.tif");
+			if (importedPixels) {
+				m_depthBg.setNumChannels(1);
 				m_cvDepthBg = ofxCv::toCv(m_depthBg);
-				--m_bgLearningCycleCount;
-
-				if (m_bgLearningCycleCount == 0) {
-					m_learntBg = true;
-					ofLogNotice("ofApp::update()") << "Background learning complete";
-				}
+				m_learntBg = true;
+				ofLogNotice("ofApp::update()") << "Imported background";
 			}
-			else if (m_bgLearningCycleCount != 0) {
-				for (int i = 0; i < m_depthBg.getWidth()*m_depthBg.getHeight(); ++i) {
-					if (0 == m_depthBg[i]) {
-						m_depthBg[i] = mOfxKinect.getDepthPixelsRef()[i];
-					}
-				}
-
-				--m_bgLearningCycleCount;
-				if (m_bgLearningCycleCount == 0) {
-					m_learntBg = true;
-					ofLogNotice("ofApp::update()") << "Background learning complete";
-				}
-			}
+		}
 
 		// Point cloud processing
 		if (m_learntBg) {
@@ -171,7 +192,7 @@ void ofApp::update() {
 			finderRes *= finderRes;
 
 			m_blobFinder.findBlobs(&m_bgMask, ofVec3f(-10, -10, -10), ofVec3f(10, 10, 10),
-				ofVec3f(0.05, 0.05, 0.1), 2, 0.06, 0.5, (int)(0.001*m_kinectHeight*m_kinectWidth / finderRes), 2);
+				ofVec3f(0.05, 0.05, 0.1), 2, 0.06, 1.2, (int)(0.001*m_kinectHeight*m_kinectWidth / finderRes), 2);
 
 			m_blobFound = false;
 			if (m_blobFinder.nBlobs != 0) {
@@ -205,20 +226,17 @@ void ofApp::draw() {
 
 		// Bottom Right
 		if (m_blobFound) {
-			mEasyCam.begin();
-			if (!m_askPause) {
-				mEasyCam.setTarget(m_modelBlob.centroid);
-			}
 			ofPushMatrix();
-			ofEnableDepthTest();
-			//ofTranslate(0, 0, -5000);
-			ofScale(1000, 1000, 1000);
-			ofSetColor(ofColor::red);
-			m_modelBlob.mesh.drawWireframe();
-			ofSetColor(ofColor::white);
-			ofDisableDepthTest();
+				ofEnableDepthTest();
+				ofTranslate(m_kinectWidth, m_kinectHeight);
+				ofScale(1000, 1000, 1000);
+				ofTranslate(0, 0, -m_modelBlob.maxZ.z -1);
+				m_modelBlob.mesh.drawVertices();
+				ofTranslate(m_modelBlob.massCenter);
+				ofDrawAxis(0.5f);
+				//ofScale(maxX.x - minX.x, maxY.y - minY.y, maxZ.z - minZ.z);
+				ofDisableDepthTest();
 			ofPopMatrix();
-			mEasyCam.end();
 		}
 
 		// GUI
@@ -269,6 +287,9 @@ void ofApp::keyPressed(int key) {
 	}
 	else if (key == 'b') {
 		m_askBgLearning = true;
+	}
+	else if (key == 'i') {
+		m_askBgExport = true;
 	}
 }
 
