@@ -8,6 +8,7 @@
 #include "ofxKinectCommonBridge.h"
 #include "ofxGui.h"
 #include "ofxKinectProjectorToolkit.h"
+#include "ofxKinectBlobFinder.h"
 #include "ofSemiImplicitActiveMesh.h"
 #include "ofUtilities.h"
 
@@ -26,9 +27,8 @@ class ofApp : public ofBaseApp {
 		void keyPressed(int key);
 
 		/* METHODS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
-		void drawProjectorImage();
-		void ofApp::toProjectorSpace(ofMesh& mesh);
-		void meshParameterizationLSCM(ofMesh& mesh);
+		void toProjectorSpace(ofMesh& mesh);
+		void meshParameterizationLSCM(ofMesh& mesh, int textureSize);
 
 
 		/* VARIABLES	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
@@ -36,8 +36,7 @@ class ofApp : public ofBaseApp {
 		// HARDWARE HANDLERS	/	/	/	/	/	/	/	/	/	/	/	/
 
 		ofxKinectCommonBridge mOfxKinect;
-		int mKinectColorImgWidth, mKinectColorImgHeight;
-		int mKinectDepthImgWidth, mKinectDepthImgHeight;
+		int m_kinectWidth, m_kinectHeight;
 
 		ofxKinectProjectorToolkit mKinectProjectorToolkit;
 		ofUtilities::ofVirtualWindow mProjectorWindow;
@@ -47,59 +46,48 @@ class ofApp : public ofBaseApp {
 
 		// KINECT SCREEN SPACE	/	/	/	/	/	/	/	/	/	/	/	/
 
+		// Background learning
+		ofxIntSlider m_bgLearningCycleGui; int m_bgLearningCycleCount; bool m_learntBg;
+		ofShortPixels m_depthBg;
+		cv::Mat m_cvDepthBg;
+
 		// Background segmentation
-		ofImage mOfSegmentedImg;
-		cv::Mat mCvSegmentedImg;
-		ofRectangle mModelRoi;
-
-		// Cloth segmentation and contour detection
-		ofImage mOfGarmentMask;
-		cv::Mat mCvGarmentMask;
-		ofRectangle mGarmentRoi;
-
-		ofxCv::ContourFinder mContourFinder;
-		ofPolyline mOfGarmentContour;
+		ofImage m_bgMask;
+		cv::Mat m_cvBgMask;
 
 		// KINECT SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
 
 		// KINECT WORLD SPACE	/	/	/	/	/	/	/	/	/	/	/	/
 
-		// Mesh generation
-		ofDeformationTracking::ofSemiImplicitActiveMesh mGarmentGeneratedMesh;
+		// Point cloud
+		ofxFloatSlider m_nearClipGui;
+		ofxFloatSlider m_farClipGui;
+
+		// Blob finder and tracker
+		ofxKinectBlobFinder m_blobFinder;
+		ofxKinectBlob m_modelBlob;
+		bool m_blobFound;
 
 		// KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
 
 		// PROJECTOR SCREEN SPACE	/	/	/	/	/	/	/	/	/	/	/
 
-		ofPolyline projectorGarmentContour;
-
-		// Textures
-		ofImage mChessboardImage;
+		ofPolyline m_projectorGarmentContour;
 
 		// PROJECTOR SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-
 
 
 		// GUI	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
-		ofxPanel mGui;
-		ofxIntSlider mGarmentSegmentationLowH, mGarmentSegmentationLowS, mGarmentSegmentationLowV; // Cloth color segmentation low thresh
-		ofxIntSlider mGarmentSegmentationHighH, mGarmentSegmentationHighS, mGarmentSegmentationHighV; // Cloth color segmentation high thresh
-		ofxIntSlider mOpenKernelSize, mCloseKernelSize; // Morphological operators
-		ofxToggle mMorphoUseEllipse; // Morphological operators
-		ofxIntSlider mGarmentBodyPercent; // Contour 
-
-		ofxFloatSlider mMeshBoundaryWeight;
-		ofxFloatSlider mMeshDepthWeight;
-		ofxFloatSlider mMeshAdaptationRate;
-
 		ofEasyCam mEasyCam;
+		ofxPanel m_gui;
 
 		// Keys
-		bool mPause;
-		bool mSaveMesh;
-		bool mAskRegeneration;
+		bool m_askPause;
+		bool m_askSaveMesh;
+		bool m_askBgLearning;
 
 		// GUI	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 };

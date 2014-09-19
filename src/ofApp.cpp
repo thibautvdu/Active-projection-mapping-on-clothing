@@ -10,10 +10,8 @@ void ofApp::setup() {
 	// HARDWARE INIT	/	/	/	/	/	/	/	/	/	/	/	/
 
 	// Kinect
-	mKinectColorImgWidth = 640;
-	mKinectColorImgHeight = 480;
-	mKinectDepthImgWidth = 640;
-	mKinectDepthImgHeight = 480;
+	m_kinectWidth = 640;
+	m_kinectHeight = 480;
 
 	bool initSensor = mOfxKinect.initSensor();
 	if (!initSensor) {
@@ -21,7 +19,7 @@ void ofApp::setup() {
 		exit();
 	}
 
-	bool initStreams = mOfxKinect.initColorStream(mKinectColorImgWidth, mKinectColorImgHeight) && mOfxKinect.initDepthStream(mKinectDepthImgWidth, mKinectDepthImgHeight, false, true);
+	bool initStreams = mOfxKinect.initColorStream(m_kinectWidth, m_kinectHeight) && mOfxKinect.initDepthStream(m_kinectWidth, m_kinectHeight, false, true);
 	if (!initStreams) {
 		ofLog(OF_LOG_FATAL_ERROR) << "Couldn't init the kinect's color and/or depth streams";
 		exit();
@@ -50,88 +48,62 @@ void ofApp::setup() {
 
 	// KINECT SCREEN SPACE	/	/	/	/	/	/	/	/	/	/	/	/
 
-	// Background segmentation
-	mOfSegmentedImg.setUseTexture(false); // Not meant to be displayed
-	mOfSegmentedImg.allocate(mKinectColorImgWidth, mKinectColorImgHeight, OF_IMAGE_COLOR);
-	mCvSegmentedImg = ofxCv::toCv(mOfSegmentedImg);
-	mOfGarmentMask.allocate(mKinectColorImgWidth, mKinectColorImgHeight, OF_IMAGE_GRAYSCALE);
-	mCvGarmentMask = ofxCv::toCv(mOfGarmentMask);
+	// Background learning
+	m_bgLearningCycleCount = 0;
+	m_askBgLearning = false;
+	m_learntBg = false;
 
-	// Cloth segmentation and contour detection
-	mContourFinder.setAutoThreshold(false);
-	mContourFinder.setFindHoles(false);
-	mContourFinder.setInvert(false);
-	mContourFinder.setSimplify(true);
-	mContourFinder.setSortBySize(true);
-	mContourFinder.setUseTargetColor(false);
+	// Background segmentation
+	m_bgMask.allocate(m_kinectWidth,m_kinectHeight,OF_IMAGE_GRAYSCALE);
+	m_cvBgMask = ofxCv::toCv(m_bgMask);
+
+	// Blob detection
+	m_blobFound = false;
 
 	// KINECT SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
 
 	// KINECT WORLD SPACE	/	/	/	/	/	/	/	/	/	/	/	/
 
-	// Mesh
-	mGarmentGeneratedMesh = ofDeformationTracking::ofSemiImplicitActiveMesh(30, 30);
+	// Blob finder and tracker
+	m_blobFinder.init(&mOfxKinect, false); // standarized coordinate system: z in the direction of gravity
+	m_blobFinder.setResolution(BF_HIGH_RES);
+	m_blobFinder.setRotation(ofVec3f(0, 0, 0));
+	m_blobFinder.setTranslation(ofVec3f(0, 0, 0));
+	m_blobFinder.setScale(ofVec3f(0.001, 0.001, 0.001)); // mm to meters
 
 	// KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
 
 	// PROJECTOR SCREEN SPACE	/	/	/	/	/	/	/	/	/	/	/
 
-	// Textures
-	mChessboardImage.loadImage("chessboard.png");
-
 	// PROJECTOR SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-
 
 
 	// GUI	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
-	mGui.setup();
-	mGui.add(mGarmentSegmentationLowH.setup("low hue thresh", 70, 0, 179));
-	mGui.add(mGarmentSegmentationLowS.setup("low saturation thresh", 0, 0, 255));
-	mGui.add(mGarmentSegmentationLowV.setup("low value thresh", 40, 0, 255));
-	mGui.add(mGarmentSegmentationHighH.setup("high hue thresh", 120, 0, 179));
-	mGui.add(mGarmentSegmentationHighS.setup("high saturation thresh", 95, 0, 255));
-	mGui.add(mGarmentSegmentationHighV.setup("high value thresh", 255, 0, 255));
-	mGui.add(mOpenKernelSize.setup("opening kernel size", 5, 1, 9));
-	mGui.add(mCloseKernelSize.setup("closing kernel size", 9, 1, 9));
-	mGui.add(mMorphoUseEllipse.setup("ellipse for morpho operations",false));
-	mGui.add(mGarmentBodyPercent.setup("percent of clothing on body", 20, 0, 100)); // 30% is a good value for a t-shirt
-	mGui.add(mMeshBoundaryWeight.setup("tracking mesh boundary weight", 0, 0.1, 2));
-	mGui.add(mMeshDepthWeight.setup("tracking mesh depth weight", 0, 0.1, 5));
-	mGui.add(mMeshAdaptationRate.setup("tracking mesh adaptation rate", 5, 1, 10));
-	
+	m_gui.setup();
+	m_gui.add(m_bgLearningCycleGui.setup("bg learning iterations", 5, 1, 10));
+	m_gui.add(m_nearClipGui.setup("near clip",1.500,0,8.000));
+	m_gui.add(m_farClipGui.setup("far clip", 3.000, 0, 8.000));
+
 	// Keys
-	mPause = false;
-	mSaveMesh = false;
-	mAskRegeneration = false;
+	m_askPause = false;
+	m_askSaveMesh = false;
 
 	// GUI	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
-
-	mOfGarmentMask.loadImage("full_mask.tif");
-	mOfGarmentMask.setImageType(OF_IMAGE_GRAYSCALE);
 }
 
 void ofApp::update() {
 	// EVENTS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
-	if (mSaveMesh) {
-		//mGarmentGeneratedMesh.save("export.ply");
-		mGarmentGeneratedMesh.getWorldMeshRef().save("export.ply");
+	if (m_askSaveMesh) {
+		m_modelBlob.mesh.save("export.ply");
 		ofLog() << "Exported the 3D mesh";
-		mSaveMesh = false;
+		m_askSaveMesh = false;
 	}
-	if (mPause)
+	if (m_askPause)
 		return;
-	if (abs(mGarmentGeneratedMesh.getBoundaryWeight() - mMeshBoundaryWeight) > 0.001) {
-		mGarmentGeneratedMesh.setBoundaryWeight(mMeshBoundaryWeight);
-	}
-	if (abs(mGarmentGeneratedMesh.getDepthWeight() - mMeshDepthWeight) > 0.001) {
-		mGarmentGeneratedMesh.setDepthWeight(mMeshDepthWeight);
-	}
-	if (abs(mGarmentGeneratedMesh.getAdaptationRate() - mMeshAdaptationRate) > 0.001) {
-		mGarmentGeneratedMesh.setAdaptationRate(mMeshAdaptationRate);
-	}
 
 	// EVENTS	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -143,106 +115,75 @@ void ofApp::update() {
 	// HARDWARE	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 
 
-	// Model ROI
-	mModelRoi = ofRectangle(mOfSegmentedImg.width, mOfSegmentedImg.height, 0, 0);
-	int modelRoiXBottomRight = 0, modelRoiYBottomRight = 0;
-	int modelBodyPixelsCount = 0; // Used to discriminate contours, more robust than bounding box if the model extend their arms, etc.
+	// PROCESS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
+	if (mOfxKinect.isFrameNew()) {
+		// Background learning
+			if (m_askBgLearning) {
+				m_bgLearningCycleCount = m_bgLearningCycleGui;
+				m_learntBg = false;
+				m_askBgLearning = false;
 
-	// Segmentation from the skeleton
-	if (/*mOfxKinect.isNewSkeleton()*/ 1) {
-		ofShortPixels depthPlayerPixel = mOfxKinect.getDepthPlayerPixelsRef(); // The kinect segmentation map
+				ofLogNotice("ofApp::update()") << "Learning background . . .";
+				m_depthBg = mOfxKinect.getDepthPixels();
+				m_cvDepthBg = ofxCv::toCv(m_depthBg);
+				--m_bgLearningCycleCount;
 
-		for (int x = 0; x < mOfSegmentedImg.width; ++x) {
-			for (int y = 0; y < mOfSegmentedImg.height; ++y) {
-				USHORT playerId = depthPlayerPixel[x + y*mOfSegmentedImg.width];
-
-				if (playerId != 0) {
-					ofColor bgra = mOfxKinect.getColorPixelsRef().getColor(x, y);
-					mOfSegmentedImg.setColor(x, y, ofColor(bgra.b, bgra.g, bgra.r));
-
-					// Update the ROI
-					mModelRoi.x = (x < mModelRoi.x) ? x : mModelRoi.x;
-					mModelRoi.y = (y < mModelRoi.y) ? y : mModelRoi.y;
-					modelRoiXBottomRight = (x > modelRoiXBottomRight) ? x : modelRoiXBottomRight;
-					modelRoiYBottomRight = (y > modelRoiYBottomRight) ? y : modelRoiYBottomRight;
-					modelBodyPixelsCount++;
-				}
-				else {
-					mOfSegmentedImg.setColor(x, y, ofColor::black);
+				if (m_bgLearningCycleCount == 0) {
+					m_learntBg = true;
+					ofLogNotice("ofApp::update()") << "Background learning complete";
 				}
 			}
-		}
-	
-		// Cloth segmentation and contour acquisition
-		if (/*modelBodyPixelsCount != 0*/ 1) {
-			// Update the ROI information of the model
-			//mModelRoi.width = modelRoiXBottomRight - mModelRoi.x;
-			//mModelRoi.height = modelRoiYBottomRight - mModelRoi.y;
-			//cv::Mat cvSegmentedImgRoi = mCvSegmentedImg(ofxCv::toCv(mModelRoi));
-			//cv::Mat cvGarmentMaskRoi = mCvGarmentMask(ofxCv::toCv(mModelRoi));
+			else if (m_bgLearningCycleCount != 0) {
+				for (int i = 0; i < m_depthBg.getWidth()*m_depthBg.getHeight(); ++i) {
+					if (0 == m_depthBg[i]) {
+						m_depthBg[i] = mOfxKinect.getDepthPixelsRef()[i];
+					}
+				}
 
-			// OPENCV
-			/*
-			// Color segmentation
-			cv::Mat cvSegmentedImgHsv;
-			cv::cvtColor(cvSegmentedImgRoi, cvSegmentedImgHsv, CV_RGB2HSV);
-			cv::inRange(cvSegmentedImgHsv, cv::Scalar(mGarmentSegmentationLowH, mGarmentSegmentationLowS, mGarmentSegmentationLowV), cv::Scalar(mGarmentSegmentationHighH, mGarmentSegmentationHighS, mGarmentSegmentationHighV), cvGarmentMaskRoi);
-
-			// Morphological opening (remove small objects) and closing (fill small holes)
-			cv::Mat openingOperator = cv::getStructuringElement(mMorphoUseEllipse ? cv::MORPH_ELLIPSE : cv::MORPH_RECT, cv::Size(mOpenKernelSize, mOpenKernelSize));
-			cv::Mat closingOperator = cv::getStructuringElement(mMorphoUseEllipse ? cv::MORPH_ELLIPSE : cv::MORPH_RECT, cv::Size(mCloseKernelSize, mCloseKernelSize));
-			cv::morphologyEx(cvGarmentMaskRoi, cvGarmentMaskRoi, cv::MORPH_OPEN, openingOperator);
-			cv::morphologyEx(cvGarmentMaskRoi, cvGarmentMaskRoi, cv::MORPH_CLOSE, closingOperator);
-			// !OPENCV
-			*/
-
-			// Find the biggest correct contour
-			mContourFinder.setMinArea(modelBodyPixelsCount*mGarmentBodyPercent / 100.f);
-			//mContourFinder.findContours(cvGarmentMaskRoi);
-			mContourFinder.findContours(mCvGarmentMask);
-			if (mContourFinder.getContours().size() != 0) {
-				mOfGarmentContour = mContourFinder.getPolyline(0);
-				/*
-				for (int i = 0; i < mOfGarmentContour.size(); ++i) {
-					mOfGarmentContour[i] += mModelRoi.getTopLeft();
-				}*/
-
-				mOfGarmentMask.setColor(ofColor::black); // reset the mask as opencv only draw on the ROI
-				//ofxCv::fillPoly(mContourFinder.getContour(0), cvGarmentMaskRoi);
-				ofxCv::fillPoly(mContourFinder.getContour(0), mCvGarmentMask);
-
-				// Update the ROI information of the garment
-				mGarmentRoi = mOfGarmentContour.getBoundingBox();
-
-				drawProjectorImage();
-			}
-			else {
-				ofLog(OF_LOG_ERROR) << "Couldn't retrieve big enough contour";
-				mOfGarmentContour.clear();
-			}
-		}
-		else {
-			ofLog(OF_LOG_ERROR) << "Found skeleton but couldn't detect garment";
-			mOfGarmentContour.clear();
-		}
-
-		// Generate the mesh
-		if (mOfGarmentContour.size() != 0) {
-			if (mAskRegeneration) {
-				mGarmentGeneratedMesh.generateMesh(mOfGarmentContour, mOfGarmentMask.getPixelsRef(), mOfxKinect);
-				//computeNormals(mGarmentGeneratedMesh, true);
-				mAskRegeneration = false;
-			}
-			else if (mGarmentGeneratedMesh.isGenerated()) {
-				mGarmentGeneratedMesh.updateMesh(mOfGarmentContour,mOfGarmentMask.getPixelsRef(),mOfxKinect);
-				if (mGarmentGeneratedMesh.getWorldMeshRef().getNumTexCoords() == 0) {
-					meshParameterizationLSCM(mGarmentGeneratedMesh.getWorldMeshRef());
+				--m_bgLearningCycleCount;
+				if (m_bgLearningCycleCount == 0) {
+					m_learntBg = true;
+					ofLogNotice("ofApp::update()") << "Background learning complete";
 				}
 			}
+
+		// Point cloud processing
+		if (m_learntBg) {
+			// Background removal
+			cv::Mat diff;
+			cv::absdiff(m_cvDepthBg, ofxCv::toCv(mOfxKinect.getDepthPixelsRef()), diff);
+			for (int row = 0; row < m_kinectHeight; ++row) {
+				for (int col = 0; col < m_kinectWidth; ++col) {
+					if (mOfxKinect.getDepthPixelsRef()[row*m_kinectWidth + col] != 0)
+						*(m_cvBgMask.ptr<UCHAR>(row) +col) = min(*(diff.ptr<USHORT>(row) +col) / 10, 255); // to cm
+					else
+						*(m_cvBgMask.ptr<UCHAR>(row) +col) = 0;
+				}
+			}
+			cv::Mat kernel = cv::getStructuringElement(CV_SHAPE_RECT, cv::Size(3, 3));
+			cv::erode(m_cvBgMask, m_cvBgMask, kernel);
+			cv::dilate(m_cvBgMask, m_cvBgMask, kernel);
+			cv::threshold(m_cvBgMask, m_cvBgMask, 10, 255, CV_THRESH_BINARY);
+			m_bgMask.update();
+
+			// Blob detection
+			float finderRes = m_blobFinder.getResolution();
+			finderRes *= finderRes;
+
+			m_blobFinder.findBlobs(&m_bgMask, ofVec3f(-10, -10, -10), ofVec3f(10, 10, 10),
+				ofVec3f(0.05, 0.05, 0.1), 2, 0.06, 0.5, (int)(0.001*m_kinectHeight*m_kinectWidth / finderRes), 2);
+
+			m_blobFound = false;
+			if (m_blobFinder.nBlobs != 0) {
+				m_modelBlob = m_blobFinder.blobs[0];
+				for (int i = 1; i < m_blobFinder.nBlobs; ++i) {
+					m_modelBlob = m_modelBlob.volume < m_blobFinder.blobs[i].volume ? m_blobFinder.blobs[i] : m_modelBlob;
+				}
+				m_blobFound = true;
+			}
 		}
-		mOfSegmentedImg.update();
-		mOfGarmentMask.update();
-	} // mOfxKinect.isNewSkeleton()
+	}
+	// PROCESS	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 }
 
 void ofApp::draw() {
@@ -250,49 +191,44 @@ void ofApp::draw() {
 
 		// COMPUTER SCREEN	/	/	/	/	/	/	/	/	/	/	/	/	/
 
-		ofBackground(ofColor::white);
+		ofBackground(ofColor::grey);
 		mProjectorWindow.background(ofColor::black);
 
 		// Top Left
 		mOfxKinect.draw(0, 0);
 
-		ofSetColor(ofColor::blue);
-		mOfGarmentContour.draw();
-		//mGarmentGeneratedMesh.drawWireframe();
-		ofSetColor(255);
-
 		// Top Right
-		mOfxKinect.drawDepth(mKinectColorImgWidth, 0);
+		mOfxKinect.drawDepth(m_kinectWidth, 0);
 
 		// Bottom Left
-		mOfGarmentMask.draw(0, mKinectColorImgHeight);
+		m_bgMask.draw(0, m_kinectHeight);
 
 		// Bottom Right
-		if (mGarmentGeneratedMesh.hasVertices()) {
-			ofMesh worldMesh = mGarmentGeneratedMesh.getWorldMeshRef();
+		if (m_blobFound) {
 			mEasyCam.begin();
-			if (!mPause) {
-				mEasyCam.setTarget(worldMesh.getCentroid());
+			if (!m_askPause) {
+				mEasyCam.setTarget(m_modelBlob.centroid);
 			}
 			ofPushMatrix();
-				ofTranslate(mKinectColorImgWidth, mKinectColorImgHeight);
-				ofEnableDepthTest();
-				//mChessboardImage.bind();
-				worldMesh.drawWireframe();
-				//mChessboardImage.unbind();
-				ofDisableDepthTest();
+			ofEnableDepthTest();
+			//ofTranslate(0, 0, -5000);
+			ofScale(1000, 1000, 1000);
+			ofSetColor(ofColor::red);
+			m_modelBlob.mesh.drawWireframe();
+			ofSetColor(ofColor::white);
+			ofDisableDepthTest();
 			ofPopMatrix();
 			mEasyCam.end();
 		}
 
 		// GUI
-		mGui.draw();
+		m_gui.draw();
 
 		// COMPUTER SCREEN	-	-	-	-	-	-	-	-	-	-	-	-	-
 
 		 
 		// PROJECTOR SCREEN	/	/	/	/	/	/	/	/	/	/	/	/	/
-
+		/*
 		if (mOfGarmentContour.size() != 0) {
 			mGarmentGeneratedMesh.computeWorldMesh(mOfxKinect);
 			ofMesh worldMesh = mGarmentGeneratedMesh.getWorldMeshRef();
@@ -301,14 +237,14 @@ void ofApp::draw() {
 			mChessboardImage.bind();
 			worldMesh.draw();
 			mChessboardImage.unbind();
-			/*
+
 				ofPath projectorGarmentPath = ofUtilities::polylineToPath(projectorGarmentContour);
 				projectorGarmentPath.setFilled(true);
 				projectorGarmentPath.setFillColor(ofColor::red);
 				projectorGarmentPath.draw();
-			*/
+
 			mProjectorWindow.end();
-		}
+		}*/
 
 		// PROJECTOR SCREEN	-	-	-	-	-	-	-	-	-	-	-	-	-
 	}
@@ -321,17 +257,18 @@ void ofApp::exit() {
 }
 
 void ofApp::mousePressed(int x, int y, int button) {
-	if (button == OF_MOUSE_BUTTON_MIDDLE) {
-		mSaveMesh = true;
-	}
+
 }
 
 void ofApp::keyPressed(int key) {
 	if (key == ' ') {
-		mPause = !mPause;
+		m_askPause = !m_askPause;
 	}
-	else if (key == 'g') {
-		mAskRegeneration = true;
+	else if (key == 's') {
+		m_askSaveMesh = true;
+	}
+	else if (key == 'b') {
+		m_askBgLearning = true;
 	}
 }
 
@@ -339,36 +276,6 @@ void ofApp::keyPressed(int key) {
 
 
 /* METHODS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
-
-void ofApp::drawProjectorImage() {
-	projectorGarmentContour.clear();
-	ofVec2f projectorCoordinates;
-
-	std::vector<ofVec3f> worldPoints;
-	ofVec3f worldPoint;
-	float averageDepth = 0;
-	for (int i = 0; i < mOfGarmentContour.size(); ++i) {
-		worldPoint = mOfxKinect.getWorldCoordinates(mOfGarmentContour[i].x, mOfGarmentContour[i].y);
-
-		if (abs(worldPoint.z) > 0.1) {
-			worldPoints.push_back(worldPoint);
-			averageDepth += worldPoint.z;
-		}
-	}
-	averageDepth /= worldPoints.size();
-
-	for (int i = 0; i < worldPoints.size(); ++i) {
-		if (abs(worldPoints[i].z - averageDepth) < 500) {
-			projectorCoordinates = mKinectProjectorToolkit.getProjectedPoint(worldPoints[i]);
-
-			projectorCoordinates.x = ofMap(projectorCoordinates.x, 0, 1, 0, mProjectorWindow.getWidth());
-			projectorCoordinates.y = ofMap(projectorCoordinates.y, 0, 1, 0, mProjectorWindow.getHeight());
-
-			projectorGarmentContour.addVertex(projectorCoordinates);
-		}
-	}
-	projectorGarmentContour.close();
-}
 
 void ofApp::toProjectorSpace(ofMesh& mesh) {
 	ofVec2f projectorCoordinates;
@@ -383,7 +290,7 @@ void ofApp::toProjectorSpace(ofMesh& mesh) {
 	}
 }
 
-void ofApp::meshParameterizationLSCM(ofMesh& mesh) {
+void ofApp::meshParameterizationLSCM(ofMesh& mesh, int textureSize) {
 	mesh.enableTextures();
 	ofVec2f* texCoords = new ofVec2f[mesh.getNumVertices()];
 	mesh.addTexCoords(texCoords, mesh.getNumVertices());
@@ -394,7 +301,6 @@ void ofApp::meshParameterizationLSCM(ofMesh& mesh) {
 	float uRange = std::abs(lscm.umax - lscm.umin);
 	float vRange = std::abs(lscm.vmax - lscm.vmin);
 	float maxRange = std::max(uRange, vRange);
-	int textureSize = mChessboardImage.getTextureReference().getWidth();
 	ofVec2f outputRange(textureSize*uRange / maxRange, textureSize*vRange / maxRange);
 
 	for (int i = 0; i < mesh.getNumVertices(); ++i) {

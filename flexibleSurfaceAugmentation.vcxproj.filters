@@ -112,6 +112,9 @@
     <ClCompile Include="src\ofUtilities.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxKinectBlobFinder\src\ofxKinectBlobFinder.cpp">
+      <Filter>addons\ofxKinectBlobFinder\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -389,6 +392,12 @@
     </Filter>
     <Filter Include="addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack">
       <UniqueIdentifier>{c935a0dc-dfd0-408d-822e-553e8dbd17e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxKinectBlobFinder">
+      <UniqueIdentifier>{2c6208e6-6bf9-46d0-bfcc-48116f2c08db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxKinectBlobFinder\src">
+      <UniqueIdentifier>{9805fdc1-a5bd-4eac-8d51-cc8e969536a8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1771,6 +1780,12 @@
     </ClInclude>
     <ClInclude Include="src\ofUtilities.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectBlobFinder\src\ofxKinectBlob.h">
+      <Filter>addons\ofxKinectBlobFinder\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxKinectBlobFinder\src\ofxKinectBlobFinder.h">
+      <Filter>addons\ofxKinectBlobFinder\src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
