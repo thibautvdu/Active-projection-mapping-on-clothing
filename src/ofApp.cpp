@@ -89,7 +89,8 @@ void ofApp::setup() {
 
 	// Keys
 	m_askPause = false;
-	m_askSaveMesh = false;
+	m_askSaveAssets = false;
+	m_askBgExport = false;
 
 	// GUI	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 }
@@ -97,10 +98,12 @@ void ofApp::setup() {
 void ofApp::update() {
 	// EVENTS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
-	if (m_askSaveMesh) {
-		m_modelBlob.mesh.save("export.ply");
-		ofLogNotice("ofApp::update") << "Exported the 3D mesh";
-		m_askSaveMesh = false;
+	if (m_askSaveAssets) {
+		m_modelBlob.mesh.save("mesh_export.ply");
+		ofSaveImage(mOfxKinect.getColorPixelsRef(), "color_ir_export.tif");
+		ofSaveImage(mOfxKinect.getDepthPixelsRef(), "depth_export.tif");
+		ofLogNotice("ofApp::update") << "Exported the 3D mesh, IR/color and depth image";
+		m_askSaveAssets = false;
 	}
 	if (m_askBgExport) {
 		if (m_learntBg) {
@@ -283,7 +286,7 @@ void ofApp::keyPressed(int key) {
 		m_askPause = !m_askPause;
 	}
 	else if (key == 's') {
-		m_askSaveMesh = true;
+		m_askSaveAssets = true;
 	}
 	else if (key == 'b') {
 		m_askBgLearning = true;

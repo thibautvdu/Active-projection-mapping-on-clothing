@@ -85,7 +85,7 @@ class ofApp : public ofBaseApp {
 
 		// Keys
 		bool m_askPause;
-		bool m_askSaveMesh;
+		bool m_askSaveAssets;
 		bool m_askBgLearning;
 		bool m_askBgExport;
 
