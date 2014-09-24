@@ -494,6 +494,7 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
     <ClInclude Include="src\cvHelper.h" />
     <ClInclude Include="src\lscm.h" />
     <ClInclude Include="src\lscmUtilities.h" />
+    <ClInclude Include="src\ofFastMesh.h" />
     <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvBlob.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenCv\src\ofxCvColorImage.h" />
@@ -650,6 +651,8 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
     <None Include="..\..\..\addons\ofxEigen\Eigen\SuperLUSupport" />
     <None Include="..\..\..\addons\ofxEigen\Eigen\SVD" />
     <None Include="..\..\..\addons\ofxEigen\Eigen\UmfPackSupport" />
+    <None Include="bin\data\shaders\toProjector.frag" />
+    <None Include="bin\data\shaders\toProjector.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

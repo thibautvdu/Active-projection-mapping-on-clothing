@@ -35,11 +35,13 @@ class ofApp : public ofBaseApp {
 
 		// HARDWARE HANDLERS	/	/	/	/	/	/	/	/	/	/	/	/
 
-		ofxKinectCommonBridge mOfxKinect;
+		ofxKinectCommonBridge m_ofxKinect;
 		int m_kinectWidth, m_kinectHeight;
 
-		ofxKinectProjectorToolkit mKinectProjectorToolkit;
-		ofUtilities::ofVirtualWindow mProjectorWindow;
+		ofxKinectProjectorToolkit m_kinectProjectorToolkit;
+		ofUtilities::ofVirtualWindow m_projectorWindow;
+
+		ofShader m_shader;
 
 		// HARDWARE HANDLERS	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -55,6 +57,12 @@ class ofApp : public ofBaseApp {
 		ofImage m_bgMask;
 		cv::Mat m_cvBgMask;
 
+		// Garment segmentation
+		ofImage m_garmentSeg;
+		cv::Mat m_cvGarmentSeg;
+		ofxIntSlider m_cannyThresh1;
+		ofxIntSlider m_cannyThresh2;
+
 		// KINECT SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
 
@@ -66,7 +74,7 @@ class ofApp : public ofBaseApp {
 
 		// Blob finder and tracker
 		ofxKinectBlobFinder m_blobFinder;
-		ofxKinectBlob m_modelBlob;
+		ofxKinectBlob* m_modelBlob;
 		bool m_blobFound;
 
 		// KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-
@@ -74,7 +82,7 @@ class ofApp : public ofBaseApp {
 
 		// PROJECTOR SCREEN SPACE	/	/	/	/	/	/	/	/	/	/	/
 
-		ofPolyline m_projectorGarmentContour;
+		ofImage m_chessboardImage;
 
 		// PROJECTOR SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-
 
@@ -88,6 +96,9 @@ class ofApp : public ofBaseApp {
 		bool m_askSaveAssets;
 		bool m_askBgLearning;
 		bool m_askBgExport;
+
+		// FPS
+		ofxLabel m_fpsGui;
 
 		// GUI	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 };

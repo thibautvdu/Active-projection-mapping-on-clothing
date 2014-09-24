@@ -399,6 +399,9 @@
     <Filter Include="addons\ofxKinectBlobFinder\src">
       <UniqueIdentifier>{9805fdc1-a5bd-4eac-8d51-cc8e969536a8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\shaders">
+      <UniqueIdentifier>{d0fd54cc-e453-43ef-a9c6-b6ce79afd805}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofApp.h">
@@ -1787,6 +1790,9 @@
     <ClInclude Include="..\..\..\addons\ofxKinectBlobFinder\src\ofxKinectBlobFinder.h">
       <Filter>addons\ofxKinectBlobFinder\src</Filter>
     </ClInclude>
+    <ClInclude Include="src\ofFastMesh.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />
@@ -1887,6 +1893,12 @@
     </None>
     <None Include="..\..\..\addons\ofxEigen\Eigen\Householder">
       <Filter>addons\ofxEigen\Eigen</Filter>
+    </None>
+    <None Include="bin\data\shaders\toProjector.frag">
+      <Filter>src\shaders</Filter>
+    </None>
+    <None Include="bin\data\shaders\toProjector.vert">
+      <Filter>src\shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

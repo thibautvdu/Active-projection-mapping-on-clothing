@@ -13,27 +13,27 @@ void ofApp::setup() {
 	m_kinectWidth = 640;
 	m_kinectHeight = 480;
 
-	bool initSensor = mOfxKinect.initSensor();
+	bool initSensor = m_ofxKinect.initSensor();
 	if (!initSensor) {
 		ofLog(OF_LOG_FATAL_ERROR) << "Couldn't init the kinect's sensor";
 		exit();
 	}
 
-	bool initStreams = mOfxKinect.initColorStream(m_kinectWidth, m_kinectHeight) && mOfxKinect.initDepthStream(m_kinectWidth, m_kinectHeight, false, true);
+	bool initStreams = m_ofxKinect.initColorStream(m_kinectWidth, m_kinectHeight) && m_ofxKinect.initDepthStream(m_kinectWidth, m_kinectHeight, false, true);
 	if (!initStreams) {
 		ofLog(OF_LOG_FATAL_ERROR) << "Couldn't init the kinect's color and/or depth streams";
 		exit();
 	}
 
-	bool kinectStarted = mOfxKinect.start();
+	bool kinectStarted = m_ofxKinect.start();
 	if (!kinectStarted) {
 		ofLog(OF_LOG_FATAL_ERROR) << "Couldn't start the kinect";
 		exit();
 	}
 
 	// Projector
-	mKinectProjectorToolkit.loadCalibration("calibration.xml");
-	mProjectorWindow = ofUtilities::ofVirtualWindow(1920, 0, 1024, 768);
+	m_projectorWindow = ofUtilities::ofVirtualWindow(1920, 0, 1024, 768);
+	m_kinectProjectorToolkit.loadCalibration("cal.xml", m_projectorWindow.getWidth(), m_projectorWindow.getHeight());
 
 	// HARDWARE INIT	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -42,6 +42,7 @@ void ofApp::setup() {
 
 	ofDisableAlphaBlending();
 	ofSetFrameRate(30);
+	m_shader.load("shaders/toProjector.vert", "shaders/toProjector.frag");
 
 	// OPEN GL	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -60,22 +61,28 @@ void ofApp::setup() {
 	// Blob detection
 	m_blobFound = false;
 
+	// Garment segmentation
+	m_garmentSeg.allocate(m_kinectWidth, m_kinectHeight, OF_IMAGE_GRAYSCALE);
+	m_cvGarmentSeg = ofxCv::toCv(m_garmentSeg);
+
 	// KINECT SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
 
 	// KINECT WORLD SPACE	/	/	/	/	/	/	/	/	/	/	/	/
 
 	// Blob finder and tracker
-	m_blobFinder.init(&mOfxKinect, false); // standarized coordinate system: z in the direction of gravity
-	m_blobFinder.setResolution(BF_HIGH_RES);
+	m_blobFinder.init(&m_ofxKinect, false); // standarized coordinate system: z in the direction of gravity
+	m_blobFinder.setResolution(BF_MEDIUM_RES);
 	m_blobFinder.setRotation(ofVec3f(0, 0, 0));
 	m_blobFinder.setTranslation(ofVec3f(0, 0, 0));
-	m_blobFinder.setScale(ofVec3f(0.001, 0.001, 0.001)); // mm to meters
+	m_blobFinder.setScale(ofVec3f(0.001,0.001,0.001)); // mm to meters
 
 	// KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
 
 	// PROJECTOR SCREEN SPACE	/	/	/	/	/	/	/	/	/	/	/
+
+	m_chessboardImage.loadImage("chessboard.png");
 
 	// PROJECTOR SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-
 
@@ -86,11 +93,16 @@ void ofApp::setup() {
 	m_gui.add(m_bgLearningCycleGui.setup("bg learning iterations", 10, 1, 50));
 	m_gui.add(m_nearClipGui.setup("near clip",1.500,0,8.000));
 	m_gui.add(m_farClipGui.setup("far clip", 3.000, 0, 8.000));
+	m_gui.add(m_cannyThresh1.setup("canny thres 1", 0, 0, 255));
+	m_gui.add(m_cannyThresh2.setup("canny thres 2", 0, 0, 255));
 
 	// Keys
 	m_askPause = false;
 	m_askSaveAssets = false;
 	m_askBgExport = false;
+
+	// FPS
+	m_gui.add(m_fpsGui.setup(std::string("fps :")));
 
 	// GUI	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 }
@@ -99,9 +111,9 @@ void ofApp::update() {
 	// EVENTS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
 	if (m_askSaveAssets) {
-		m_modelBlob.mesh.save("mesh_export.ply");
-		ofSaveImage(mOfxKinect.getColorPixelsRef(), "color_ir_export.tif");
-		ofSaveImage(mOfxKinect.getDepthPixelsRef(), "depth_export.tif");
+		m_modelBlob->mesh.save("mesh_export.ply");
+		ofSaveImage(m_ofxKinect.getColorPixelsRef(), "color_ir_export.tif");
+		ofSaveImage(m_ofxKinect.getDepthPixelsRef(), "depth_export.tif");
 		ofLogNotice("ofApp::update") << "Exported the 3D mesh, IR/color and depth image";
 		m_askSaveAssets = false;
 	}
@@ -123,13 +135,13 @@ void ofApp::update() {
 
 	// HARDWARE	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
-	mOfxKinect.update();
+	m_ofxKinect.update();
 
 	// HARDWARE	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 
 
 	// PROCESS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
-	if (mOfxKinect.isFrameNew()) {
+	if (m_ofxKinect.isFrameNew()) {
 		// Background learning
 		/*
 		if (m_askBgLearning) {
@@ -175,19 +187,26 @@ void ofApp::update() {
 		if (m_learntBg) {
 			// Background removal
 			cv::Mat diff;
-			cv::absdiff(m_cvDepthBg, ofxCv::toCv(mOfxKinect.getDepthPixelsRef()), diff);
+			cv::Mat currentDepth = ofxCv::toCv(m_ofxKinect.getDepthPixelsRef());
+			cv::absdiff(m_cvDepthBg, currentDepth, diff);
+			UCHAR *p_maskRow;
+			USHORT *p_diffRow;
+			USHORT *p_depth;
 			for (int row = 0; row < m_kinectHeight; ++row) {
+				p_maskRow = m_cvBgMask.ptr<UCHAR>(row);
+				p_diffRow = diff.ptr<USHORT>(row);
+				p_depth = currentDepth.ptr<USHORT>(row);
 				for (int col = 0; col < m_kinectWidth; ++col) {
-					if (mOfxKinect.getDepthPixelsRef()[row*m_kinectWidth + col] != 0)
-						*(m_cvBgMask.ptr<UCHAR>(row) +col) = min(*(diff.ptr<USHORT>(row) +col) / 10, 255); // to cm
+					if (*(p_depth + col) != 0)
+						*(p_maskRow + col) = *(p_diffRow + col) / 10; // to cm
 					else
-						*(m_cvBgMask.ptr<UCHAR>(row) +col) = 0;
+						*(p_maskRow + col) = 0;
 				}
 			}
-			cv::Mat kernel = cv::getStructuringElement(CV_SHAPE_RECT, cv::Size(3, 3));
+			cv::Mat kernel = cv::getStructuringElement(CV_SHAPE_RECT, cv::Size(11, 11));
 			cv::erode(m_cvBgMask, m_cvBgMask, kernel);
 			cv::dilate(m_cvBgMask, m_cvBgMask, kernel);
-			cv::threshold(m_cvBgMask, m_cvBgMask, 10, 255, CV_THRESH_BINARY);
+			cv::threshold(m_cvBgMask, m_cvBgMask, 20, 255, CV_THRESH_BINARY);
 			m_bgMask.update();
 
 			// Blob detection
@@ -195,15 +214,27 @@ void ofApp::update() {
 			finderRes *= finderRes;
 
 			m_blobFinder.findBlobs(&m_bgMask, ofVec3f(-10, -10, -10), ofVec3f(10, 10, 10),
-				ofVec3f(0.05, 0.05, 0.1), 2, 0.06, 1.2, (int)(0.001*m_kinectHeight*m_kinectWidth / finderRes), 2);
+				ofVec3f(0.05, 0.05, 0.1), 2, 0.06, 1.2, (int)(0.001*m_kinectHeight*m_kinectWidth / finderRes), 1);
 
 			m_blobFound = false;
 			if (m_blobFinder.nBlobs != 0) {
 				m_modelBlob = m_blobFinder.blobs[0];
 				for (int i = 1; i < m_blobFinder.nBlobs; ++i) {
-					m_modelBlob = m_modelBlob.volume < m_blobFinder.blobs[i].volume ? m_blobFinder.blobs[i] : m_modelBlob;
+					m_modelBlob = m_modelBlob->volume < m_blobFinder.blobs[i]->volume ? m_blobFinder.blobs[i] : m_modelBlob;
 				}
 				m_blobFound = true;
+			}
+
+			if (m_blobFound) {
+				//ofUtilities::computeNormals(m_modelBlob->mesh, false);
+
+				// Segmenting the garment on the body
+				//ofImage grayStream;
+				//grayStream.setFromPixels(m_ofxKinect.getColorPixelsRef());
+				//cv::Mat cvGrayStream = ofxCv::toCv(grayStream);
+				//cv::cvtColor(cvGrayStream, cvGrayStream, CV_RGB2GRAY);
+				//cv::Canny(cvGrayStream, m_cvGarmentSeg, m_cannyThresh1, m_cannyThresh2);
+				//m_garmentSeg.update();
 			}
 		}
 	}
@@ -211,31 +242,32 @@ void ofApp::update() {
 }
 
 void ofApp::draw() {
-	if (mOfxKinect.isFrameNew()) {
-
+	if (m_ofxKinect.isFrameNew()) {
 		// COMPUTER SCREEN	/	/	/	/	/	/	/	/	/	/	/	/	/
 
 		ofBackground(ofColor::grey);
-		mProjectorWindow.background(ofColor::black);
+		m_projectorWindow.background(ofColor::black);
 
 		// Top Left
-		mOfxKinect.draw(0, 0);
+		m_ofxKinect.draw(0, 0);
 
 		// Top Right
-		mOfxKinect.drawDepth(m_kinectWidth, 0);
+		m_ofxKinect.drawDepth(m_kinectWidth, 0);
 
 		// Bottom Left
 		m_bgMask.draw(0, m_kinectHeight);
 
 		// Bottom Right
 		if (m_blobFound) {
+			//m_garmentSeg.draw(m_kinectWidth, m_kinectHeight);
+
 			ofPushMatrix();
 				ofEnableDepthTest();
 				ofTranslate(m_kinectWidth, m_kinectHeight);
 				ofScale(1000, 1000, 1000);
-				ofTranslate(0, 0, -m_modelBlob.maxZ.z -1);
-				m_modelBlob.mesh.drawVertices();
-				ofTranslate(m_modelBlob.massCenter);
+				ofTranslate(0, 0, -m_modelBlob->maxZ.z -1);
+				m_modelBlob->mesh.drawVertices();
+				ofTranslate(m_modelBlob->massCenter);
 				ofDrawAxis(0.5f);
 				//ofScale(maxX.x - minX.x, maxY.y - minY.y, maxZ.z - minZ.z);
 				ofDisableDepthTest();
@@ -243,29 +275,22 @@ void ofApp::draw() {
 		}
 
 		// GUI
+		m_fpsGui.setup(std::string("fps : ") + std::to_string(ofGetFrameRate()));
 		m_gui.draw();
 
 		// COMPUTER SCREEN	-	-	-	-	-	-	-	-	-	-	-	-	-
 
 		 
 		// PROJECTOR SCREEN	/	/	/	/	/	/	/	/	/	/	/	/	/
-		/*
-		if (mOfGarmentContour.size() != 0) {
-			mGarmentGeneratedMesh.computeWorldMesh(mOfxKinect);
-			ofMesh worldMesh = mGarmentGeneratedMesh.getWorldMeshRef();
-			toProjectorSpace(worldMesh);
-			mProjectorWindow.begin();
-			mChessboardImage.bind();
-			worldMesh.draw();
-			mChessboardImage.unbind();
 
-				ofPath projectorGarmentPath = ofUtilities::polylineToPath(projectorGarmentContour);
-				projectorGarmentPath.setFilled(true);
-				projectorGarmentPath.setFillColor(ofColor::red);
-				projectorGarmentPath.draw();
-
-			mProjectorWindow.end();
-		}*/
+		if (m_blobFound) {
+			m_projectorWindow.begin();
+				m_shader.begin();
+				m_shader.setUniformMatrix4f("toProjector", ofMatrix4x4::getTransposedOf(m_kinectProjectorToolkit.getTransformMatrix()));
+					m_modelBlob->mesh.draw();
+				m_shader.end();
+			m_projectorWindow.end();
+		}
 
 		// PROJECTOR SCREEN	-	-	-	-	-	-	-	-	-	-	-	-	-
 	}
@@ -274,7 +299,7 @@ void ofApp::draw() {
 /* OF ROUTINES	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 
 void ofApp::exit() {
-	mOfxKinect.stop();
+	m_ofxKinect.stop();
 }
 
 void ofApp::mousePressed(int x, int y, int button) {
@@ -305,10 +330,10 @@ void ofApp::toProjectorSpace(ofMesh& mesh) {
 	ofVec2f projectorCoordinates;
 
 	for (int i = 0; i < mesh.getNumVertices(); ++i) {
-		projectorCoordinates = mKinectProjectorToolkit.getProjectedPoint(mesh.getVertex(i));
+		projectorCoordinates = m_kinectProjectorToolkit.getProjectedPoint(mesh.getVertex(i)*1000);
 
-		projectorCoordinates.x = ofMap(projectorCoordinates.x, 0, 1, 0, mProjectorWindow.getWidth());
-		projectorCoordinates.y = ofMap(projectorCoordinates.y, 0, 1, 0, mProjectorWindow.getHeight());
+		projectorCoordinates.x = ofMap(projectorCoordinates.x, 0, 1, 0, m_projectorWindow.getWidth());
+		projectorCoordinates.y = ofMap(projectorCoordinates.y, 0, 1, 0, m_projectorWindow.getHeight());
 
 		mesh.setVertex(i, ofVec3f(projectorCoordinates.x, projectorCoordinates.y, 0));
 	}
