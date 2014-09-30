@@ -4,10 +4,11 @@
 #include "ofMesh.h"
 
 class ofFastMesh : public ofMesh {
-public:
-	void reserveCapacity(int capacity) {
-		this->vertices.reserve(capacity);
-	}
+
+	public:
+		void reserveCapacity(int capacity);
+
+		void computeNormals(bool bNormalize);
 };
 
 #endif

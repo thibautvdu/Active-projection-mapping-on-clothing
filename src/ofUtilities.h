@@ -21,22 +21,10 @@ namespace ofUtilities {
 		int getWidth() const { return m_width; }
 		int getHeight() const { return m_height; }
 
-		void begin() {
-			ofPushMatrix();
-				ofTranslate(m_xPosition, m_yPosition);
-		}
+		void begin();
+		void end();
 
-		void end() {
-			ofPopMatrix();
-		}
-
-		void background(ofColor color) {
-			ofSetColor(color);
-			ofFill();
-			ofRect(m_xPosition,m_yPosition, m_width, m_height);
-			ofNoFill();
-			ofSetColor(255);
-		}
+		void background(ofColor color);
 
 	private:
 		int m_xPosition, m_yPosition;
@@ -46,7 +34,6 @@ namespace ofUtilities {
 
 	ofVec2f mapVec2f(ofVec2f value, ofVec2f inputMin, ofVec2f inputMax, ofVec2f outputMin, ofVec2f outputMax, bool clamp = false);	// Map function for ofVec2f
 	ofPath polylineToPath(ofPolyline polyline);
-	void computeNormals(ofMesh& mesh, bool bNormalize);
 }
 
 #endif // FLEXIBLE_SURFACE_AUGMENTATION_OF_UTILITIES_H_

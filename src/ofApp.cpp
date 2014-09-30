@@ -1,8 +1,12 @@
 #include "ofApp.h"
 
 #include <stdlib.h>
+#include <Eigen/Core>
+#include <Eigen/SVD>
+
 #include "cvHelper.h"
 #include "lscm.h"
+#include "foldTracker.h"
 
 /* OF ROUTINES	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 
@@ -61,10 +65,6 @@ void ofApp::setup() {
 	// Blob detection
 	m_blobFound = false;
 
-	// Garment segmentation
-	m_garmentSeg.allocate(m_kinectWidth, m_kinectHeight, OF_IMAGE_GRAYSCALE);
-	m_cvGarmentSeg = ofxCv::toCv(m_garmentSeg);
-
 	// KINECT SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
 
@@ -76,6 +76,10 @@ void ofApp::setup() {
 	m_blobFinder.setRotation(ofVec3f(0, 0, 0));
 	m_blobFinder.setTranslation(ofVec3f(0, 0, 0));
 	m_blobFinder.setScale(ofVec3f(0.001,0.001,0.001)); // mm to meters
+	m_blobFinder.setGenerateMesh(true);
+
+	// Fold processing
+	m_askFoldComputation = false;
 
 	// KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -93,7 +97,7 @@ void ofApp::setup() {
 	m_gui.add(m_bgLearningCycleGui.setup("bg learning iterations", 10, 1, 50));
 	m_gui.add(m_nearClipGui.setup("near clip",1.500,0,8.000));
 	m_gui.add(m_farClipGui.setup("far clip", 3.000, 0, 8.000));
-	m_gui.add(m_cannyThresh1.setup("canny thres 1", 0, 0, 255));
+	m_gui.add(m_cannyThresh1.setup("canny thres 1", 160, 0, 255));
 	m_gui.add(m_cannyThresh2.setup("canny thres 2", 0, 0, 255));
 
 	// Keys
@@ -114,6 +118,7 @@ void ofApp::update() {
 		m_modelBlob->mesh.save("mesh_export.ply");
 		ofSaveImage(m_ofxKinect.getColorPixelsRef(), "color_ir_export.tif");
 		ofSaveImage(m_ofxKinect.getDepthPixelsRef(), "depth_export.tif");
+		ofSaveImage(m_normalsImg, "normals_export.tif");
 		ofLogNotice("ofApp::update") << "Exported the 3D mesh, IR/color and depth image";
 		m_askSaveAssets = false;
 	}
@@ -226,15 +231,8 @@ void ofApp::update() {
 			}
 
 			if (m_blobFound) {
-				//ofUtilities::computeNormals(m_modelBlob->mesh, false);
-
-				// Segmenting the garment on the body
-				//ofImage grayStream;
-				//grayStream.setFromPixels(m_ofxKinect.getColorPixelsRef());
-				//cv::Mat cvGrayStream = ofxCv::toCv(grayStream);
-				//cv::cvtColor(cvGrayStream, cvGrayStream, CV_RGB2GRAY);
-				//cv::Canny(cvGrayStream, m_cvGarmentSeg, m_cannyThresh1, m_cannyThresh2);
-				//m_garmentSeg.update();
+				//ofUtilities::computeNormals(m_modelBlob->mesh, true);
+				markFolds();
 			}
 		}
 	}
@@ -259,19 +257,24 @@ void ofApp::draw() {
 
 		// Bottom Right
 		if (m_blobFound) {
-			//m_garmentSeg.draw(m_kinectWidth, m_kinectHeight);
-
+			//m_normalsImg.draw(m_kinectWidth, m_kinectHeight);
+			if (m_askPause)
+				m_easyCam.begin();
 			ofPushMatrix();
-				ofEnableDepthTest();
-				ofTranslate(m_kinectWidth, m_kinectHeight);
-				ofScale(1000, 1000, 1000);
-				ofTranslate(0, 0, -m_modelBlob->maxZ.z -1);
-				m_modelBlob->mesh.drawVertices();
-				ofTranslate(m_modelBlob->massCenter);
-				ofDrawAxis(0.5f);
-				//ofScale(maxX.x - minX.x, maxY.y - minY.y, maxZ.z - minZ.z);
-				ofDisableDepthTest();
+			//ofEnableDepthTest();
+			ofTranslate(m_kinectWidth, m_kinectHeight);
+			ofScale(1000, 1000, 1000);
+			ofTranslate(0, 0, -m_modelBlob->maxZ.z - 1);
+			m_modelBlob->mesh.drawVertices();
+			if (m_foldAxis.size() != 0) {
+				ofSetColor(ofColor::blue);
+				m_foldAxis.draw();
+				ofSetColor(ofColor::white);
+			}
+			//ofDisableDepthTest();
 			ofPopMatrix();
+			if (m_askPause)
+				m_easyCam.end();
 		}
 
 		// GUI
@@ -287,7 +290,12 @@ void ofApp::draw() {
 			m_projectorWindow.begin();
 				m_shader.begin();
 				m_shader.setUniformMatrix4f("toProjector", ofMatrix4x4::getTransposedOf(m_kinectProjectorToolkit.getTransformMatrix()));
-					m_modelBlob->mesh.draw();
+					//m_modelBlob->mesh.draw();
+					ofSetColor(ofColor::red);
+					ofSetLineWidth(5);
+					m_foldAxis.draw();
+					ofSetLineWidth(1);
+					ofSetColor(ofColor::white);
 				m_shader.end();
 			m_projectorWindow.end();
 		}
@@ -318,6 +326,9 @@ void ofApp::keyPressed(int key) {
 	}
 	else if (key == 'i') {
 		m_askBgExport = true;
+	}
+	else if (key == 'c') {
+		m_askFoldComputation = true;
 	}
 }
 
@@ -356,5 +367,152 @@ void ofApp::meshParameterizationLSCM(ofMesh& mesh, int textureSize) {
 		mesh.setTexCoord(i, ofUtilities::mapVec2f(mesh.getTexCoord(i), ofVec2f(lscm.umin, lscm.vmin), ofVec2f(lscm.umax, lscm.vmax), ofVec2f(0, 0), outputRange));
 	}
 }
+
+void ofApp::markFolds() {
+	for (int i = 0; i < m_modelBlob->mesh.getNumVertices(); ++i) {
+		m_modelBlob->mesh.addColor(ofColor::lightYellow);
+	}
+
+	int width = m_kinectWidth / m_blobFinder.getResolution();
+	int height = m_kinectHeight / m_blobFinder.getResolution();
+
+	int patchSize = 9;
+	foldTracker tracker(&(m_modelBlob->mesh), m_blobFinder.getGenerationMap(), m_blobFinder.getWidth(), m_blobFinder.getHeight());
+	foldTracker::trackerPatch patch = tracker.createPatch(ofRectangle(0, 0, 0, 0));
+	float deformation;
+	std::vector<ofVec3f> points;
+	for (int y = 0; y < height - 5; y+= 20) {
+		for (int x = 0; x < width - patchSize; x++) {
+			patch.moveTo(ofRectangle(x, y, patchSize, 5));
+			if (patch.insideMesh()) {
+				deformation = patch.getDeformationPercent();
+				if (deformation > m_cannyThresh1 / 2.55) {
+					patch.setColor(ofColor::red);
+					if (m_askFoldComputation) {
+						std::vector<ofVec3f> patchPts = patch.getPoints();
+						points.insert(points.end(),patchPts.begin(),patchPts.end());
+					}
+				}
+			}
+		}
+	}
+
+	if (m_askFoldComputation) {
+		double xBar = 0, yBar = 0, zBar = 0;
+		for (int i = 0; i < points.size(); ++i) {
+			xBar += points[i].x / points.size(); yBar += points[i].y / points.size(); zBar += points[i].z / points.size();
+		}
+
+		Eigen::MatrixX3f A(points.size(), 3);
+		for (int i = 0; i < points.size(); ++i) {
+			A(i, 0) = points[i].x - xBar; A(i, 1) = points[i].y - yBar; A(i, 2) = points[i].z - zBar;
+		}
+
+		ofVec3f rightVector;
+		Eigen::JacobiSVD<Eigen::MatrixXf> svd(A, Eigen::ComputeThinV);
+		rightVector.x = svd.matrixV()(0, 0);
+		rightVector.y = svd.matrixV()(1, 0);
+		rightVector.z = svd.matrixV()(2, 0);
+
+		ofVec3f meanVector(xBar, yBar, zBar);
+
+		m_foldAxis.clear();
+		m_foldAxis.addVertex(meanVector + -10000 * rightVector);
+		m_foldAxis.addVertex(meanVector + 10000 * rightVector);
+
+		//m_askFoldComputation = false;
+	}
+}
+
+/*
+void ofApp::markFolds(ofFastMesh& mesh) {
+	unsigned int* map =  mesh.get2dIndicesMap();
+	if (!m_normalsImg.bAllocated())
+		m_normalsImg.allocate(mesh.getIndicesMapWidth(), mesh.getIndicesMapHeight(),OF_IMAGE_GRAYSCALE);
+	m_normalsImg.setColor(ofColor::black);
+
+	m_cvNormalsImg = ofxCv::toCv(m_normalsImg);
+
+	ofImage color;
+	color.allocate(mesh.getIndicesMapWidth(), mesh.getIndicesMapHeight(), OF_IMAGE_COLOR);
+	cv::Mat cvColor = ofxCv::toCv(color);
+
+	cv::Vec3b* p_row;
+	ofVec3f normal;
+	int idx;
+	for (int row = 0; row < mesh.getIndicesMapHeight(); ++row) {
+		p_row = cvColor.ptr<cv::Vec3b>(row);
+		for (int col = 0; col < mesh.getIndicesMapWidth(); ++col) {
+			idx = *(map + row*mesh.getIndicesMapWidth() + col);
+			if ( idx >= 0) {
+				normal = mesh.getNormal(idx);
+				*(p_row + col) = cv::Vec3b(normal.x * 255, normal.y * 255, normal.z * 255);
+			}
+		}
+	}
+	
+	cv::Mat horizontalFilter = (cv::Mat_<float>(5, 5) << 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -1, -1, 1, -1, -1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0);
+	//horizontalFilter /= 10;
+	cv::filter2D(cvColor, cvColor, m_cvNormalsImg.depth(), horizontalFilter);
+	uchar* p_uRow;
+	cv::Vec3b rgb;
+	for (int row = 0; row < mesh.getIndicesMapHeight(); ++row) {
+		p_row = cvColor.ptr<cv::Vec3b>(row);
+		p_uRow = m_cvNormalsImg.ptr<uchar>(row);
+		for (int col = 0; col < mesh.getIndicesMapWidth(); ++col) {
+			if (*(map + row*mesh.getIndicesMapWidth() + col) >= 0) {
+				rgb = *(p_row + col);
+				*(p_uRow + col) = (rgb.val[0] + rgb.val[1] + rgb.val[2]) / 3;
+			}
+		}
+	}
+	m_normalsImg.update();
+} */
+
+/*void ofApp::markFolds(ofFastMesh& mesh) {
+	for (int i = 0; i < mesh.getNumVertices(); ++i) {
+		mesh.addColor(ofColor::lightYellow);
+	}
+
+	int width = m_kinectWidth / m_blobFinder.getResolution();
+	int height = m_kinectHeight / m_blobFinder.getResolution();
+
+	int patchSize = 25;
+	ofFastMesh::ofFastMeshPatch patch = mesh.getPatch(ofRectangle(0, 0, patchSize, patchSize));
+
+	float deformation;
+	std::vector<ofFastMesh::ofFastMeshPatch> candidates;
+	for (int x = 0; x < width - patchSize; x += patchSize/2) {
+		for (int y = 0; y < height - patchSize; y += patchSize / 2) {
+			patch.move(ofRectangle(x, y, patchSize, patchSize));
+			if (patch.insideMesh()) {
+				deformation = patch.deformationAreaPercent();
+
+				// try to reduce the patch
+				if (deformation > m_cannyThresh1 / 2.55) {
+					float newDeformation = deformation;
+					ofFastMesh::ofFastMeshPatch newPatch = patch;
+					int reduce = 1;
+					do {
+						deformation = newDeformation;
+						patch = newPatch;
+						newPatch.move(ofRectangle(x + reduce, y + reduce, patchSize - reduce * 2, patchSize - reduce * 2));
+						if (!newPatch.insideMesh())
+							break;
+						newDeformation = newPatch.deformationAreaPercent();
+						reduce++;
+					} while (reduce < patchSize / 2 && newDeformation > deformation);
+
+					candidates.push_back(patch);
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i < candidates.size(); ++i) {
+		if (candidates[i].deformationAreaPercent() > m_cannyThresh2 / 2.55)
+			candidates[i].setColor(ofColor::red);
+	}
+}*/
 
 /* METHODS	-	-	-	-	-	-	-	-	-	-	-	-	-	-	*/

@@ -7,9 +7,9 @@
 #include "ofxCv.h"
 #include "ofxKinectCommonBridge.h"
 #include "ofxGui.h"
+
 #include "ofxKinectProjectorToolkit.h"
 #include "ofxKinectBlobFinder.h"
-#include "ofSemiImplicitActiveMesh.h"
 #include "ofUtilities.h"
 
 class ofApp : public ofBaseApp {
@@ -29,6 +29,7 @@ class ofApp : public ofBaseApp {
 		/* METHODS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 		void toProjectorSpace(ofMesh& mesh);
 		void meshParameterizationLSCM(ofMesh& mesh, int textureSize);
+		void markFolds();
 
 
 		/* VARIABLES	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
@@ -57,11 +58,13 @@ class ofApp : public ofBaseApp {
 		ofImage m_bgMask;
 		cv::Mat m_cvBgMask;
 
-		// Garment segmentation
-		ofImage m_garmentSeg;
-		cv::Mat m_cvGarmentSeg;
+		// Folds detection
+		ofImage m_normalsImg;
+		cv::Mat m_cvNormalsImg;
 		ofxIntSlider m_cannyThresh1;
 		ofxIntSlider m_cannyThresh2;
+		bool m_askFoldComputation;
+		ofPolyline m_foldAxis;
 
 		// KINECT SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -90,6 +93,7 @@ class ofApp : public ofBaseApp {
 		// GUI	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
 		ofxPanel m_gui;
+		ofEasyCam m_easyCam;
 
 		// Keys
 		bool m_askPause;

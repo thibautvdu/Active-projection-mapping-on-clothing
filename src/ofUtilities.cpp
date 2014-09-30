@@ -2,6 +2,23 @@
 
 namespace ofUtilities {
 
+	void ofVirtualWindow::begin() {
+		ofPushMatrix();
+		ofTranslate(m_xPosition, m_yPosition);
+	}
+
+	void ofVirtualWindow::end() {
+		ofPopMatrix();
+	}
+
+	void ofVirtualWindow::background(ofColor color) {
+		ofSetColor(color);
+		ofFill();
+		ofRect(m_xPosition, m_yPosition, m_width, m_height);
+		ofNoFill();
+		ofSetColor(255);
+	}
+
 	// Map function for ofVec2f
 	ofVec2f mapVec2f(ofVec2f value, ofVec2f inputMin, ofVec2f inputMax, ofVec2f outputMin, ofVec2f outputMax, bool clamp) {
 		float x = ofMap(value.x, inputMin.x, inputMax.x, outputMin.x, outputMax.x, clamp);
@@ -21,32 +38,5 @@ namespace ofUtilities {
 		path.close();
 
 		return path;
-	}
-
-	void computeNormals(ofMesh& mesh, bool bNormalize){
-		for (int i = 0; i < mesh.getVertices().size(); i++) mesh.addNormal(ofPoint(0, 0, 0));
-
-		for (int i = 0; i < mesh.getIndices().size(); i += 3){
-			const int ia = mesh.getIndices()[i];
-			const int ib = mesh.getIndices()[i + 1];
-			const int ic = mesh.getIndices()[i + 2];
-			ofVec3f a = mesh.getVertices()[ia];
-			ofVec3f b = mesh.getVertices()[ib];
-			ofVec3f c = mesh.getVertices()[ic];
-
-			ofVec3f e1 = a - b;
-			ofVec3f e2 = c - b;
-			ofVec3f no = e2;
-			no.cross(e1);
-
-			mesh.getNormals()[ia] += no;
-			mesh.getNormals()[ib] += no;
-			mesh.getNormals()[ic] += no;
-		}
-
-		if (bNormalize)
-		for (int i = 0; i < mesh.getNormals().size(); i++) {
-			mesh.getNormals()[i].normalize();
-		}
 	}
 }

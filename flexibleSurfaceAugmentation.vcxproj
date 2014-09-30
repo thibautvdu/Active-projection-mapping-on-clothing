@@ -115,6 +115,7 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
     <ClCompile Include="..\..\..\addons\ofxKinectBlobFinder\src\ofxKinectBlobFinder.cpp" />
     <ClCompile Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\unicode\unicode.cpp" />
     <ClCompile Include="..\..\..\addons\ofxKinectProjectorToolkit\src\ofxKinectProjectorToolkit.cpp" />
+    <ClCompile Include="src\foldTracker.cpp" />
     <ClCompile Include="src\lscm.cpp" />
     <ClCompile Include="src\lscmUtilities.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -140,6 +141,7 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
     <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Wrappers.cpp" />
     <ClCompile Include="..\..\..\addons\ofxKinectCommonBridge\src\ofxKinectCommonBridge.cpp" />
     <ClCompile Include="src\cvHelper.cpp" />
+    <ClCompile Include="src\ofFastMesh.cpp" />
     <ClCompile Include="src\ofSemiImplicitActiveMesh.cpp" />
     <ClCompile Include="src\ofUtilities.cpp" />
   </ItemGroup>
@@ -492,6 +494,7 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
     <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_private.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_superlu.h" />
     <ClInclude Include="src\cvHelper.h" />
+    <ClInclude Include="src\foldTracker.h" />
     <ClInclude Include="src\lscm.h" />
     <ClInclude Include="src\lscmUtilities.h" />
     <ClInclude Include="src\ofFastMesh.h" />

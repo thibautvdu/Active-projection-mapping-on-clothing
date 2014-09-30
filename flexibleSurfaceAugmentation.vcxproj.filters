@@ -94,12 +94,6 @@
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxToggle.cpp">
       <Filter>addons\ofxGui\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\lscm.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\lscmUtilities.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\ofSemiImplicitActiveMesh.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -114,6 +108,18 @@
     </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxKinectBlobFinder\src\ofxKinectBlobFinder.cpp">
       <Filter>addons\ofxKinectBlobFinder\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lscm.cpp">
+      <Filter>src\lscm</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lscmUtilities.cpp">
+      <Filter>src\lscm</Filter>
+    </ClCompile>
+    <ClCompile Include="src\foldTracker.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofFastMesh.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -401,6 +407,9 @@
     </Filter>
     <Filter Include="src\shaders">
       <UniqueIdentifier>{d0fd54cc-e453-43ef-a9c6-b6ce79afd805}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\lscm">
+      <UniqueIdentifier>{448622c0-f8c5-4946-8ce4-660db9338294}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -764,9 +773,6 @@
     <ClInclude Include="..\..\..\addons\ofxGui\src\ofxToggle.h">
       <Filter>addons\ofxGui\src</Filter>
     </ClInclude>
-    <ClInclude Include="src\lscm.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl.h">
       <Filter>addons\ofxOpenNL\src\NL</Filter>
     </ClInclude>
@@ -796,9 +802,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_superlu.h">
       <Filter>addons\ofxOpenNL\src\NL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\lscmUtilities.h">
-      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxEigen\src\Eigen\Cholesky\LDLT.h">
       <Filter>addons\ofxEigen\Eigen\src\Cholesky</Filter>
@@ -1789,6 +1792,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxKinectBlobFinder\src\ofxKinectBlobFinder.h">
       <Filter>addons\ofxKinectBlobFinder\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lscm.h">
+      <Filter>src\lscm</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lscmUtilities.h">
+      <Filter>src\lscm</Filter>
+    </ClInclude>
+    <ClInclude Include="src\foldTracker.h">
+      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\ofFastMesh.h">
       <Filter>src</Filter>
