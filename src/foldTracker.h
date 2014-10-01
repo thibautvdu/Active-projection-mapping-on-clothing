@@ -18,9 +18,7 @@ class foldTracker {
 
 		class trackerPatch {
 			public:
-				trackerPatch(foldTracker *t, ofRectangle roi) : mp_tracker(t), mp_mesh(mp_tracker->getMeshPtr()), m_roi(roi) {
-					m_area = m_unfoldedArea = -1;
-				}
+				trackerPatch(foldTracker *t, ofRectangle roi);
 
 				inline void move(int x, int y) {
 					m_roi.translate(x, y);
@@ -67,10 +65,8 @@ class foldTracker {
 
 				void computeAreas();
 
-				// Pos : 0 to 3 cover 99.7 % of the gaussian distribution
-				inline float gaussianDist(float pos, float sigma) {
-					return (1.0 / (sigma *sqrt(2 * PI))) * exp(-(pos*pos) / (2 * sigma*sigma));
-				}
+				// ( cover 99.7 % of the gaussian distribution )
+				void computeGaussianDist(float sigma);
 		};
 
 		inline trackerPatch createPatch(ofRectangle roi) { return trackerPatch(this, roi); }

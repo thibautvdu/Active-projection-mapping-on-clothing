@@ -1,6 +1,22 @@
 #include "foldTracker.h"
 
 // ***************************************************************************
+//								STATIC
+// ***************************************************************************
+
+static std::vector<float> gaussianValues;
+
+// ***************************************************************************
+//								CONSTRUCTOR
+// ***************************************************************************
+
+foldTracker::trackerPatch::trackerPatch(foldTracker *t, ofRectangle roi) : mp_tracker(t), mp_mesh(mp_tracker->getMeshPtr()), m_roi(roi) {
+	m_area = m_unfoldedArea = -1;
+	if (gaussianValues.size() == 0)
+		computeGaussianDist(1);
+}
+
+// ***************************************************************************
 //								GET/SET
 // ***************************************************************************
 
@@ -63,9 +79,10 @@ void foldTracker::trackerPatch::computeAreas() {
 	float unfoldedTriangleArea = ((topLeft - bottomLeft).getCrossed(topRight - bottomLeft).length() + (bottomLeft - topRight).getCrossed(bottomRight - topRight).length()) / (2 * 2 * (m_roi.width - 1)*(m_roi.height - 1));
 
 	// Attribute a gaussian weigth along the horizontal of the unfolded patch
-	ofVec3f unfoldedHorizontal = ((topRight - topLeft) + (bottomRight - bottomLeft)).normalize();
-	ofVec3f horizontalLeftPoint = (topLeft + bottomLeft) / 2;
-	float middle = ((topRight - topLeft).length() + (bottomRight - bottomLeft).length()) / 4;
+	ofVec3f unfoldedHorizontal = ((topRight - topLeft) + (bottomRight - bottomLeft)) / 2;
+	float horizontalScale = unfoldedHorizontal.length() / 2;
+	unfoldedHorizontal.normalize();
+	ofVec3f unfoldedMiddle = (topRight + topLeft + bottomRight + bottomLeft) / 4;
 	float posToMiddle, gaussianWeight;
 
 
@@ -86,16 +103,16 @@ void foldTracker::trackerPatch::computeAreas() {
 				posD = pointDIdx >= 0 ? mp_mesh->getVertex(pointDIdx) : posD;
 
 				if (pointAIdx >= 0 && pointBIdx >= 0 && pointDIdx >= 0) {
-					posToMiddle = ((((posA + posB + posC) / 3) - horizontalLeftPoint).dot(unfoldedHorizontal) - middle) / middle;
-					gaussianWeight = gaussianDist(posToMiddle * 3, 1);
+					posToMiddle = (((posA + posB + posC) / 3) - unfoldedMiddle).dot(unfoldedHorizontal) / horizontalScale;
+					gaussianWeight = gaussianValues[99 * std::min(fabs(posToMiddle), 1.f)];
 
 					// Triangle face 1
 					m_unfoldedArea += unfoldedTriangleArea * gaussianWeight;
 					m_area += (posB - posA).getCrossed(posD - posA).length() * gaussianWeight / 2;
 				}
 				if (pointBIdx >= 0 && pointCIdx >= 0 && pointDIdx >= 0) {
-					posToMiddle = ((((posB + posC + posD) / 3) - horizontalLeftPoint).dot(unfoldedHorizontal) - middle) / middle;
-					gaussianWeight = gaussianDist(posToMiddle * 3, 1);
+					posToMiddle = (((posB + posC + posD) / 3) - unfoldedMiddle).dot(unfoldedHorizontal) / horizontalScale;
+					gaussianWeight = gaussianValues[99 * std::min(fabs(posToMiddle), 1.f)];
 
 					// Triangle face 2
 					m_unfoldedArea += unfoldedTriangleArea * gaussianWeight;
@@ -103,6 +120,17 @@ void foldTracker::trackerPatch::computeAreas() {
 				}
 			}
 		}
+	}
+}
+
+void foldTracker::trackerPatch::computeGaussianDist(float sigma) {
+	if (gaussianValues.size() == 0)
+		gaussianValues.resize(100);
+
+	float posI;
+	for (int i = 0; i < gaussianValues.size(); ++i) {
+		posI = 3 * i / (float)99;
+		gaussianValues[i] = (1.0 / (sigma *sqrt(2 * PI))) * exp(-(posI*posI) / (2 * sigma*sigma));
 	}
 }
 

@@ -386,7 +386,7 @@ void ofApp::markFolds() {
 			patch.moveTo(ofRectangle(x, y, patchSize, 5));
 			if (patch.insideMesh()) {
 				deformation = patch.getDeformationPercent();
-				if (deformation > m_cannyThresh1 / 2.55) {
+				if (deformation  > m_cannyThresh1 / 2.55) {
 					patch.setColor(ofColor::red);
 					if (m_askFoldComputation) {
 						std::vector<ofVec3f> patchPts = patch.getPoints();
