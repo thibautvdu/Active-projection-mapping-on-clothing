@@ -9,8 +9,9 @@
 #include "ofxGui.h"
 
 #include "ofxKinectProjectorToolkit.h"
-#include "ofxKinectBlobFinder.h"
+#include "ofFast3dBlob.h"
 #include "ofUtilities.h"
+#include "ofSemiImplicitActiveMesh.h"
 
 class ofApp : public ofBaseApp {
 
@@ -76,9 +77,13 @@ class ofApp : public ofBaseApp {
 		ofxFloatSlider m_farClipGui;
 
 		// Blob finder and tracker
-		ofxKinectBlobFinder m_blobFinder;
-		ofxKinectBlob* m_modelBlob;
+		ofFast3dBlobDetector m_blobFinder;
+		ofFast3dBlob* m_modelBlob;
 		bool m_blobFound;
+
+		// Tracking mesh
+		ofDeformationTracking::ofSemiImplicitActiveMesh m_blobMesh;
+		ofxFloatSlider m_adaptationRate, m_boundaryWeight, m_depthWeight;
 
 		// KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 

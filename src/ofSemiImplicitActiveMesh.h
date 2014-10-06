@@ -7,6 +7,7 @@
 #include <Eigen/Sparse>
 #include <Eigen/SparseLU>
 #include "ofxKinectCommonBridge.h"
+#include "ofFast3dBlob.h"
 
 namespace ofDeformationTracking {
 
@@ -25,11 +26,9 @@ namespace ofDeformationTracking {
 				mGenerated = false;
 				mGenerationAreaThresh = 20;
 
-				mAdaptationRate = 0.5;
-				mBoundaryWeight = 0.2;
-				mDepthWeight = 0.6;
-
-				m_maxDepthDiff = 500;
+				mAdaptationRate = 2;
+				mBoundaryWeight = 0.6;
+				mDepthWeight = 0.8;
 
 				m_minDepth = m_maxDepth = 0;
 
@@ -42,13 +41,11 @@ namespace ofDeformationTracking {
 				mGenerated = false;
 				mGenerationAreaThresh = 20;
 
-				mAdaptationRate = 0.5;
-				mBoundaryWeight = 0.2;
-				mDepthWeight = 0.6;
+				mAdaptationRate = 2;
+				mBoundaryWeight = 0.6;
+				mDepthWeight = 0.8;
 
 				m_minDepth = m_maxDepth = 0;
-
-				m_maxDepthDiff = 500;
 
 				mpSolver = new Eigen::SparseLU<Eigen::SparseMatrix<double, Eigen::ColMajor>>();
 			};
@@ -83,11 +80,10 @@ namespace ofDeformationTracking {
 			const ofMesh& getKinectRelativeMeshRef() const { return mKinectRelativeMesh; }
 
 			// INITIALIZATION
-			void generateMesh(const ofPolyline& imgContour, ofPixels contourMask, const ofxKinectCommonBridge& ofxKinect);
+			void generateMesh(const ofFast3dBlobDetector &detector, ofFast3dBlob &blob);
 
 			// COMPUTATION
-			void updateMesh(const ofPolyline& imgContour, ofPixels contourMask, const ofxKinectCommonBridge& ofxKinect);
-			void computeWorldMesh(const ofxKinectCommonBridge &ofxKinect);
+			void updateMesh(const ofFast3dBlobDetector &detector, ofFast3dBlob &blob);
 
 		private :
 
@@ -112,7 +108,6 @@ namespace ofDeformationTracking {
 
 			// VARIOUS
 			float m_meshAvgDepth; // Used to discriminate incoherent values sent by kinect
-			float m_maxDepthDiff; // Should correspond to the size of the tracked object on z
 			float m_maxDepth, m_minDepth;
 
 			// FLAGS

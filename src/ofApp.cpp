@@ -6,7 +6,7 @@
 
 #include "cvHelper.h"
 #include "lscm.h"
-#include "foldTracker.h"
+#include "ofFast3dBlob.h"
 
 /* OF ROUTINES	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 
@@ -71,15 +71,15 @@ void ofApp::setup() {
 	// KINECT WORLD SPACE	/	/	/	/	/	/	/	/	/	/	/	/
 
 	// Blob finder and tracker
-	m_blobFinder.init(&m_ofxKinect, false); // standarized coordinate system: z in the direction of gravity
-	m_blobFinder.setResolution(BF_MEDIUM_RES);
-	m_blobFinder.setRotation(ofVec3f(0, 0, 0));
-	m_blobFinder.setTranslation(ofVec3f(0, 0, 0));
+	m_blobFinder.init(&m_ofxKinect); // standarized coordinate system: z in the direction of gravity
+	//m_blobFinder.setResolution(BF_HIGH_RES);
 	m_blobFinder.setScale(ofVec3f(0.001,0.001,0.001)); // mm to meters
-	m_blobFinder.setGenerateMesh(true);
 
 	// Fold processing
 	m_askFoldComputation = false;
+
+	// Mesh
+	m_blobMesh = ofDeformationTracking::ofSemiImplicitActiveMesh(20, 20);
 
 	// KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -100,6 +100,11 @@ void ofApp::setup() {
 	m_gui.add(m_cannyThresh1.setup("canny thres 1", 160, 0, 255));
 	m_gui.add(m_cannyThresh2.setup("canny thres 2", 0, 0, 255));
 
+	// Mesh
+	m_gui.add(m_adaptationRate.setup("adaptation rate", 2, 0, 10));
+	m_gui.add(m_boundaryWeight.setup("boundary weight", 0, 0, 4));
+	m_gui.add(m_depthWeight.setup("depth weight", 2, 0, 4));
+
 	// Keys
 	m_askPause = false;
 	m_askSaveAssets = false;
@@ -115,7 +120,7 @@ void ofApp::update() {
 	// EVENTS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
 	if (m_askSaveAssets) {
-		m_modelBlob->mesh.save("mesh_export.ply");
+		m_blobMesh.save("mesh_export.ply");
 		ofSaveImage(m_ofxKinect.getColorPixelsRef(), "color_ir_export.tif");
 		ofSaveImage(m_ofxKinect.getDepthPixelsRef(), "depth_export.tif");
 		ofSaveImage(m_normalsImg, "normals_export.tif");
@@ -134,6 +139,10 @@ void ofApp::update() {
 	}
 	if (m_askPause)
 		return;
+
+	m_blobMesh.setAdaptationRate(m_adaptationRate);
+	m_blobMesh.setBoundaryWeight(m_boundaryWeight);
+	m_blobMesh.setDepthWeight(m_depthWeight);
 
 	// EVENTS	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -218,8 +227,8 @@ void ofApp::update() {
 			float finderRes = m_blobFinder.getResolution();
 			finderRes *= finderRes;
 
-			m_blobFinder.findBlobs(&m_bgMask, ofVec3f(-10, -10, -10), ofVec3f(10, 10, 10),
-				ofVec3f(0.05, 0.05, 0.1), 2, 0.06, 1.2, (int)(0.001*m_kinectHeight*m_kinectWidth / finderRes), 1);
+			m_blobFinder.findBlobs(&m_bgMask,
+				ofVec3f(0.05, 0.05, 0.1), 1, 0.06, 1.2, (int)(0.001*m_kinectHeight*m_kinectWidth / finderRes), 1);
 
 			m_blobFound = false;
 			if (m_blobFinder.nBlobs != 0) {
@@ -232,7 +241,13 @@ void ofApp::update() {
 
 			if (m_blobFound) {
 				//ofUtilities::computeNormals(m_modelBlob->mesh, true);
-				markFolds();
+				//markFolds();
+				if (!m_blobMesh.isGenerated()) {
+					m_blobMesh.generateMesh(m_blobFinder, *m_modelBlob);
+				}
+				else {
+					m_blobMesh.updateMesh(m_blobFinder, *m_modelBlob);
+				}
 			}
 		}
 	}
@@ -265,7 +280,8 @@ void ofApp::draw() {
 			ofTranslate(m_kinectWidth, m_kinectHeight);
 			ofScale(1000, 1000, 1000);
 			ofTranslate(0, 0, -m_modelBlob->maxZ.z - 1);
-			m_modelBlob->mesh.drawVertices();
+			ofScale(0.001*m_blobFinder.getResolution(), 0.001*m_blobFinder.getResolution(), 0.001);
+			m_blobMesh.drawWireframe();
 			if (m_foldAxis.size() != 0) {
 				ofSetColor(ofColor::blue);
 				m_foldAxis.draw();
@@ -368,6 +384,7 @@ void ofApp::meshParameterizationLSCM(ofMesh& mesh, int textureSize) {
 	}
 }
 
+/*
 void ofApp::markFolds() {
 	for (int i = 0; i < m_modelBlob->mesh.getNumVertices(); ++i) {
 		m_modelBlob->mesh.addColor(ofColor::lightYellow);
@@ -423,7 +440,7 @@ void ofApp::markFolds() {
 		//m_askFoldComputation = false;
 	}
 }
-
+*/
 /*
 void ofApp::markFolds(ofFastMesh& mesh) {
 	unsigned int* map =  mesh.get2dIndicesMap();

@@ -1,15 +1,26 @@
 #include "ofSemiImplicitActiveMesh.h"
+
 #include "ofxCv.h"
+#include "ofFast3dBlob.h"
+#include "ofFastPolyline.h"
 
 namespace ofDeformationTracking {
 
 	// INITIALIZATION
-	void ofSemiImplicitActiveMesh::generateMesh(const ofPolyline& imgContour, ofPixels contourMask, const ofxKinectCommonBridge& ofxKinect) {
+	void ofSemiImplicitActiveMesh::generateMesh(const ofFast3dBlobDetector& detector, ofFast3dBlob& blob) {
 		this->clear();
 		this->setMode(OF_PRIMITIVE_TRIANGLES);
 		this->enableIndices();
 
-		const ofRectangle roi = imgContour.getBoundingBox();
+		int pointCloudWidth = detector.getWidth();
+		int pointCloudHeight = detector.getHeight();
+
+		ofFastPolyline blobContour;
+		for (int i = 0; i < blob.contourIndices.size(); ++i) {
+			blobContour.addVertex(blob.contourIndices[i] % pointCloudWidth, blob.contourIndices[i] / pointCloudWidth);
+		}
+
+		const ofRectangle roi = blobContour.getBoundingBox();
 
 		int rows = mMeshYResolution;
 		int columns = mMeshXResolution;
@@ -45,7 +56,7 @@ namespace ofDeformationTracking {
 				rectangleFace.addVertex(pointD);
 				rectangleFace.close();
 
-				if (intersectionArea(rectangleFace, imgContour) * 100 / rectangleFace.getArea() > mGenerationAreaThresh){
+				if (intersectionArea(rectangleFace, blobContour) * 100 / rectangleFace.getArea() > mGenerationAreaThresh){
 					// Triangle face 1
 					this->addTriangle((row)*columns + col, (row)*columns + col + 1, (row + 1)*columns + col);
 
@@ -134,24 +145,7 @@ namespace ofDeformationTracking {
 		computeSolver();
 
 		// Initialize the depths to an average value
-		ofShortPixels depthPixels = ofxKinect.getDepthPixels();
-		cv::Mat cvDepthPixelsRoi = ofxCv::toCv(depthPixels)(ofxCv::toCv(roi));
-		cv::Mat cvContourMaskRoi = ofxCv::toCv(contourMask)(ofxCv::toCv(roi));
-		USHORT *p_row, *p_maskRow;
-		int nbValues = 0;
-		ULONG sumDepth = 0;
-		for (int row = 0; row < cvDepthPixelsRoi.rows; row++) {
-			p_row = cvDepthPixelsRoi.ptr<USHORT>(row);
-			p_maskRow = cvContourMaskRoi.ptr<USHORT>(row);
-			for (int col = 0; col < cvDepthPixelsRoi.cols; col++) {
-				if (*(p_maskRow + col) != 0 && *(p_row + col) != 0) {
-					nbValues++;
-					sumDepth += *(p_row + col);
-				}
-			}
-		}
-		
-		m_meshAvgDepth = sumDepth / nbValues;
+		m_meshAvgDepth = blob.centroid.z/detector.getScale().z;
 
 		for (int i = 0; i < this->getNumVertices(); ++i) {
 			this->setVertex(i, ofVec3f(this->getVertex(i).x, this->getVertex(i).y, m_meshAvgDepth));
@@ -198,42 +192,28 @@ namespace ofDeformationTracking {
 	}
 
 	// COMPUTATION
-	void ofSemiImplicitActiveMesh::updateMesh(const ofPolyline& imgContour, ofPixels contourMask, const ofxKinectCommonBridge& ofxKinect) {
+	void ofSemiImplicitActiveMesh::updateMesh(const ofFast3dBlobDetector& detector, ofFast3dBlob& blob) {
 		if (mNeedComputation) {
 			computeSolver();
 		}
 
-		// Left to right flooding on the ROI
-		ofRectangle roi = imgContour.getBoundingBox();
-		ofShortPixels depthPixelsFilled = ofxKinect.getDepthPixels();
-		int depthW = depthPixelsFilled.getWidth(); int depthH = depthPixelsFilled.getHeight();
+		int pointCloudWidth = detector.getWidth();
+		int pointCloudHeight = detector.getHeight();
 
-		USHORT lastValid;
-		int startX = min((int)roi.getBottomRight().x + 1, depthW - 1);
-		for (int y = roi.getTopLeft().y; y < roi.getBottomRight().y; ++y) {
-			lastValid = 0;
-			for (int x = startX; x >= 0; --x){
-				lastValid = depthPixelsFilled[y*depthW + x] = depthPixelsFilled[y*depthW + x] == 0 ? lastValid : depthPixelsFilled[y*depthW + x];
-			}
+		ofFastPolyline blobContour2dDepth;
+		for (int i = 0; i < blob.contourIndices.size(); ++i) {
+			blobContour2dDepth.addVertex(blob.contourIndices[i] % pointCloudWidth, blob.contourIndices[i] / pointCloudWidth, detector[blob.contourIndices[i]].pos.z / detector.getScale().z);
 		}
-
-		ofPolyline depthContour;
-		USHORT depth;
-		for (int i = 0; i < imgContour.size(); ++i) {
-			depth = depthPixelsFilled[(int)imgContour[i].y*depthPixelsFilled.getWidth() + (int)imgContour[i].x];
-			depthContour.addVertex(imgContour[i].x, imgContour[i].y, (float)depth);
-		}
-		depthContour.close();
 
 		// Get closest points for each boundary vertex and construct the mesh contour
-		ofPolyline meshDepthContour;
+		ofFastPolyline meshDepthContour;
 		ofVec3f* closestImgPtForce = new ofVec3f[this->getNumVertices()]; // 0 for non boundary vertices
 		unsigned int nearestIdx;
 		for (int i = 0; i < this->getNumVertices(); ++i) { closestImgPtForce[i] = ofVec3f::zero(); }
 		for (int i = 0; i < mMeshBoundaryIndices.size(); ++i) {
-			imgContour.getClosestPoint(ofVec3f(this->getVertex(mMeshBoundaryIndices[i]).x, this->getVertex(mMeshBoundaryIndices[i]).y,0),&nearestIdx);
-			closestImgPtForce[mMeshBoundaryIndices[i]] = depthContour[nearestIdx] - this->getVertex(mMeshBoundaryIndices[i]);
-
+			blobContour2dDepth.getClosestPoint(this->getVertex(mMeshBoundaryIndices[i]), &nearestIdx);
+			if (detector[blob.contourIndices[nearestIdx]].flag == blob.idx)
+				closestImgPtForce[mMeshBoundaryIndices[i]] = blobContour2dDepth[nearestIdx] - this->getVertex(mMeshBoundaryIndices[i]);
 			meshDepthContour.addVertex(this->getVertex(mMeshBoundaryIndices[i]));
 		}
 		meshDepthContour.close();
@@ -242,10 +222,12 @@ namespace ofDeformationTracking {
 		ofVec3f nearestPoint;
 		ofVec3f* imgPtToMeshContourForce = new ofVec3f[this->getNumVertices()]; // 0 for non boundary vertices
 		for (int i = 0; i < this->getNumVertices(); ++i) { imgPtToMeshContourForce[i] = ofVec3f::zero(); }
-		for (int i = 0; i < imgContour.size(); ++i) {
-			nearestPoint = meshDepthContour.getClosestPoint(depthContour[i], &nearestIdx);
-			nearestIdx = mMeshBoundaryIndices[nearestIdx];
-			imgPtToMeshContourForce[nearestIdx] += depthContour[i] - nearestPoint;
+		for (int i = 0; i < blobContour2dDepth.size(); ++i) {
+			if (detector[blob.contourIndices[i]].flag == blob.idx) {
+				nearestPoint = meshDepthContour.getClosestPoint(blobContour2dDepth[i], &nearestIdx);
+				nearestIdx = mMeshBoundaryIndices[nearestIdx];
+				imgPtToMeshContourForce[nearestIdx] += blobContour2dDepth[i] - nearestPoint;
+			}
 		}
 
 
@@ -253,7 +235,7 @@ namespace ofDeformationTracking {
 		for (int i = 0; i < this->getNumVertices(); ++i) {
 
 			if (mIsBoundaryVertices[i]) {
-				bX[i] = mAdaptationRate*this->getVertex(i).x + mBoundaryWeight*(closestImgPtForce[i].x +imgPtToMeshContourForce[i].x);
+				bX[i] = mAdaptationRate*this->getVertex(i).x +mBoundaryWeight*(closestImgPtForce[i].x + imgPtToMeshContourForce[i].x);
 			}
 			else {
 				bX[i] = mAdaptationRate*this->getVertex(i).x;
@@ -264,7 +246,7 @@ namespace ofDeformationTracking {
 		for (int i = 0; i < this->getNumVertices(); ++i) {
 
 			if (mIsBoundaryVertices[i]) {
-				bY[i] = mAdaptationRate*this->getVertex(i).y + mBoundaryWeight*(closestImgPtForce[i].y + imgPtToMeshContourForce[i].y);
+				bY[i] = mAdaptationRate*this->getVertex(i).y +mBoundaryWeight*(closestImgPtForce[i].y + imgPtToMeshContourForce[i].y);
 			}
 			else {
 				bY[i] = mAdaptationRate*this->getVertex(i).y;
@@ -291,9 +273,8 @@ namespace ofDeformationTracking {
 				bZ[i] += mBoundaryWeight*(closestImgPtForce[i].z + imgPtToMeshContourForce[i].z);
 			}
 
-			newDepth = depthPixelsFilled[(int)Y[i] * depthPixelsFilled.getWidth() + (int)X[i]];
-			if (newDepth != 0 && abs(newDepth - m_meshAvgDepth) < m_maxDepthDiff) {
-				bZ[i] += mDepthWeight*((float)newDepth - this->getVertex(i).z);
+			if (detector[(int)Y[i] * pointCloudWidth + X[i]].flag == blob.idx) {
+				bZ[i] += mDepthWeight*((float)detector[(int)Y[i] * pointCloudWidth + X[i]].pos.z / detector.getScale().z - this->getVertex(i).z);
 			}
 		}
 
@@ -311,17 +292,6 @@ namespace ofDeformationTracking {
 			this->setVertex(i, ofVec3f(X[i], Y[i], Z[i]));
 			m_minDepth = min((float)Z[i], m_minDepth);
 			m_maxDepth = max((float)Z[i], m_maxDepth);
-		}
-	}
-
-	void ofSemiImplicitActiveMesh::computeWorldMesh(const ofxKinectCommonBridge &ofxKinect) {
-		ofColor depthColor;
-		for (int i = 0; i < mKinectRelativeMesh.getNumVertices(); ++i) {
-			mKinectRelativeMesh.setVertex(i, ofxKinect.getWorldCoordinates((int)this->getVertex(i).x, (int)this->getVertex(i).y, this->getVertex(i).z));
-			if (m_minDepth != m_maxDepth) {
-				depthColor = ofColor(ofMap(this->getVertex(i).z, m_minDepth, m_minDepth + (m_maxDepth - m_minDepth) / 2, 0, 255, true), ofMap(this->getVertex(i).z, m_minDepth + (m_maxDepth - m_minDepth) / 2, m_maxDepth, 0, 255, true), 255);
-			}
-			mKinectRelativeMesh.setColor(i, depthColor);
 		}
 	}
 }

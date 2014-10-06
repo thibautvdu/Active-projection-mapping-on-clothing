@@ -121,6 +121,9 @@
     <ClCompile Include="src\ofFastMesh.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\ofFast3dBlob.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -1803,6 +1806,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\ofFastMesh.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofFast3dBlob.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofFastPolyline.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
