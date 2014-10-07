@@ -37,13 +37,13 @@ class ofApp : public ofBaseApp {
 
 		// HARDWARE HANDLERS	/	/	/	/	/	/	/	/	/	/	/	/
 
-		ofxKinectCommonBridge m_ofxKinect;
-		int m_kinectWidth, m_kinectHeight;
+		ofxKinectCommonBridge ofxKinect_;
+		int kinectWidth_, kinectHeight_;
 
-		ofxKinectProjectorToolkit m_kinectProjectorToolkit;
-		ofUtilities::ofVirtualWindow m_projectorWindow;
+		ofxKinectProjectorToolkit kinectProjectorToolkit_;
+		ofUtilities::ofVirtualWindow projectorWindow_;
 
-		ofShader m_shader;
+		ofShader shader_;
 
 		// HARDWARE HANDLERS	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -51,21 +51,21 @@ class ofApp : public ofBaseApp {
 		// KINECT SCREEN SPACE	/	/	/	/	/	/	/	/	/	/	/	/
 
 		// Background learning
-		ofxIntSlider m_bgLearningCycleGui; int m_bgLearningCycleCount; bool m_learntBg;
-		ofShortPixels m_depthBg;
-		cv::Mat m_cvDepthBg;
+		ofxIntSlider bgLearningCycleGui_; int bgLearningCycleCount_; bool learntBg_;
+		ofShortPixels depthBg_;
+		cv::Mat cvDepthBg_;
 
 		// Background segmentation
-		ofImage m_bgMask;
-		cv::Mat m_cvBgMask;
+		ofImage bgMask_;
+		cv::Mat cvBgMask_;
 
 		// Folds detection
-		ofImage m_normalsImg;
-		cv::Mat m_cvNormalsImg;
-		ofxIntSlider m_cannyThresh1;
-		ofxIntSlider m_cannyThresh2;
-		bool m_askFoldComputation;
-		ofPolyline m_foldAxis;
+		ofImage normalsImg_;
+		cv::Mat cvNormalsImg_;
+		ofxIntSlider cannyThresh1_;
+		ofxIntSlider cannyThresh2_;
+		bool askFoldComputation_;
+		ofPolyline foldAxis_;
 
 		// KINECT SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -73,13 +73,12 @@ class ofApp : public ofBaseApp {
 		// KINECT WORLD SPACE	/	/	/	/	/	/	/	/	/	/	/	/
 
 		// Point cloud
-		ofxFloatSlider m_nearClipGui;
-		ofxFloatSlider m_farClipGui;
+		ofxFloatSlider nearClipGui_;
+		ofxFloatSlider farClipGui_;
 
 		// Blob finder and tracker
-		garmentAugmentation::kinect3dBlobDetector m_blobFinder;
-		garmentAugmentation::simple3dBlob * m_modelBlob;
-		bool m_blobFound;
+		garmentAugmentation::kinect3dBlobDetector blobFinder_;
+		bool blobFound_;
 
 		// Garment object
 		garmentAugmentation::interactiveGarment garment_;
@@ -93,24 +92,24 @@ class ofApp : public ofBaseApp {
 
 		// PROJECTOR SCREEN SPACE	/	/	/	/	/	/	/	/	/	/	/
 
-		ofImage m_chessboardImage;
+		ofImage chessboardImage_;
 
 		// PROJECTOR SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-
 
 
 		// GUI	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
-		ofxPanel m_gui;
-		ofEasyCam m_easyCam;
+		ofxPanel gui_;
+		ofEasyCam easyCam_;
 
 		// Keys
-		bool m_askPause;
-		bool m_askSaveAssets;
-		bool m_askBgLearning;
-		bool m_askBgExport;
+		bool askPause_;
+		bool askSaveAssets_;
+		bool askBgLearning_;
+		bool askBgExport_;
 
 		// FPS
-		ofxLabel m_fpsGui;
+		ofxLabel fpsGui_;
 
 		// GUI	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 };

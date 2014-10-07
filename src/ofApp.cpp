@@ -14,30 +14,30 @@ void ofApp::setup() {
 	// HARDWARE INIT	/	/	/	/	/	/	/	/	/	/	/	/
 
 	// Kinect
-	m_kinectWidth = 640;
-	m_kinectHeight = 480;
+	kinectWidth_ = 640;
+	kinectHeight_ = 480;
 
-	bool initSensor = m_ofxKinect.initSensor();
+	bool initSensor = ofxKinect_.initSensor();
 	if (!initSensor) {
 		ofLog(OF_LOG_FATAL_ERROR) << "Couldn't init the kinect's sensor";
 		exit();
 	}
 
-	bool initStreams = m_ofxKinect.initColorStream(m_kinectWidth, m_kinectHeight) && m_ofxKinect.initDepthStream(m_kinectWidth, m_kinectHeight, false, true);
+	bool initStreams = ofxKinect_.initColorStream(kinectWidth_, kinectHeight_) && ofxKinect_.initDepthStream(kinectWidth_, kinectHeight_, false, true);
 	if (!initStreams) {
 		ofLog(OF_LOG_FATAL_ERROR) << "Couldn't init the kinect's color and/or depth streams";
 		exit();
 	}
 
-	bool kinectStarted = m_ofxKinect.start();
+	bool kinectStarted = ofxKinect_.start();
 	if (!kinectStarted) {
 		ofLog(OF_LOG_FATAL_ERROR) << "Couldn't start the kinect";
 		exit();
 	}
 
 	// Projector
-	m_projectorWindow = ofUtilities::ofVirtualWindow(1920, 0, 1024, 768);
-	m_kinectProjectorToolkit.loadCalibration("cal.xml", m_projectorWindow.getWidth(), m_projectorWindow.getHeight());
+	projectorWindow_ = ofUtilities::ofVirtualWindow(1920, 0, 1024, 768);
+	kinectProjectorToolkit_.loadCalibration("cal.xml", projectorWindow_.getWidth(), projectorWindow_.getHeight());
 
 	// HARDWARE INIT	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -46,7 +46,7 @@ void ofApp::setup() {
 
 	ofDisableAlphaBlending();
 	ofSetFrameRate(30);
-	m_shader.load("shaders/toProjector.vert", "shaders/toProjector.frag");
+	shader_.load("shaders/toProjector.vert", "shaders/toProjector.frag");
 
 	// OPEN GL	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -54,16 +54,16 @@ void ofApp::setup() {
 	// KINECT SCREEN SPACE	/	/	/	/	/	/	/	/	/	/	/	/
 
 	// Background learning
-	m_bgLearningCycleCount = 0;
-	m_askBgLearning = false;
-	m_learntBg = false;
+	bgLearningCycleCount_ = 0;
+	askBgLearning_ = false;
+	learntBg_ = false;
 
 	// Background segmentation
-	m_bgMask.allocate(m_kinectWidth,m_kinectHeight,OF_IMAGE_GRAYSCALE);
-	m_cvBgMask = ofxCv::toCv(m_bgMask);
+	bgMask_.allocate(kinectWidth_,kinectHeight_,OF_IMAGE_GRAYSCALE);
+	cvBgMask_ = ofxCv::toCv(bgMask_);
 
 	// Blob detection
-	m_blobFound = false;
+	blobFound_ = false;
 
 	// KINECT SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -71,12 +71,12 @@ void ofApp::setup() {
 	// KINECT WORLD SPACE	/	/	/	/	/	/	/	/	/	/	/	/
 
 	// Blob finder and tracker
-	m_blobFinder.init(&m_ofxKinect); // standarized coordinate system: z in the direction of gravity
+	blobFinder_.init(&ofxKinect_); // standarized coordinate system: z in the direction of gravity
 	//m_blobFinder.setResolution(BF_HIGH_RES);
-	m_blobFinder.setScale(ofVec3f(0.001,0.001,0.001)); // mm to meters
+	blobFinder_.setScale(ofVec3f(0.001,0.001,0.001)); // mm to meters
 
 	// Fold processing
-	m_askFoldComputation = false;
+	askFoldComputation_ = false;
 
 	// Mesh
 	//m_blobMesh = garmentAugmentation::ofSemiImplicitActiveMesh(20, 20);
@@ -86,19 +86,19 @@ void ofApp::setup() {
 
 	// PROJECTOR SCREEN SPACE	/	/	/	/	/	/	/	/	/	/	/
 
-	m_chessboardImage.loadImage("chessboard.png");
+	chessboardImage_.loadImage("chessboard.png");
 
 	// PROJECTOR SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-
 
 
 	// GUI	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
-	m_gui.setup();
-	m_gui.add(m_bgLearningCycleGui.setup("bg learning iterations", 10, 1, 50));
-	m_gui.add(m_nearClipGui.setup("near clip",1.500,0,8.000));
-	m_gui.add(m_farClipGui.setup("far clip", 3.000, 0, 8.000));
-	m_gui.add(m_cannyThresh1.setup("canny thres 1", 160, 0, 255));
-	m_gui.add(m_cannyThresh2.setup("canny thres 2", 0, 0, 255));
+	gui_.setup();
+	gui_.add(bgLearningCycleGui_.setup("bg learning iterations", 10, 1, 50));
+	gui_.add(nearClipGui_.setup("near clip",1.500,0,8.000));
+	gui_.add(farClipGui_.setup("far clip", 3.000, 0, 8.000));
+	gui_.add(cannyThresh1_.setup("canny thres 1", 160, 0, 255));
+	gui_.add(cannyThresh2_.setup("canny thres 2", 0, 0, 255));
 
 	// Mesh
 	//m_gui.add(m_adaptationRate.setup("adaptation rate", 2, 0, 10));
@@ -106,12 +106,12 @@ void ofApp::setup() {
 	//m_gui.add(m_depthWeight.setup("depth weight", 2, 0, 4));
 
 	// Keys
-	m_askPause = false;
-	m_askSaveAssets = false;
-	m_askBgExport = false;
+	askPause_ = false;
+	askSaveAssets_ = false;
+	askBgExport_ = false;
 
 	// FPS
-	m_gui.add(m_fpsGui.setup(std::string("fps :")));
+	gui_.add(fpsGui_.setup(std::string("fps :")));
 
 	// GUI	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 }
@@ -119,25 +119,25 @@ void ofApp::setup() {
 void ofApp::update() {
 	// EVENTS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
-	if (m_askSaveAssets) {
+	if (askSaveAssets_) {
 		//m_blobMesh.save("mesh_export.ply");
-		ofSaveImage(m_ofxKinect.getColorPixelsRef(), "color_ir_export.tif");
-		ofSaveImage(m_ofxKinect.getDepthPixelsRef(), "depth_export.tif");
-		ofSaveImage(m_normalsImg, "normals_export.tif");
+		ofSaveImage(ofxKinect_.getColorPixelsRef(), "color_ir_export.tif");
+		ofSaveImage(ofxKinect_.getDepthPixelsRef(), "depth_export.tif");
+		ofSaveImage(normalsImg_, "normals_export.tif");
 		ofLogNotice("ofApp::update") << "Exported the 3D mesh, IR/color and depth image";
-		m_askSaveAssets = false;
+		askSaveAssets_ = false;
 	}
-	if (m_askBgExport) {
-		if (m_learntBg) {
-			ofSaveImage(m_depthBg, "background_export.tif");
+	if (askBgExport_) {
+		if (learntBg_) {
+			ofSaveImage(depthBg_, "background_export.tif");
 			ofLogNotice("ofApp::update") << "Exported the learnt background";
 		}
 		else {
 			ofLogNotice("ofApp::update") << "Can't export the background, press b to learn background";
 		}
-		m_askBgExport = false;
+		askBgExport_ = false;
 	}
-	if (m_askPause)
+	if (askPause_)
 		return;
 
 	//m_blobMesh.setAdaptationRate(m_adaptationRate);
@@ -149,13 +149,13 @@ void ofApp::update() {
 
 	// HARDWARE	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
-	m_ofxKinect.update();
+	ofxKinect_.update();
 
 	// HARDWARE	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 
 
 	// PROCESS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
-	if (m_ofxKinect.isFrameNew()) {
+	if (ofxKinect_.isFrameNew()) {
 		// Background learning
 		/*
 		if (m_askBgLearning) {
@@ -187,30 +187,30 @@ void ofApp::update() {
 			}
 		}
 		*/
-		if (!m_learntBg) {
-			bool importedPixels = ofLoadImage(m_depthBg, "background_export.tif");
+		if (!learntBg_) {
+			bool importedPixels = ofLoadImage(depthBg_, "background_export.tif");
 			if (importedPixels) {
-				m_depthBg.setNumChannels(1);
-				m_cvDepthBg = ofxCv::toCv(m_depthBg);
-				m_learntBg = true;
+				depthBg_.setNumChannels(1);
+				cvDepthBg_ = ofxCv::toCv(depthBg_);
+				learntBg_ = true;
 				ofLogNotice("ofApp::update()") << "Imported background";
 			}
 		}
 
 		// Point cloud processing
-		if (m_learntBg) {
+		if (learntBg_) {
 			// Background removal
 			cv::Mat diff;
-			cv::Mat currentDepth = ofxCv::toCv(m_ofxKinect.getDepthPixelsRef());
-			cv::absdiff(m_cvDepthBg, currentDepth, diff);
+			cv::Mat currentDepth = ofxCv::toCv(ofxKinect_.getDepthPixelsRef());
+			cv::absdiff(cvDepthBg_, currentDepth, diff);
 			UCHAR *p_maskRow;
 			USHORT *p_diffRow;
 			USHORT *p_depth;
-			for (int row = 0; row < m_kinectHeight; ++row) {
-				p_maskRow = m_cvBgMask.ptr<UCHAR>(row);
+			for (int row = 0; row < kinectHeight_; ++row) {
+				p_maskRow = cvBgMask_.ptr<UCHAR>(row);
 				p_diffRow = diff.ptr<USHORT>(row);
 				p_depth = currentDepth.ptr<USHORT>(row);
-				for (int col = 0; col < m_kinectWidth; ++col) {
+				for (int col = 0; col < kinectWidth_; ++col) {
 					if (*(p_depth + col) != 0)
 						*(p_maskRow + col) = *(p_diffRow + col) / 10; // to cm
 					else
@@ -218,29 +218,24 @@ void ofApp::update() {
 				}
 			}
 			cv::Mat kernel = cv::getStructuringElement(CV_SHAPE_RECT, cv::Size(11, 11));
-			cv::erode(m_cvBgMask, m_cvBgMask, kernel);
-			cv::dilate(m_cvBgMask, m_cvBgMask, kernel);
-			cv::threshold(m_cvBgMask, m_cvBgMask, 20, 255, CV_THRESH_BINARY);
-			m_bgMask.update();
+			cv::erode(cvBgMask_, cvBgMask_, kernel);
+			cv::dilate(cvBgMask_, cvBgMask_, kernel);
+			cv::threshold(cvBgMask_, cvBgMask_, 20, 255, CV_THRESH_BINARY);
+			bgMask_.update();
 
 			// Blob detection
-			float finderRes = m_blobFinder.getResolution();
+			float finderRes = blobFinder_.getResolution();
 			finderRes *= finderRes;
 
-			m_blobFinder.findBlobs(&m_bgMask,
-				ofVec3f(0.05, 0.05, 0.1), 1, 0.06, 1.2, (int)(0.001*m_kinectHeight*m_kinectWidth / finderRes), 1);
+			blobFinder_.findBlobs(&bgMask_,
+				ofVec3f(0.05, 0.05, 0.1), 1, 0.06, 1.2, (int)(0.001*kinectHeight_*kinectWidth_ / finderRes), 1);
 
-			m_blobFound = false;
-			if (m_blobFinder.nBlobs != 0) {
-				m_modelBlob = m_blobFinder.blobs[0];
-				for (int i = 1; i < m_blobFinder.nBlobs; ++i) {
-					m_modelBlob = m_modelBlob->volume < m_blobFinder.blobs[i]->volume ? m_blobFinder.blobs[i] : m_modelBlob;
-				}
-				m_blobFound = true;
-			}
+			blobFound_ = false;
+			if (blobFinder_.nBlobs != 0)
+				blobFound_ = true;
 
-			if (m_blobFound) {
-				garment_.update(m_blobFinder, *m_modelBlob);
+			if (blobFound_) {
+				garment_.update(blobFinder_, *blobFinder_.blobs[0]);
 				markFolds();
 				/*
 				if (!m_blobMesh.isGenerated()) {
@@ -256,66 +251,66 @@ void ofApp::update() {
 }
 
 void ofApp::draw() {
-	if (m_ofxKinect.isFrameNew()) {
+	if (ofxKinect_.isFrameNew()) {
 		// COMPUTER SCREEN	/	/	/	/	/	/	/	/	/	/	/	/	/
 
 		ofBackground(ofColor::grey);
-		m_projectorWindow.background(ofColor::black);
+		projectorWindow_.background(ofColor::black);
 
 		// Top Left
-		m_ofxKinect.draw(0, 0);
+		ofxKinect_.draw(0, 0);
 
 		// Top Right
-		m_ofxKinect.drawDepth(m_kinectWidth, 0);
+		ofxKinect_.drawDepth(kinectWidth_, 0);
 
 		// Bottom Left
-		m_bgMask.draw(0, m_kinectHeight);
+		bgMask_.draw(0, kinectHeight_);
 
 		// Bottom Right
-		if (m_blobFound) {
+		if (blobFound_) {
 			//m_normalsImg.draw(m_kinectWidth, m_kinectHeight);
-			if (m_askPause)
-				m_easyCam.begin();
+			if (askPause_)
+				easyCam_.begin();
 			ofPushMatrix();
 			//ofEnableDepthTest();
-			ofTranslate(m_kinectWidth, m_kinectHeight);
+			ofTranslate(kinectWidth_, kinectHeight_);
 			ofScale(1000, 1000, 1000);
-			ofTranslate(0, 0, -m_modelBlob->maxZ.z - 1);
+			ofTranslate(0, 0, -garment_.getBlobRef().maxZ.z - 1);
 			//ofScale(0.001*m_blobFinder.getResolution(), 0.001*m_blobFinder.getResolution(), 0.001);
 			//m_blobMesh.drawWireframe();
 			garment_.drawMesh();
-			if (m_foldAxis.size() != 0) {
+			if (foldAxis_.size() != 0) {
 				ofSetColor(ofColor::blue);
-				m_foldAxis.draw();
+				foldAxis_.draw();
 				ofSetColor(ofColor::white);
 			}
 			//ofDisableDepthTest();
 			ofPopMatrix();
-			if (m_askPause)
-				m_easyCam.end();
+			if (askPause_)
+				easyCam_.end();
 		}
 
 		// GUI
-		m_fpsGui.setup(std::string("fps : ") + std::to_string(ofGetFrameRate()));
-		m_gui.draw();
+		fpsGui_.setup(std::string("fps : ") + std::to_string(ofGetFrameRate()));
+		gui_.draw();
 
 		// COMPUTER SCREEN	-	-	-	-	-	-	-	-	-	-	-	-	-
 
 		 
 		// PROJECTOR SCREEN	/	/	/	/	/	/	/	/	/	/	/	/	/
 
-		if (m_blobFound) {
-			m_projectorWindow.begin();
-				m_shader.begin();
-				m_shader.setUniformMatrix4f("toProjector", ofMatrix4x4::getTransposedOf(m_kinectProjectorToolkit.getTransformMatrix()));
+		if (blobFound_) {
+			projectorWindow_.begin();
+				shader_.begin();
+				shader_.setUniformMatrix4f("toProjector", ofMatrix4x4::getTransposedOf(kinectProjectorToolkit_.getTransformMatrix()));
 					//m_modelBlob->mesh.draw();
 					ofSetColor(ofColor::red);
 					ofSetLineWidth(5);
-					m_foldAxis.draw();
+					foldAxis_.draw();
 					ofSetLineWidth(1);
 					ofSetColor(ofColor::white);
-				m_shader.end();
-			m_projectorWindow.end();
+				shader_.end();
+			projectorWindow_.end();
 		}
 
 		// PROJECTOR SCREEN	-	-	-	-	-	-	-	-	-	-	-	-	-
@@ -325,7 +320,7 @@ void ofApp::draw() {
 /* OF ROUTINES	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 
 void ofApp::exit() {
-	m_ofxKinect.stop();
+	ofxKinect_.stop();
 }
 
 void ofApp::mousePressed(int x, int y, int button) {
@@ -334,19 +329,19 @@ void ofApp::mousePressed(int x, int y, int button) {
 
 void ofApp::keyPressed(int key) {
 	if (key == ' ') {
-		m_askPause = !m_askPause;
+		askPause_ = !askPause_;
 	}
 	else if (key == 's') {
-		m_askSaveAssets = true;
+		askSaveAssets_ = true;
 	}
 	else if (key == 'b') {
-		m_askBgLearning = true;
+		askBgLearning_ = true;
 	}
 	else if (key == 'i') {
-		m_askBgExport = true;
+		askBgExport_ = true;
 	}
 	else if (key == 'c') {
-		m_askFoldComputation = true;
+		askFoldComputation_ = true;
 	}
 }
 
@@ -359,10 +354,10 @@ void ofApp::toProjectorSpace(ofMesh& mesh) {
 	ofVec2f projectorCoordinates;
 
 	for (int i = 0; i < mesh.getNumVertices(); ++i) {
-		projectorCoordinates = m_kinectProjectorToolkit.getProjectedPoint(mesh.getVertex(i)*1000);
+		projectorCoordinates = kinectProjectorToolkit_.getProjectedPoint(mesh.getVertex(i)*1000);
 
-		projectorCoordinates.x = ofMap(projectorCoordinates.x, 0, 1, 0, m_projectorWindow.getWidth());
-		projectorCoordinates.y = ofMap(projectorCoordinates.y, 0, 1, 0, m_projectorWindow.getHeight());
+		projectorCoordinates.x = ofMap(projectorCoordinates.x, 0, 1, 0, projectorWindow_.getWidth());
+		projectorCoordinates.y = ofMap(projectorCoordinates.y, 0, 1, 0, projectorWindow_.getHeight());
 
 		mesh.setVertex(i, ofVec3f(projectorCoordinates.x, projectorCoordinates.y, 0));
 	}
@@ -387,8 +382,8 @@ void ofApp::meshParameterizationLSCM(ofMesh& mesh, int textureSize) {
 }
 
 void ofApp::markFolds() {
-	int width = m_kinectWidth / m_blobFinder.getResolution();
-	int height = m_kinectHeight / m_blobFinder.getResolution();
+	int width = kinectWidth_ / blobFinder_.getResolution();
+	int height = kinectHeight_ / blobFinder_.getResolution();
 
 	int patchSize = 9;
 	garmentAugmentation::foldTracker tracker(&garment_);
@@ -400,9 +395,9 @@ void ofApp::markFolds() {
 			patch.moveTo(ofRectangle(x, y, patchSize, 5));
 			if (patch.insideMesh()) {
 				deformation = patch.getDeformationPercent();
-				if (deformation  > m_cannyThresh1 / 2.55) {
+				if (deformation  > cannyThresh1_ / 2.55) {
 					patch.setColor(ofColor::red);
-					if (m_askFoldComputation) {
+					if (askFoldComputation_) {
 						std::vector<ofVec3f> patchPts = patch.getPoints();
 						points.insert(points.end(),patchPts.begin(),patchPts.end());
 					}
@@ -411,7 +406,7 @@ void ofApp::markFolds() {
 		}
 	}
 
-	if (m_askFoldComputation) {
+	if (askFoldComputation_) {
 		double xBar = 0, yBar = 0, zBar = 0;
 		for (int i = 0; i < points.size(); ++i) {
 			xBar += points[i].x / points.size(); yBar += points[i].y / points.size(); zBar += points[i].z / points.size();
@@ -430,9 +425,9 @@ void ofApp::markFolds() {
 
 		ofVec3f meanVector(xBar, yBar, zBar);
 
-		m_foldAxis.clear();
-		m_foldAxis.addVertex(meanVector + -10000 * rightVector);
-		m_foldAxis.addVertex(meanVector + 10000 * rightVector);
+		foldAxis_.clear();
+		foldAxis_.addVertex(meanVector + -10000 * rightVector);
+		foldAxis_.addVertex(meanVector + 10000 * rightVector);
 
 		//m_askFoldComputation = false;
 	}

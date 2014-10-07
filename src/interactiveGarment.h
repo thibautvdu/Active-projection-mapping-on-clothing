@@ -11,9 +11,10 @@ namespace garmentAugmentation {
 			interactiveGarment() {
 			}
 
-			inline ofFastMesh& getMeshRef() { return mesh_; }
-			inline ofPolyline& getContour2dRef() { return contour2d_; }
-			inline const std::vector< std::vector<int> > &getMesh2dViewRef() const { return mesh2dView_; };
+			inline ofFastMesh &getMeshRef() { return mesh_; }
+			inline ofPolyline &getContour2dRef() { return contour2d_; }
+			inline const std::vector< std::vector<int> > &getMesh2dViewRef() const { return mesh2dView_; }
+			inline simple3dBlob &getBlobRef() { return blob_; }
 
 			void update(const kinect3dBlobDetector &detector, const simple3dBlob blob);
 			inline void drawMesh() { mesh_.drawVertices(); }
