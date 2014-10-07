@@ -67,9 +67,6 @@
     <ClCompile Include="..\..\..\addons\ofxKinectCommonBridge\src\ofxKinectCommonBridge.cpp">
       <Filter>addons\ofxKinectCommonBridge\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\cvHelper.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxBaseGui.cpp">
       <Filter>addons\ofxGui\src</Filter>
     </ClCompile>
@@ -103,9 +100,6 @@
     <ClCompile Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\unicode\unicode.cpp">
       <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\unicode</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofUtilities.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxKinectBlobFinder\src\ofxKinectBlobFinder.cpp">
       <Filter>addons\ofxKinectBlobFinder\src</Filter>
     </ClCompile>
@@ -118,11 +112,20 @@
     <ClCompile Include="src\foldTracker.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofFastMesh.cpp">
+    <ClCompile Include="src\kinect3dBlobDetector.cpp">
+      <Filter>src\blobDetection</Filter>
+    </ClCompile>
+    <ClCompile Include="src\interactiveGarment.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofFast3dBlob.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="src\cvHelper.cpp">
+      <Filter>src\toolbox</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofUtilities.cpp">
+      <Filter>src\toolbox</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofFastMesh.cpp">
+      <Filter>src\toolbox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -413,6 +416,12 @@
     </Filter>
     <Filter Include="src\lscm">
       <UniqueIdentifier>{448622c0-f8c5-4946-8ce4-660db9338294}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\blobDetection">
+      <UniqueIdentifier>{72b4a2fa-8124-4308-92d4-60031df1fc86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\toolbox">
+      <UniqueIdentifier>{a422e4bd-4182-4d39-b3dc-fde4d55293e2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -745,9 +754,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\include\KinectCommonBridgeLib.h">
       <Filter>addons\ofxKinectCommonBridge\libs\KinectCommonBridge\include</Filter>
-    </ClInclude>
-    <ClInclude Include="src\cvHelper.h">
-      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxGui\src\ofxBaseGui.h">
       <Filter>addons\ofxGui\src</Filter>
@@ -1787,9 +1793,6 @@
     <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\unicode\unicode_abstract.h">
       <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\unicode</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofUtilities.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxKinectBlobFinder\src\ofxKinectBlob.h">
       <Filter>addons\ofxKinectBlobFinder\src</Filter>
     </ClInclude>
@@ -1805,14 +1808,29 @@
     <ClInclude Include="src\foldTracker.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofFastMesh.h">
+    <ClInclude Include="src\interactiveGarment.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofFast3dBlob.h">
-      <Filter>src</Filter>
+    <ClInclude Include="src\pointCloud.h">
+      <Filter>src\blobDetection</Filter>
+    </ClInclude>
+    <ClInclude Include="src\kinect3dBlobDetector.h">
+      <Filter>src\blobDetection</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simple3dBlob.h">
+      <Filter>src\blobDetection</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cvHelper.h">
+      <Filter>src\toolbox</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofUtilities.h">
+      <Filter>src\toolbox</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofFastMesh.h">
+      <Filter>src\toolbox</Filter>
     </ClInclude>
     <ClInclude Include="src\ofFastPolyline.h">
-      <Filter>src</Filter>
+      <Filter>src\toolbox</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,13 +1,12 @@
 #include "ofSemiImplicitActiveMesh.h"
 
 #include "ofxCv.h"
-#include "ofFast3dBlob.h"
 #include "ofFastPolyline.h"
 
-namespace ofDeformationTracking {
+namespace garmentAugmentation {
 
 	// INITIALIZATION
-	void ofSemiImplicitActiveMesh::generateMesh(const ofFast3dBlobDetector& detector, ofFast3dBlob& blob) {
+	void ofSemiImplicitActiveMesh::generateMesh(const kinect3dBlobDetector &detector, simple3dBlob &blob) {
 		this->clear();
 		this->setMode(OF_PRIMITIVE_TRIANGLES);
 		this->enableIndices();
@@ -16,8 +15,8 @@ namespace ofDeformationTracking {
 		int pointCloudHeight = detector.getHeight();
 
 		ofFastPolyline blobContour;
-		for (int i = 0; i < blob.contourIndices.size(); ++i) {
-			blobContour.addVertex(blob.contourIndices[i] % pointCloudWidth, blob.contourIndices[i] / pointCloudWidth);
+		for (int i = 0; i < blob.contourIndices2d.size(); ++i) {
+			blobContour.addVertex(blob.contourIndices2d[i] % pointCloudWidth, blob.contourIndices2d[i] / pointCloudWidth);
 		}
 
 		const ofRectangle roi = blobContour.getBoundingBox();
@@ -192,7 +191,7 @@ namespace ofDeformationTracking {
 	}
 
 	// COMPUTATION
-	void ofSemiImplicitActiveMesh::updateMesh(const ofFast3dBlobDetector& detector, ofFast3dBlob& blob) {
+	void ofSemiImplicitActiveMesh::updateMesh(const kinect3dBlobDetector &detector, simple3dBlob &blob) {
 		if (mNeedComputation) {
 			computeSolver();
 		}
@@ -201,8 +200,8 @@ namespace ofDeformationTracking {
 		int pointCloudHeight = detector.getHeight();
 
 		ofFastPolyline blobContour2dDepth;
-		for (int i = 0; i < blob.contourIndices.size(); ++i) {
-			blobContour2dDepth.addVertex(blob.contourIndices[i] % pointCloudWidth, blob.contourIndices[i] / pointCloudWidth, detector[blob.contourIndices[i]].pos.z / detector.getScale().z);
+		for (int i = 0; i < blob.contourIndices2d.size(); ++i) {
+			blobContour2dDepth.addVertex(blob.contourIndices2d[i] % pointCloudWidth, blob.contourIndices2d[i] / pointCloudWidth, detector[blob.contourIndices2d[i]].pos.z / detector.getScale().z);
 		}
 
 		// Get closest points for each boundary vertex and construct the mesh contour
@@ -212,7 +211,7 @@ namespace ofDeformationTracking {
 		for (int i = 0; i < this->getNumVertices(); ++i) { closestImgPtForce[i] = ofVec3f::zero(); }
 		for (int i = 0; i < mMeshBoundaryIndices.size(); ++i) {
 			blobContour2dDepth.getClosestPoint(this->getVertex(mMeshBoundaryIndices[i]), &nearestIdx);
-			if (detector[blob.contourIndices[nearestIdx]].flag == blob.idx)
+			if (detector[blob.contourIndices2d[nearestIdx]].flag == blob.idx)
 				closestImgPtForce[mMeshBoundaryIndices[i]] = blobContour2dDepth[nearestIdx] - this->getVertex(mMeshBoundaryIndices[i]);
 			meshDepthContour.addVertex(this->getVertex(mMeshBoundaryIndices[i]));
 		}
@@ -223,7 +222,7 @@ namespace ofDeformationTracking {
 		ofVec3f* imgPtToMeshContourForce = new ofVec3f[this->getNumVertices()]; // 0 for non boundary vertices
 		for (int i = 0; i < this->getNumVertices(); ++i) { imgPtToMeshContourForce[i] = ofVec3f::zero(); }
 		for (int i = 0; i < blobContour2dDepth.size(); ++i) {
-			if (detector[blob.contourIndices[i]].flag == blob.idx) {
+			if (detector[blob.contourIndices2d[i]].flag == blob.idx) {
 				nearestPoint = meshDepthContour.getClosestPoint(blobContour2dDepth[i], &nearestIdx);
 				nearestIdx = mMeshBoundaryIndices[nearestIdx];
 				imgPtToMeshContourForce[nearestIdx] += blobContour2dDepth[i] - nearestPoint;

@@ -6,7 +6,7 @@
 
 #include "cvHelper.h"
 #include "lscm.h"
-#include "ofFast3dBlob.h"
+#include "foldTracker.h"
 
 /* OF ROUTINES	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 
@@ -79,7 +79,7 @@ void ofApp::setup() {
 	m_askFoldComputation = false;
 
 	// Mesh
-	m_blobMesh = ofDeformationTracking::ofSemiImplicitActiveMesh(20, 20);
+	//m_blobMesh = garmentAugmentation::ofSemiImplicitActiveMesh(20, 20);
 
 	// KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -101,9 +101,9 @@ void ofApp::setup() {
 	m_gui.add(m_cannyThresh2.setup("canny thres 2", 0, 0, 255));
 
 	// Mesh
-	m_gui.add(m_adaptationRate.setup("adaptation rate", 2, 0, 10));
-	m_gui.add(m_boundaryWeight.setup("boundary weight", 0, 0, 4));
-	m_gui.add(m_depthWeight.setup("depth weight", 2, 0, 4));
+	//m_gui.add(m_adaptationRate.setup("adaptation rate", 2, 0, 10));
+	//m_gui.add(m_boundaryWeight.setup("boundary weight", 0, 0, 4));
+	//m_gui.add(m_depthWeight.setup("depth weight", 2, 0, 4));
 
 	// Keys
 	m_askPause = false;
@@ -120,7 +120,7 @@ void ofApp::update() {
 	// EVENTS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
 	if (m_askSaveAssets) {
-		m_blobMesh.save("mesh_export.ply");
+		//m_blobMesh.save("mesh_export.ply");
 		ofSaveImage(m_ofxKinect.getColorPixelsRef(), "color_ir_export.tif");
 		ofSaveImage(m_ofxKinect.getDepthPixelsRef(), "depth_export.tif");
 		ofSaveImage(m_normalsImg, "normals_export.tif");
@@ -140,9 +140,9 @@ void ofApp::update() {
 	if (m_askPause)
 		return;
 
-	m_blobMesh.setAdaptationRate(m_adaptationRate);
-	m_blobMesh.setBoundaryWeight(m_boundaryWeight);
-	m_blobMesh.setDepthWeight(m_depthWeight);
+	//m_blobMesh.setAdaptationRate(m_adaptationRate);
+	//m_blobMesh.setBoundaryWeight(m_boundaryWeight);
+	//m_blobMesh.setDepthWeight(m_depthWeight);
 
 	// EVENTS	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -240,14 +240,15 @@ void ofApp::update() {
 			}
 
 			if (m_blobFound) {
-				//ofUtilities::computeNormals(m_modelBlob->mesh, true);
-				//markFolds();
+				garment_.update(m_blobFinder, *m_modelBlob);
+				markFolds();
+				/*
 				if (!m_blobMesh.isGenerated()) {
 					m_blobMesh.generateMesh(m_blobFinder, *m_modelBlob);
 				}
 				else {
 					m_blobMesh.updateMesh(m_blobFinder, *m_modelBlob);
-				}
+				}*/
 			}
 		}
 	}
@@ -280,8 +281,9 @@ void ofApp::draw() {
 			ofTranslate(m_kinectWidth, m_kinectHeight);
 			ofScale(1000, 1000, 1000);
 			ofTranslate(0, 0, -m_modelBlob->maxZ.z - 1);
-			ofScale(0.001*m_blobFinder.getResolution(), 0.001*m_blobFinder.getResolution(), 0.001);
-			m_blobMesh.drawWireframe();
+			//ofScale(0.001*m_blobFinder.getResolution(), 0.001*m_blobFinder.getResolution(), 0.001);
+			//m_blobMesh.drawWireframe();
+			garment_.drawMesh();
 			if (m_foldAxis.size() != 0) {
 				ofSetColor(ofColor::blue);
 				m_foldAxis.draw();
@@ -384,18 +386,13 @@ void ofApp::meshParameterizationLSCM(ofMesh& mesh, int textureSize) {
 	}
 }
 
-/*
 void ofApp::markFolds() {
-	for (int i = 0; i < m_modelBlob->mesh.getNumVertices(); ++i) {
-		m_modelBlob->mesh.addColor(ofColor::lightYellow);
-	}
-
 	int width = m_kinectWidth / m_blobFinder.getResolution();
 	int height = m_kinectHeight / m_blobFinder.getResolution();
 
 	int patchSize = 9;
-	foldTracker tracker(&(m_modelBlob->mesh), m_blobFinder.getGenerationMap(), m_blobFinder.getWidth(), m_blobFinder.getHeight());
-	foldTracker::trackerPatch patch = tracker.createPatch(ofRectangle(0, 0, 0, 0));
+	garmentAugmentation::foldTracker tracker(&garment_);
+	garmentAugmentation::foldTracker::trackerPatch patch = tracker.createPatch(ofRectangle(0, 0, 0, 0));
 	float deformation;
 	std::vector<ofVec3f> points;
 	for (int y = 0; y < height - 5; y+= 20) {
@@ -440,7 +437,7 @@ void ofApp::markFolds() {
 		//m_askFoldComputation = false;
 	}
 }
-*/
+
 /*
 void ofApp::markFolds(ofFastMesh& mesh) {
 	unsigned int* map =  mesh.get2dIndicesMap();

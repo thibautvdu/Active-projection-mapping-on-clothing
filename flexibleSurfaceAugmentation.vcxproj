@@ -116,6 +116,7 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
     <ClCompile Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\unicode\unicode.cpp" />
     <ClCompile Include="..\..\..\addons\ofxKinectProjectorToolkit\src\ofxKinectProjectorToolkit.cpp" />
     <ClCompile Include="src\foldTracker.cpp" />
+    <ClCompile Include="src\interactiveGarment.cpp" />
     <ClCompile Include="src\lscm.cpp" />
     <ClCompile Include="src\lscmUtilities.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -141,7 +142,7 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
     <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Wrappers.cpp" />
     <ClCompile Include="..\..\..\addons\ofxKinectCommonBridge\src\ofxKinectCommonBridge.cpp" />
     <ClCompile Include="src\cvHelper.cpp" />
-    <ClCompile Include="src\ofFast3dBlob.cpp" />
+    <ClCompile Include="src\kinect3dBlobDetector.cpp" />
     <ClCompile Include="src\ofFastMesh.cpp" />
     <ClCompile Include="src\ofSemiImplicitActiveMesh.cpp" />
     <ClCompile Include="src\ofUtilities.cpp" />
@@ -494,10 +495,12 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
     <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_preconditioners.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_private.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_superlu.h" />
+    <ClInclude Include="src\simple3dBlob.h" />
     <ClInclude Include="src\cvHelper.h" />
     <ClInclude Include="src\foldTracker.h" />
+    <ClInclude Include="src\interactiveGarment.h" />
     <ClInclude Include="src\ofFastPolyline.h" />
-    <ClInclude Include="src\ofFast3dBlob.h" />
+    <ClInclude Include="src\kinect3dBlobDetector.h" />
     <ClInclude Include="src\lscm.h" />
     <ClInclude Include="src\lscmUtilities.h" />
     <ClInclude Include="src\ofFastMesh.h" />
@@ -613,6 +616,7 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
     <ClInclude Include="..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\include\KinectCommonBridgeLib.h" />
     <ClInclude Include="src\ofSemiImplicitActiveMesh.h" />
     <ClInclude Include="src\ofUtilities.h" />
+    <ClInclude Include="src\pointCloud.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">

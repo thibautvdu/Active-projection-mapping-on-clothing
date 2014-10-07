@@ -2,10 +2,18 @@
 
 void ofFastMesh::reserveCapacity(int capacity) {
 	this->vertices.reserve(capacity);
-	this->normals.reserve(capacity);
+	//this->normals.reserve(capacity);
 	this->colors.reserve(capacity);
-	this->texCoords.reserve(capacity);
-	this->indices.reserve(capacity * 4);
+	//this->texCoords.reserve(capacity);
+	//this->indices.reserve(capacity * 4);
+}
+
+void ofFastMesh::resize(int size) {
+	this->vertices.resize(size);
+	this->colors.resize(size);
+	bVertsChanged = true;
+	bColorsChanged = true;
+	bFacesDirty = true;
 }
 
 void ofFastMesh::computeNormals(bool bNormalize){

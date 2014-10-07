@@ -7,9 +7,9 @@
 #include <Eigen/Sparse>
 #include <Eigen/SparseLU>
 #include "ofxKinectCommonBridge.h"
-#include "ofFast3dBlob.h"
+#include "kinect3dBlobDetector.h"
 
-namespace ofDeformationTracking {
+namespace garmentAugmentation {
 
 	/*
 	An object oriented implementation of "3D Non-Rigid Deformable Surface Estimation Without Feature
@@ -80,10 +80,10 @@ namespace ofDeformationTracking {
 			const ofMesh& getKinectRelativeMeshRef() const { return mKinectRelativeMesh; }
 
 			// INITIALIZATION
-			void generateMesh(const ofFast3dBlobDetector &detector, ofFast3dBlob &blob);
+			void generateMesh(const kinect3dBlobDetector &detector, simple3dBlob &blob);
 
 			// COMPUTATION
-			void updateMesh(const ofFast3dBlobDetector &detector, ofFast3dBlob &blob);
+			void updateMesh(const kinect3dBlobDetector &detector, simple3dBlob &blob);
 
 		private :
 
