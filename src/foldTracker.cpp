@@ -28,12 +28,13 @@ namespace garmentAugmentation {
 		interactiveGarment * pGarment = mp_tracker->getGarmentPtr();
 		const std::vector< std::vector<int> > &mesh2dView = pGarment->getMesh2dViewRef();
 
+		int col = m_roi.getTopLeft().x + ((m_roi.width - 1) / 2);
 		for (int row = m_roi.getTopLeft().y; row < m_roi.getBottomRight().y; row++) {
-			for (int col = m_roi.getTopLeft().x; col < m_roi.getBottomRight().x; col++) {
+			//for (int col = m_roi.getTopLeft().x; col < m_roi.getBottomRight().x; col++) {
 				if (mesh2dView[col][row] != -1) {
 					res.push_back(pGarment->getMeshRef().getVertex(mesh2dView[col][row]));
 				}
-			}
+			//}
 		}
 
 		return res;
@@ -43,12 +44,13 @@ namespace garmentAugmentation {
 		interactiveGarment * pGarment = mp_tracker->getGarmentPtr();
 		const std::vector< std::vector<int> > &mesh2dView = pGarment->getMesh2dViewRef();
 
+		int col = m_roi.getTopLeft().x + ((m_roi.width - 1) / 2);
 		for (int row = m_roi.getTopLeft().y; row < m_roi.getBottomRight().y; row++) {
-			for (int col = m_roi.getTopLeft().x; col < m_roi.getBottomRight().x; col++) {
+			//for (int col = m_roi.getTopLeft().x; col < m_roi.getBottomRight().x; col++) {
 				if (mesh2dView[col][row] != -1) {
 					pGarment->getMeshRef().setColor(mesh2dView[col][row],color);
 				}
-			}
+			//}
 		}
 	}
 

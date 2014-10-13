@@ -77,6 +77,8 @@ void ofApp::setup() {
 
 	// Fold processing
 	askFoldComputation_ = false;
+	numFolds_ = 1;
+	prevFoldDist_ = 0;
 
 	// Mesh
 	//m_blobMesh = garmentAugmentation::ofSemiImplicitActiveMesh(20, 20);
@@ -97,8 +99,7 @@ void ofApp::setup() {
 	gui_.add(bgLearningCycleGui_.setup("bg learning iterations", 10, 1, 50));
 	gui_.add(nearClipGui_.setup("near clip",1.500,0,8.000));
 	gui_.add(farClipGui_.setup("far clip", 3.000, 0, 8.000));
-	gui_.add(cannyThresh1_.setup("canny thres 1", 160, 0, 255));
-	gui_.add(cannyThresh2_.setup("canny thres 2", 0, 0, 255));
+	gui_.add(deformationThres_.setup("canny thres 1", 100, 0, 200));
 
 	// Mesh
 	//m_gui.add(m_adaptationRate.setup("adaptation rate", 2, 0, 10));
@@ -123,7 +124,6 @@ void ofApp::update() {
 		//m_blobMesh.save("mesh_export.ply");
 		ofSaveImage(ofxKinect_.getColorPixelsRef(), "color_ir_export.tif");
 		ofSaveImage(ofxKinect_.getDepthPixelsRef(), "depth_export.tif");
-		ofSaveImage(normalsImg_, "normals_export.tif");
 		ofLogNotice("ofApp::update") << "Exported the 3D mesh, IR/color and depth image";
 		askSaveAssets_ = false;
 	}
@@ -279,9 +279,11 @@ void ofApp::draw() {
 			//ofScale(0.001*m_blobFinder.getResolution(), 0.001*m_blobFinder.getResolution(), 0.001);
 			//m_blobMesh.drawWireframe();
 			garment_.drawMesh();
-			if (foldAxis_.size() != 0) {
+			if (foldAxes_.size() != 0) {
 				ofSetColor(ofColor::blue);
-				foldAxis_.draw();
+				for (int i = 0; i < foldAxes_.size(); ++i) {
+					foldAxes_[i].draw();
+				}
 				ofSetColor(ofColor::white);
 			}
 			//ofDisableDepthTest();
@@ -306,7 +308,9 @@ void ofApp::draw() {
 					//m_modelBlob->mesh.draw();
 					ofSetColor(ofColor::red);
 					ofSetLineWidth(5);
-					foldAxis_.draw();
+					for (int i = 0; i < foldAxes_.size(); ++i) {
+						foldAxes_[i].draw();
+					}
 					ofSetLineWidth(1);
 					ofSetColor(ofColor::white);
 				shader_.end();
@@ -395,7 +399,7 @@ void ofApp::markFolds() {
 			patch.moveTo(ofRectangle(x, y, patchSize, 5));
 			if (patch.insideMesh()) {
 				deformation = patch.getDeformationPercent();
-				if (deformation  > cannyThresh1_ / 2.55) {
+				if (deformation  > deformationThres_) {
 					patch.setColor(ofColor::red);
 					if (askFoldComputation_) {
 						std::vector<ofVec3f> patchPts = patch.getPoints();
@@ -407,27 +411,131 @@ void ofApp::markFolds() {
 	}
 
 	if (askFoldComputation_) {
-		double xBar = 0, yBar = 0, zBar = 0;
-		for (int i = 0; i < points.size(); ++i) {
-			xBar += points[i].x / points.size(); yBar += points[i].y / points.size(); zBar += points[i].z / points.size();
+
+		// Computation structure
+		typedef struct fold fold;
+		struct fold {
+			ofVec3f direction;
+			ofVec3f meanPt;
+			ofVec3f aPt;
+
+			int nbPts;
+			std::vector<float> distToPts;
+
+			void clear() {
+				direction = ofVec3f(0, 0, 0);
+				meanPt = ofVec3f(0, 0, 0);
+				aPt = ofVec3f(0, 0, 0);
+
+				nbPts = 0;
+			}
+
+			fold() {
+				clear();
+			}
+		};
+
+		// Initialize the clusters
+		std::vector<uchar> clusterLabel(points.size()); // rel. to points' vector
+		std::vector<fold> foldClusters(numFolds_);
+		if (numFolds_ > 1) {
+			float maxX = -10000, minX = 10000;
+			for (int i = 0; i < points.size(); ++i) {
+				maxX = maxX < points[i].x ? points[i].x : maxX;
+				minX = minX > points[i].x ? points[i].x : minX;
+			}
+
+			float deltaX = (maxX - minX) / (numFolds_ - 1);
+			for (int i = 0; i < points.size(); ++i) {
+				clusterLabel[i] = floor(((points[i].x - minX) / deltaX) + 0.5);
+			}
+		}
+		else {
+			for (int i = 0; i < points.size(); ++i) {
+				clusterLabel[i] = 0;
+			}
 		}
 
-		Eigen::MatrixX3f A(points.size(), 3);
-		for (int i = 0; i < points.size(); ++i) {
-			A(i, 0) = points[i].x - xBar; A(i, 1) = points[i].y - yBar; A(i, 2) = points[i].z - zBar;
+		// K-means
+		bool change = true;
+		float avgDist;
+		int ptsNbApprox = points.size() / numFolds_;
+		while (change) {
+			change = false;
+
+			// Update the clusters
+			for (int nCluster = 0; nCluster < foldClusters.size(); ++nCluster) {
+				foldClusters[nCluster].clear();
+				for (int i = 0; i < points.size(); ++i) {
+					if (clusterLabel[i] == nCluster) {
+						foldClusters[nCluster].meanPt.x += points[i].x;
+						foldClusters[nCluster].meanPt.y += points[i].y;
+						foldClusters[nCluster].meanPt.z += points[i].z;
+						++foldClusters[nCluster].nbPts;
+					}
+				}
+
+				if (foldClusters[nCluster].nbPts != 0) {
+					foldClusters[nCluster].meanPt /= (float)foldClusters[nCluster].nbPts;
+					Eigen::MatrixX3f A(foldClusters[nCluster].nbPts, 3);
+					int AIdx = 0;
+					for (int i = 0; i < points.size(); ++i) {
+						if (clusterLabel[i] == nCluster) {
+							A(AIdx, 0) = points[i].x - foldClusters[nCluster].meanPt.x;
+							A(AIdx, 1) = points[i].y - foldClusters[nCluster].meanPt.y;
+							A(AIdx, 2) = points[i].z - foldClusters[nCluster].meanPt.z;
+							++AIdx;
+						}
+					}
+
+					Eigen::JacobiSVD<Eigen::MatrixXf> svd(A, Eigen::ComputeThinV);
+					foldClusters[nCluster].direction.x = svd.matrixV()(0, 0);
+					foldClusters[nCluster].direction.y = svd.matrixV()(1, 0);
+					foldClusters[nCluster].direction.z = svd.matrixV()(2, 0);
+					foldClusters[nCluster].direction.normalize();
+					foldClusters[nCluster].aPt = foldClusters[nCluster].meanPt + foldClusters[nCluster].direction;
+
+					// Compute the distance for each point	
+					foldClusters[nCluster].distToPts.resize(points.size());
+					for (int i = 0; i < points.size(); ++i) {
+						foldClusters[nCluster].distToPts[i] = ((points[i] - foldClusters[nCluster].meanPt).cross(points[i] - foldClusters[nCluster].aPt)).length();
+					}
+				}
+			}
+
+			// Assign in regard of the distance
+			avgDist = 0;
+			for (int i = 0; i < points.size(); ++i) {
+				float minDist = 100000;
+				int closestCluster = 255;
+				for (int nCluster = 0; nCluster < foldClusters.size(); ++nCluster) {
+					if (foldClusters[nCluster].nbPts != 0 && foldClusters[nCluster].distToPts[i] < minDist) {
+						minDist = foldClusters[nCluster].distToPts[i];
+						closestCluster = nCluster;
+					}
+				}
+				avgDist += minDist / points.size();
+				if (clusterLabel[i] != closestCluster) {
+					change = true;
+					clusterLabel[i] = closestCluster;
+				}
+			}
 		}
 
-		ofVec3f rightVector;
-		Eigen::JacobiSVD<Eigen::MatrixXf> svd(A, Eigen::ComputeThinV);
-		rightVector.x = svd.matrixV()(0, 0);
-		rightVector.y = svd.matrixV()(1, 0);
-		rightVector.z = svd.matrixV()(2, 0);
+		if (prevFoldDist_ > 0.001 && abs(avgDist - prevFoldDist_) / prevFoldDist_ > 0.5) {
+			numFolds_++;
+		}
+		prevFoldDist_ = avgDist;
 
-		ofVec3f meanVector(xBar, yBar, zBar);
-
-		foldAxis_.clear();
-		foldAxis_.addVertex(meanVector + -10000 * rightVector);
-		foldAxis_.addVertex(meanVector + 10000 * rightVector);
+		foldAxes_.resize(foldClusters.size());
+		for (int i = 0; i < foldAxes_.size(); ++i) {
+			foldAxes_[i].clear();
+			if (foldClusters[i].nbPts != 0) {
+				foldAxes_[i].addVertex(foldClusters[i].meanPt + -10000 * foldClusters[i].direction);
+				foldAxes_[i].addVertex(foldClusters[i].meanPt + 10000 * foldClusters[i].direction);
+			}
+		}
+		
 
 		//m_askFoldComputation = false;
 	}

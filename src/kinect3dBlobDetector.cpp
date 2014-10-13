@@ -36,7 +36,7 @@ namespace garmentAugmentation {
 		kWidth = kinectPtr->getColorPixelsRef().getWidth();
 		kHeight = kinectPtr->getColorPixelsRef().getHeight();
 		kNPix = kWidth*kHeight;
-		bFinderInited = setResolution(BF_LOW_RES);
+		bFinderInited = setResolution(BF_MEDIUM_RES);
 	}
 
 	// ***************************************************************************

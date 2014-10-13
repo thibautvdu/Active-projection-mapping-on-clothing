@@ -60,12 +60,11 @@ class ofApp : public ofBaseApp {
 		cv::Mat cvBgMask_;
 
 		// Folds detection
-		ofImage normalsImg_;
-		cv::Mat cvNormalsImg_;
-		ofxIntSlider cannyThresh1_;
-		ofxIntSlider cannyThresh2_;
+		ofxIntSlider deformationThres_;
 		bool askFoldComputation_;
-		ofPolyline foldAxis_;
+		uchar numFolds_;
+		float prevFoldDist_;
+		std::vector<ofPolyline> foldAxes_;
 
 		// KINECT SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 

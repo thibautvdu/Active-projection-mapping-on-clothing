@@ -10,7 +10,7 @@ namespace garmentAugmentation {
 
 		if (mesh_.getCapacity() != pcW*pcH) {
 			mesh_.reserveCapacity(pcW*pcH);
-			mesh2dView_.resize(pcW, vector<int>(pcH, -1));
+			mesh2dView_.resize(pcW, vector<int>(pcH));
 		}
 
 		mesh_.resize(blob_.nbPoints);
@@ -24,6 +24,8 @@ namespace garmentAugmentation {
 					mesh2dView_[x][y] = vIdx;
 					vIdx++;
 				}
+				else
+					mesh2dView_[x][y] = -1;
 			}
 		}
 

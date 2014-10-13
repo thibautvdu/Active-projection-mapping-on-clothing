@@ -109,14 +109,8 @@
     <ClCompile Include="src\lscmUtilities.cpp">
       <Filter>src\lscm</Filter>
     </ClCompile>
-    <ClCompile Include="src\foldTracker.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\kinect3dBlobDetector.cpp">
       <Filter>src\blobDetection</Filter>
-    </ClCompile>
-    <ClCompile Include="src\interactiveGarment.cpp">
-      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\cvHelper.cpp">
       <Filter>src\toolbox</Filter>
@@ -126,6 +120,12 @@
     </ClCompile>
     <ClCompile Include="src\ofFastMesh.cpp">
       <Filter>src\toolbox</Filter>
+    </ClCompile>
+    <ClCompile Include="src\foldTracker.cpp">
+      <Filter>src\garment</Filter>
+    </ClCompile>
+    <ClCompile Include="src\interactiveGarment.cpp">
+      <Filter>src\garment</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -422,6 +422,9 @@
     </Filter>
     <Filter Include="src\toolbox">
       <UniqueIdentifier>{a422e4bd-4182-4d39-b3dc-fde4d55293e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\garment">
+      <UniqueIdentifier>{a63da343-c2f1-4eb1-9ddc-9065fb43c334}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1805,12 +1808,6 @@
     <ClInclude Include="src\lscmUtilities.h">
       <Filter>src\lscm</Filter>
     </ClInclude>
-    <ClInclude Include="src\foldTracker.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\interactiveGarment.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="src\pointCloud.h">
       <Filter>src\blobDetection</Filter>
     </ClInclude>
@@ -1831,6 +1828,12 @@
     </ClInclude>
     <ClInclude Include="src\ofFastPolyline.h">
       <Filter>src\toolbox</Filter>
+    </ClInclude>
+    <ClInclude Include="src\foldTracker.h">
+      <Filter>src\garment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\interactiveGarment.h">
+      <Filter>src\garment</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
