@@ -91,9 +91,6 @@
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxToggle.cpp">
       <Filter>addons\ofxGui\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofSemiImplicitActiveMesh.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxKinectProjectorToolkit\src\ofxKinectProjectorToolkit.cpp">
       <Filter>addons\ofxKinectProjectorToolkit\src</Filter>
     </ClCompile>
@@ -129,6 +126,9 @@
     </ClCompile>
     <ClCompile Include="src\flyingLights.cpp">
       <Filter>src\garment</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ofSemiImplicitActiveMesh.cpp">
+      <Filter>src\surfaceTracking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -428,6 +428,9 @@
     </Filter>
     <Filter Include="src\garment">
       <UniqueIdentifier>{a63da343-c2f1-4eb1-9ddc-9065fb43c334}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\surfaceTracking">
+      <UniqueIdentifier>{503b7d9e-5e71-4ebe-ad3e-661a304aff12}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1580,9 +1583,6 @@
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\UmfPackSupport\UmfPackSupport.h">
       <Filter>addons\ofxEigen\Eigen\src\UmfPackSupport</Filter>
     </ClInclude>
-    <ClInclude Include="src\ofSemiImplicitActiveMesh.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\src\ofxKinectProjectorToolkit.h">
       <Filter>addons\ofxKinectProjectorToolkit\src</Filter>
     </ClInclude>
@@ -1846,6 +1846,9 @@
     </ClInclude>
     <ClInclude Include="src\flyingLights.h">
       <Filter>src\garment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofSemiImplicitActiveMesh.h">
+      <Filter>src\surfaceTracking</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

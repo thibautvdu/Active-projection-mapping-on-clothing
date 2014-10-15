@@ -2,12 +2,13 @@
 #define FLEXIBLE_SURFACE_AUGMENTATION_KINECT_3D_BLOB_DETECTOR_H_
 
 #include "ofMain.h"
-#include "ofxKinectCommonBridge.h"
 
+#include "ofxKinectCommonBridge.h"
 #include "simple3dBlob.h"
 #include "pointCloud.h"
 
 namespace garmentAugmentation {
+namespace blobDetection {
 
 	enum kinectBlobDetectorResolution { BF_HIGH_RES = 1, BF_MEDIUM_RES = 2, BF_LOW_RES = 4 };
 
@@ -59,6 +60,7 @@ namespace garmentAugmentation {
 			bool createCloud(unsigned char * maskPix);
 	};
 
-};
+} // namespace blobDetection
+} // namespace garmentAugmentation
 
-#endif // !FLEXIBLE_SURFACE_AUGMENTATION_KINECT_3D_BLOB_DETECTOR_H_
+#endif // FLEXIBLE_SURFACE_AUGMENTATION_KINECT_3D_BLOB_DETECTOR_H_

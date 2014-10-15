@@ -1,6 +1,7 @@
 #include "flyingLights.h"
 
 namespace garmentAugmentation {
+namespace garment {
 
 	flyingLights::flyingLights() {
 		lights.reserve(20);
@@ -12,10 +13,10 @@ namespace garmentAugmentation {
 		}
 	}
 
-	void flyingLights::update(std::vector<fold> &folds) {
+	void flyingLights::update(const std::vector<fold> &folds) {
 		if (!folds.empty()) {
 			for (int i = 0; i < ofRandomf()*2; ++i) {
-				fold &f = folds[floor(ofRandom(folds.size() - 1)+0.5)];
+				const fold &f = folds[floor(ofRandom(folds.size() - 1)+0.5)];
 				ofVec3f foldDir = f.getBPt() - f.getAPt();
 				lights.push_back(particle(f.getAPt(),0.01f,foldDir.length()));
 				lights[lights.size()-1].vel = foldDir.normalize() * 0.01f;
@@ -40,4 +41,5 @@ namespace garmentAugmentation {
 		}
 	}
 
-};
+} // namespace garment
+} // namespace garmentAugmentation

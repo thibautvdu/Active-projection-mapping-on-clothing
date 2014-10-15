@@ -6,10 +6,12 @@
 #include "ofPolyline.h"
 #include <Eigen/Sparse>
 #include <Eigen/SparseLU>
+
 #include "ofxKinectCommonBridge.h"
 #include "kinect3dBlobDetector.h"
 
 namespace garmentAugmentation {
+namespace surfaceTracking {
 
 	/*
 	An object oriented implementation of "3D Non-Rigid Deformable Surface Estimation Without Feature
@@ -80,10 +82,10 @@ namespace garmentAugmentation {
 			const ofMesh& getKinectRelativeMeshRef() const { return mKinectRelativeMesh; }
 
 			// INITIALIZATION
-			void generateMesh(const kinect3dBlobDetector &detector, simple3dBlob &blob);
+			void generateMesh(const blobDetection::kinect3dBlobDetector &detector, simple3dBlob &blob);
 
 			// COMPUTATION
-			void updateMesh(const kinect3dBlobDetector &detector, simple3dBlob &blob);
+			void updateMesh(const blobDetection::kinect3dBlobDetector &detector, simple3dBlob &blob);
 
 		private :
 
@@ -119,6 +121,7 @@ namespace garmentAugmentation {
 			int intersectionArea(const ofPolyline& contour1, const ofPolyline& contour2);
 	};
 
-}
+} // namespace surfaceTracking
+} // namespace garmentAugmentation
 
 #endif // FLEXIBLE_SURFACE_AUGMENTATION_SEMI_IMPLICIT_ACTIVE_MESH_H_

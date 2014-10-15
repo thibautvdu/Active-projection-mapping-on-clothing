@@ -1,13 +1,13 @@
 #ifndef FLEXIBLE_SURFACE_AUGMENTATION_OF_APP_H_
 #define FLEXIBLE_SURFACE_AUGMENTATION_OF_APP_H_
 
-#include "ofMain.h"
-
 #include <stdlib.h>
+
+#include "ofMain.h"
 #include "ofxCv.h"
-#include "ofxKinectCommonBridge.h"
 #include "ofxGui.h"
 
+#include "ofxKinectCommonBridge.h"
 #include "ofxKinectProjectorToolkit.h"
 #include "ofUtilities.h"
 #include "kinect3dBlobDetector.h"
@@ -29,7 +29,7 @@ class ofApp : public ofBaseApp {
 
 		/* METHODS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 		void meshParameterizationLSCM(ofMesh& mesh, int textureSize);
-		void markFolds();
+		void detectFolds();
 
 
 		/* VARIABLES	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
@@ -39,8 +39,9 @@ class ofApp : public ofBaseApp {
 		ofxKinectCommonBridge ofxKinect_;
 		static const int kinectWidth_, kinectHeight_;
 
+		static const int screenWidth_, screenHeight_, projectorWidth_, projectorHeight_;
 		ofxKinectProjectorToolkit kinectProjectorToolkit_;
-		static const ofUtilities::ofVirtualWindow projectorWindow_;
+		ofUtilities::ofVirtualWindow projectorWindow_;
 
 		// HARDWARE HANDLERS	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -62,14 +63,14 @@ class ofApp : public ofBaseApp {
 		// KINECT WORLD SPACE	/	/	/	/	/	/	/	/	/	/	/	/
 
 		// Scaling
-		static const ofVec3f toWorldUnits_;
+		static const float toWorldUnits_;
 
 		// Blob finder and tracker
-		garmentAugmentation::kinect3dBlobDetector blobFinder_;
+		garmentAugmentation::blobDetection::kinect3dBlobDetector blobFinder_;
 		bool blobFound_;
 
 		// Garment object
-		garmentAugmentation::interactiveGarment garment_;
+		garmentAugmentation::garment::interactiveGarment garment_;
 
 		// Folds detection
 		ofxIntSlider deformationThres_;

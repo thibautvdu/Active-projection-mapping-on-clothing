@@ -3,6 +3,7 @@
 #include "ofxCv.h"
 
 namespace garmentAugmentation {
+namespace blobDetection {
 
 	static int clockwiseBacktracking[] = { 6, 0, 0, 2, 2, 4, 4, 6 }; // newStart = clockwiseBacktraking[previous_backtrack]
 	static int clockwiseX[] = { -1, -1, 0, 1, 1, 1, 0, -1, -1, -1, 0, 1, 1, 1, 0, -1 };
@@ -292,4 +293,5 @@ namespace garmentAugmentation {
 		return bFinderInited;
 	}
 
-};
+} // namespace blobDetection
+} // namespace garmentAugmentation

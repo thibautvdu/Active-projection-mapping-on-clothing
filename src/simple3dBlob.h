@@ -4,18 +4,18 @@
 #include "ofMain.h"
 
 namespace garmentAugmentation {
-	class simple3dBlob {
-		public:
-			int idx;
-			vector<int> contourIndices2d;
-			ofVec3f centroid;
-			ofVec3f minX, minY, minZ; // points with minimum x / y / z
-			ofVec3f maxX, maxY, maxZ; // points with maximum x / y / z
-			ofVec3f boundingBoxMax, boundingBoxMin; // min bounding xyz
-			ofVec3f dimensions; //dimensions
-			ofVec3f massCenter;
-			float volume; // volume
-			int nbPoints;
+	typedef struct simple3dBlob simple3dBlob;
+	struct simple3dBlob {
+		int idx;
+		vector<int> contourIndices2d;
+		ofVec3f centroid;
+		ofVec3f minX, minY, minZ; // points with minimum x / y / z
+		ofVec3f maxX, maxY, maxZ; // points with maximum x / y / z
+		ofVec3f boundingBoxMax, boundingBoxMin; // min bounding xyz
+		ofVec3f dimensions; //dimensions
+		ofVec3f massCenter;
+		float volume; // volume
+		int nbPoints;
 	};
 };
 

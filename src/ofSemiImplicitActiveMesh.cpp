@@ -4,9 +4,10 @@
 #include "ofFastPolyline.h"
 
 namespace garmentAugmentation {
+namespace surfaceTracking {
 
 	// INITIALIZATION
-	void ofSemiImplicitActiveMesh::generateMesh(const kinect3dBlobDetector &detector, simple3dBlob &blob) {
+	void ofSemiImplicitActiveMesh::generateMesh(const blobDetection::kinect3dBlobDetector &detector, simple3dBlob &blob) {
 		this->clear();
 		this->setMode(OF_PRIMITIVE_TRIANGLES);
 		this->enableIndices();
@@ -191,7 +192,7 @@ namespace garmentAugmentation {
 	}
 
 	// COMPUTATION
-	void ofSemiImplicitActiveMesh::updateMesh(const kinect3dBlobDetector &detector, simple3dBlob &blob) {
+	void ofSemiImplicitActiveMesh::updateMesh(const blobDetection::kinect3dBlobDetector &detector, simple3dBlob &blob) {
 		if (mNeedComputation) {
 			computeSolver();
 		}
@@ -293,4 +294,6 @@ namespace garmentAugmentation {
 			m_maxDepth = max((float)Z[i], m_maxDepth);
 		}
 	}
-}
+
+} // namespace surfaceTracking
+} // namespace garmentAugmentation

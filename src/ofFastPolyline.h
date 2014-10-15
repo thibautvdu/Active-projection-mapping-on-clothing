@@ -83,4 +83,5 @@ class ofFastPolyline : public ofPolyline {
 			return p1.getInterpolated(p2, u);
 		}
 };
+
 #endif // FLEXIBLE_SURFACE_AUGMENTATION_OF_FAST_POLYLINE_H_

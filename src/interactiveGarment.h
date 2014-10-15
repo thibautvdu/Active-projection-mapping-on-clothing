@@ -7,19 +7,17 @@
 #include "animation.h"
 
 namespace garmentAugmentation {
+namespace garment {
 
 	class interactiveGarment {
 		public :
-			interactiveGarment() {
-			}
-
 			inline ofFastMesh &getMeshRef() { return mesh_; }
 			inline ofPolyline &getContour2dRef() { return contour2d_; }
 			inline const std::vector< std::vector<int> > &getMesh2dViewRef() const { return mesh2dView_; }
 			inline const simple3dBlob &getBlobRef() const { return blob_; }
 			inline std::vector<fold> &getFoldsRef() { return folds_; }
 
-			void update(const kinect3dBlobDetector &detector, const simple3dBlob blob);
+			void update(const blobDetection::kinect3dBlobDetector &detector, const simple3dBlob blob);
 			inline void drawMesh() { mesh_.drawVertices(); }
 
 			inline void addFold(fold f) {
@@ -51,6 +49,8 @@ namespace garmentAugmentation {
 			std::vector<fold> folds_;
 			std::vector<std::unique_ptr<animation>> animations_;
 	};
-};
 
-#endif // !FLEXIBLE_SURFACE_AUGMENTATION_INTERACTIVE_GARMENT_H_
+} // namespace garment
+} // namespace garmentAugmentation
+
+#endif // FLEXIBLE_SURFACE_AUGMENTATION_INTERACTIVE_GARMENT_H_

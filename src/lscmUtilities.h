@@ -2,6 +2,7 @@
 #define FLEXIBLE_SURFACE_AUGMENTATION_LSCM_UTILITIES_H
 
 #include <iostream>
+
 #include <ofVec2f.h>
 #include <ofVec3f.h>
 

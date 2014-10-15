@@ -1,8 +1,9 @@
 #include "interactiveGarment.h"
 
 namespace garmentAugmentation {
+namespace garment {
 
-	void interactiveGarment::update(const kinect3dBlobDetector &detector, const simple3dBlob blob) {
+	void interactiveGarment::update(const blobDetection::kinect3dBlobDetector &detector, const simple3dBlob blob) {
 		blob_ = blob;
 
 		int pcW = detector.getWidth();
@@ -36,4 +37,6 @@ namespace garmentAugmentation {
 		}
 		contour2d_.close();
 	}
-};
+
+} // namespace garment
+} // namespace garmentAugmentation

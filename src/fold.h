@@ -4,6 +4,7 @@
 #include "ofMain.h"
 
 namespace garmentAugmentation {
+namespace garment {
 
 	enum foldState {IDLE = 0, NEW = 1};
 
@@ -33,6 +34,8 @@ namespace garmentAugmentation {
 			ofVec3f bPt_;
 			enum foldState flag_;
 	};
-};
 
-#endif // !FLEXIBLE_SURFACE_AUGMENTATION_FOLD_H_
+} // namespace garment
+} // namespace garmentAugmentation
+
+#endif // FLEXIBLE_SURFACE_AUGMENTATION_FOLD_H_

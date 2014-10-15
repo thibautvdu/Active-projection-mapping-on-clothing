@@ -4,6 +4,8 @@
 #include "ofMain.h"
 
 namespace garmentAugmentation {
+namespace blobDetection {
+
 	enum cloudPointFlag { FLAG_OFF_THRESHOLD = -5, FLAG_BACKGROUND = -4, FLAG_IDLE = -3, FLAG_QUEUED = -2, FLAG_PROCESSED = -1 };
 
 	class cloudPoint {
@@ -16,6 +18,8 @@ namespace garmentAugmentation {
 		bool boundary;
 		ofVec3f pos;
 	};
-};
 
-#endif // !FLEXIBLE_SURFACE_AUGMENTATION_POINT_CLOUD_H_
+} // namespace blobDetection
+} // namespace garmentAugmentation
+
+#endif // FLEXIBLE_SURFACE_AUGMENTATION_POINT_CLOUD_H_

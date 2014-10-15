@@ -4,7 +4,7 @@ namespace ofUtilities {
 
 	void ofVirtualWindow::begin() const {
 		ofPushMatrix();
-		ofTranslate(m_xPosition, m_yPosition);
+		ofTranslate(xPosition_, yPosition_);
 	}
 
 	void ofVirtualWindow::end() const {
@@ -14,7 +14,7 @@ namespace ofUtilities {
 	void ofVirtualWindow::background(ofColor color) const {
 		ofSetColor(color);
 		ofFill();
-		ofRect(m_xPosition, m_yPosition, m_width, m_height);
+		ofRect(xPosition_, yPosition_, width_, height_);
 		ofNoFill();
 		ofSetColor(255);
 	}
