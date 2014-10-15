@@ -127,6 +127,9 @@
     <ClCompile Include="src\interactiveGarment.cpp">
       <Filter>src\garment</Filter>
     </ClCompile>
+    <ClCompile Include="src\flyingLights.cpp">
+      <Filter>src\garment</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -1833,6 +1836,15 @@
       <Filter>src\garment</Filter>
     </ClInclude>
     <ClInclude Include="src\interactiveGarment.h">
+      <Filter>src\garment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fold.h">
+      <Filter>src\garment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\animation.h">
+      <Filter>src\garment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\flyingLights.h">
       <Filter>src\garment</Filter>
     </ClInclude>
   </ItemGroup>

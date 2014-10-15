@@ -43,8 +43,6 @@ class ofApp : public ofBaseApp {
 		ofxKinectProjectorToolkit kinectProjectorToolkit_;
 		ofUtilities::ofVirtualWindow projectorWindow_;
 
-		ofShader shader_;
-
 		// HARDWARE HANDLERS	-	-	-	-	-	-	-	-	-	-	-	-
 
 
@@ -63,8 +61,6 @@ class ofApp : public ofBaseApp {
 		ofxIntSlider deformationThres_;
 		bool askFoldComputation_;
 		uchar numFolds_;
-		float prevFoldDist_;
-		std::vector<ofPolyline> foldAxes_;
 
 		// KINECT SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 

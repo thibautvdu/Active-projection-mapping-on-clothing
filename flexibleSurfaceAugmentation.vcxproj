@@ -117,6 +117,7 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
     <ClCompile Include="..\..\..\addons\ofxKinectProjectorToolkit\src\ofxKinectProjectorToolkit.cpp" />
     <ClCompile Include="src\foldTracker.cpp" />
     <ClCompile Include="src\interactiveGarment.cpp" />
+    <ClCompile Include="src\flyingLights.cpp" />
     <ClCompile Include="src\lscm.cpp" />
     <ClCompile Include="src\lscmUtilities.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -495,6 +496,9 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
     <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_preconditioners.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_private.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_superlu.h" />
+    <ClInclude Include="src\animation.h" />
+    <ClInclude Include="src\fold.h" />
+    <ClInclude Include="src\flyingLights.h" />
     <ClInclude Include="src\simple3dBlob.h" />
     <ClInclude Include="src\cvHelper.h" />
     <ClInclude Include="src\foldTracker.h" />
