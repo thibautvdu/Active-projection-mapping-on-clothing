@@ -21,10 +21,10 @@ namespace ofUtilities {
 		int getWidth() const { return m_width; }
 		int getHeight() const { return m_height; }
 
-		void begin();
-		void end();
+		void begin() const;
+		void end() const;
 
-		void background(ofColor color);
+		void background(ofColor color) const;
 
 	private:
 		int m_xPosition, m_yPosition;

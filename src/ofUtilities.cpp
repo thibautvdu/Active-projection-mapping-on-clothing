@@ -2,16 +2,16 @@
 
 namespace ofUtilities {
 
-	void ofVirtualWindow::begin() {
+	void ofVirtualWindow::begin() const {
 		ofPushMatrix();
 		ofTranslate(m_xPosition, m_yPosition);
 	}
 
-	void ofVirtualWindow::end() {
+	void ofVirtualWindow::end() const {
 		ofPopMatrix();
 	}
 
-	void ofVirtualWindow::background(ofColor color) {
+	void ofVirtualWindow::background(ofColor color) const {
 		ofSetColor(color);
 		ofFill();
 		ofRect(m_xPosition, m_yPosition, m_width, m_height);

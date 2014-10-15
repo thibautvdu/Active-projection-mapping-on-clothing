@@ -4,10 +4,6 @@
 
 namespace garmentAugmentation {
 
-	static double fx_d = 1.0 / 5.9421434211923247e+02;
-	static double fy_d = 1.0 / 5.9104053696870778e+02;
-	static float cx_d = 3.3930780975300314e+02;
-	static float cy_d = 2.4273913761751615e+02;
 	static int clockwiseBacktracking[] = { 6, 0, 0, 2, 2, 4, 4, 6 }; // newStart = clockwiseBacktraking[previous_backtrack]
 	static int clockwiseX[] = { -1, -1, 0, 1, 1, 1, 0, -1, -1, -1, 0, 1, 1, 1, 0, -1 };
 	static int clockwiseY[] = { 0, -1, -1, -1, 0, 1, 1, 1, 0, -1, -1, -1, 0, 1, 1, 1 };

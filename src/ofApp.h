@@ -28,7 +28,6 @@ class ofApp : public ofBaseApp {
 		void keyPressed(int key);
 
 		/* METHODS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
-		void toProjectorSpace(ofMesh& mesh);
 		void meshParameterizationLSCM(ofMesh& mesh, int textureSize);
 		void markFolds();
 
@@ -38,10 +37,10 @@ class ofApp : public ofBaseApp {
 		// HARDWARE HANDLERS	/	/	/	/	/	/	/	/	/	/	/	/
 
 		ofxKinectCommonBridge ofxKinect_;
-		int kinectWidth_, kinectHeight_;
+		static const int kinectWidth_, kinectHeight_;
 
 		ofxKinectProjectorToolkit kinectProjectorToolkit_;
-		ofUtilities::ofVirtualWindow projectorWindow_;
+		static const ofUtilities::ofVirtualWindow projectorWindow_;
 
 		// HARDWARE HANDLERS	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -57,19 +56,13 @@ class ofApp : public ofBaseApp {
 		ofImage bgMask_;
 		cv::Mat cvBgMask_;
 
-		// Folds detection
-		ofxIntSlider deformationThres_;
-		bool askFoldComputation_;
-		uchar numFolds_;
-
 		// KINECT SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
 
 		// KINECT WORLD SPACE	/	/	/	/	/	/	/	/	/	/	/	/
 
-		// Point cloud
-		ofxFloatSlider nearClipGui_;
-		ofxFloatSlider farClipGui_;
+		// Scaling
+		static const ofVec3f toWorldUnits_;
 
 		// Blob finder and tracker
 		garmentAugmentation::kinect3dBlobDetector blobFinder_;
@@ -77,6 +70,11 @@ class ofApp : public ofBaseApp {
 
 		// Garment object
 		garmentAugmentation::interactiveGarment garment_;
+
+		// Folds detection
+		ofxIntSlider deformationThres_;
+		bool askFoldComputation_;
+		uchar numFolds_;
 
 		// Tracking mesh
 		//garmentAugmentation::ofSemiImplicitActiveMesh m_blobMesh;

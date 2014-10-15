@@ -12,14 +12,30 @@
 #define FLOAT_INF_POS std::numeric_limits<float>::infinity();
 #define FLOAT_INF_NEG -std::numeric_limits<float>::infinity();
 
+/* CONSTANTS	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
+
+// HARDWARE HANDLERS	/	/	/	/	/	/	/	/	/	/	/	/
+
+const int ofApp::kinectWidth_ = 640;
+const int ofApp::kinectHeight_ = 480;
+
+const ofUtilities::ofVirtualWindow ofApp::projectorWindow_ = ofUtilities::ofVirtualWindow(1920, 0, 1024, 768);
+
+// HARDWARE HANDLERS	-	-	-	-	-	-	-	-	-	-	-	-
+
+// KINECT WORLD SPACE	/	/	/	/	/	/	/	/	/	/	/	/
+
+const ofVec3f ofApp::toWorldUnits_ = ofVec3f(0.001, 0.001, 0.001); // mm to meters
+
+// KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-
+
+/* CONSTANTS	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
+
+
 /* OF ROUTINES	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 
 void ofApp::setup() {
 	// HARDWARE INIT	/	/	/	/	/	/	/	/	/	/	/	/
-
-	// Kinect
-	kinectWidth_ = 640;
-	kinectHeight_ = 480;
 
 	bool initSensor = ofxKinect_.initSensor();
 	if (!initSensor) {
@@ -40,7 +56,6 @@ void ofApp::setup() {
 	}
 
 	// Projector
-	projectorWindow_ = ofUtilities::ofVirtualWindow(1920, 0, 1024, 768);
 	kinectProjectorToolkit_.loadCalibration("cal.xml", projectorWindow_.getWidth(), projectorWindow_.getHeight());
 
 	// HARDWARE INIT	-	-	-	-	-	-	-	-	-	-	-	-
@@ -76,7 +91,7 @@ void ofApp::setup() {
 	// Blob finder and tracker
 	blobFinder_.init(&ofxKinect_); // standarized coordinate system: z in the direction of gravity
 	//m_blobFinder.setResolution(BF_HIGH_RES);
-	blobFinder_.setScale(ofVec3f(0.001,0.001,0.001)); // mm to meters
+	blobFinder_.setScale(toWorldUnits_); // mm to meters
 
 	// Fold processing
 	askFoldComputation_ = false;
@@ -103,8 +118,6 @@ void ofApp::setup() {
 
 	gui_.setup();
 	gui_.add(bgLearningCycleGui_.setup("bg learning iterations", 10, 1, 50));
-	gui_.add(nearClipGui_.setup("near clip",1.500,0,8.000));
-	gui_.add(farClipGui_.setup("far clip", 3.000, 0, 8.000));
 	gui_.add(deformationThres_.setup("canny thres 1", 100, 0, 200));
 
 	// Mesh
@@ -281,7 +294,7 @@ void ofApp::draw() {
 			ofPushMatrix();
 				//ofEnableDepthTest();
 				ofTranslate(kinectWidth_, kinectHeight_);
-				ofScale(1000, 1000, 1000);
+				ofScale(1 / toWorldUnits_.x, 1 / toWorldUnits_.y, 1 / toWorldUnits_.z);
 				ofTranslate(0, 0, -garment_.getBlobRef().maxZ.z - 1);
 				garment_.drawMesh();
 				if (garment_.getFoldsRef().size() != 0) {
@@ -311,8 +324,7 @@ void ofApp::draw() {
 		if (blobFound_) {
 			projectorWindow_.begin();
 				ofMultMatrix(ofMatrix4x4::getTransposedOf(kinectProjectorToolkit_.getTransformMatrix()));
-				ofScale(1000, 1000, 1000);
-				//garment_.drawMesh();
+				ofScale(1 / toWorldUnits_.x, 1 / toWorldUnits_.y, 1 / toWorldUnits_.z);
 				garment_.drawAnimations();
 			projectorWindow_.end();
 		}
@@ -353,19 +365,6 @@ void ofApp::keyPressed(int key) {
 
 
 /* METHODS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
-
-void ofApp::toProjectorSpace(ofMesh& mesh) {
-	ofVec2f projectorCoordinates;
-
-	for (int i = 0; i < mesh.getNumVertices(); ++i) {
-		projectorCoordinates = kinectProjectorToolkit_.getProjectedPoint(mesh.getVertex(i)*1000);
-
-		projectorCoordinates.x = ofMap(projectorCoordinates.x, 0, 1, 0, projectorWindow_.getWidth());
-		projectorCoordinates.y = ofMap(projectorCoordinates.y, 0, 1, 0, projectorWindow_.getHeight());
-
-		mesh.setVertex(i, ofVec3f(projectorCoordinates.x, projectorCoordinates.y, 0));
-	}
-}
 
 void ofApp::meshParameterizationLSCM(ofMesh& mesh, int textureSize) {
 	mesh.enableTextures();
@@ -552,96 +551,5 @@ void ofApp::markFolds() {
 		//m_askFoldComputation = false;
 	}
 }
-
-/*
-void ofApp::markFolds(ofFastMesh& mesh) {
-	unsigned int* map =  mesh.get2dIndicesMap();
-	if (!m_normalsImg.bAllocated())
-		m_normalsImg.allocate(mesh.getIndicesMapWidth(), mesh.getIndicesMapHeight(),OF_IMAGE_GRAYSCALE);
-	m_normalsImg.setColor(ofColor::black);
-
-	m_cvNormalsImg = ofxCv::toCv(m_normalsImg);
-
-	ofImage color;
-	color.allocate(mesh.getIndicesMapWidth(), mesh.getIndicesMapHeight(), OF_IMAGE_COLOR);
-	cv::Mat cvColor = ofxCv::toCv(color);
-
-	cv::Vec3b* p_row;
-	ofVec3f normal;
-	int idx;
-	for (int row = 0; row < mesh.getIndicesMapHeight(); ++row) {
-		p_row = cvColor.ptr<cv::Vec3b>(row);
-		for (int col = 0; col < mesh.getIndicesMapWidth(); ++col) {
-			idx = *(map + row*mesh.getIndicesMapWidth() + col);
-			if ( idx >= 0) {
-				normal = mesh.getNormal(idx);
-				*(p_row + col) = cv::Vec3b(normal.x * 255, normal.y * 255, normal.z * 255);
-			}
-		}
-	}
-	
-	cv::Mat horizontalFilter = (cv::Mat_<float>(5, 5) << 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -1, -1, 1, -1, -1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0);
-	//horizontalFilter /= 10;
-	cv::filter2D(cvColor, cvColor, m_cvNormalsImg.depth(), horizontalFilter);
-	uchar* p_uRow;
-	cv::Vec3b rgb;
-	for (int row = 0; row < mesh.getIndicesMapHeight(); ++row) {
-		p_row = cvColor.ptr<cv::Vec3b>(row);
-		p_uRow = m_cvNormalsImg.ptr<uchar>(row);
-		for (int col = 0; col < mesh.getIndicesMapWidth(); ++col) {
-			if (*(map + row*mesh.getIndicesMapWidth() + col) >= 0) {
-				rgb = *(p_row + col);
-				*(p_uRow + col) = (rgb.val[0] + rgb.val[1] + rgb.val[2]) / 3;
-			}
-		}
-	}
-	m_normalsImg.update();
-} */
-
-/*void ofApp::markFolds(ofFastMesh& mesh) {
-	for (int i = 0; i < mesh.getNumVertices(); ++i) {
-		mesh.addColor(ofColor::lightYellow);
-	}
-
-	int width = m_kinectWidth / m_blobFinder.getResolution();
-	int height = m_kinectHeight / m_blobFinder.getResolution();
-
-	int patchSize = 25;
-	ofFastMesh::ofFastMeshPatch patch = mesh.getPatch(ofRectangle(0, 0, patchSize, patchSize));
-
-	float deformation;
-	std::vector<ofFastMesh::ofFastMeshPatch> candidates;
-	for (int x = 0; x < width - patchSize; x += patchSize/2) {
-		for (int y = 0; y < height - patchSize; y += patchSize / 2) {
-			patch.move(ofRectangle(x, y, patchSize, patchSize));
-			if (patch.insideMesh()) {
-				deformation = patch.deformationAreaPercent();
-
-				// try to reduce the patch
-				if (deformation > m_cannyThresh1 / 2.55) {
-					float newDeformation = deformation;
-					ofFastMesh::ofFastMeshPatch newPatch = patch;
-					int reduce = 1;
-					do {
-						deformation = newDeformation;
-						patch = newPatch;
-						newPatch.move(ofRectangle(x + reduce, y + reduce, patchSize - reduce * 2, patchSize - reduce * 2));
-						if (!newPatch.insideMesh())
-							break;
-						newDeformation = newPatch.deformationAreaPercent();
-						reduce++;
-					} while (reduce < patchSize / 2 && newDeformation > deformation);
-
-					candidates.push_back(patch);
-				}
-			}
-		}
-	}
-
-	for (int i = 0; i < candidates.size(); ++i) {
-		if (candidates[i].deformationAreaPercent() > m_cannyThresh2 / 2.55)
-			candidates[i].setColor(ofColor::red);
-	}
-}*/
 
 /* METHODS	-	-	-	-	-	-	-	-	-	-	-	-	-	-	*/
