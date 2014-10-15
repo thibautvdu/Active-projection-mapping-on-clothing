@@ -7,12 +7,10 @@ namespace garmentAugmentation {
 namespace garment {
 
 	class animation {
-	public:
-		virtual void update() = 0;
-		virtual void update(const std::vector<fold> &folds) = 0;
-		virtual void draw() = 0;
-
-	private:
+		public:
+			virtual void update() = 0;
+			virtual void update(const std::vector<fold> &folds) = 0;
+			virtual void draw() = 0;
 
 	};
 

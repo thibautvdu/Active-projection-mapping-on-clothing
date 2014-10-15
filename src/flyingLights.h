@@ -11,37 +11,39 @@ namespace garment {
 
 	class flyingLights : public animation {
 		public:
+
 			flyingLights();
+
 			void update();
 			void update(const std::vector<fold> &folds);
 			void draw();
 
 		private:
 			class particle : public ofSpherePrimitive {
-			public:
-				ofVec3f vel, acc;
-				ofVec3f source;
-				float lifeTime;
-				float life;
+				public:
+					ofVec3f vel, acc;
+					ofVec3f source;
+					float lifeTime;
+					float life;
 
-				particle(ofVec3f pos, float radius, float lifeDistance) {
-					this->setRadius(ofRandomf() * radius);
-					this->setPosition(pos);
-					source = pos;
-					lifeTime = lifeDistance*lifeDistance;
-				}
+					inline particle(const ofVec3f pos, const float radius, const float lifeDistance) {
+						this->setRadius(ofRandomf() * radius);
+						this->setPosition(pos);
+						source = pos;
+						lifeTime = lifeDistance*lifeDistance;
+					}
 
-				void update() {
-					vel += acc;
+					inline void update() {
+						vel += acc;
 
-					this->setPosition(this->getPosition() + vel);
-					acc.set(0, 0, 0);
+						this->setPosition(this->getPosition() + vel);
+						acc.set(0, 0, 0);
 
-					life = 1 - (source.distanceSquared(this->getPosition()) / lifeTime);
-				}
+						life = 1 - (source.distanceSquared(this->getPosition()) / lifeTime);
+					}
 			};
 
-		std::vector<particle> lights;
+			std::vector<particle> lights_;
 	};
 
 } // namespace garment

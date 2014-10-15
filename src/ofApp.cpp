@@ -86,7 +86,7 @@ void ofApp::setup() {
 	// KINECT WORLD SPACE	/	/	/	/	/	/	/	/	/	/	/	/
 
 	// Blob finder and tracker
-	blobFinder_.init(&ofxKinect_); // standarized coordinate system: z in the direction of gravity
+	blobFinder_.init(&ofxKinect_, kinectWidth_, kinectHeight_); // standarized coordinate system: z in the direction of gravity
 	//m_blobFinder.setResolution(BF_HIGH_RES);
 	blobFinder_.setScale(ofVec3f(toWorldUnits_)); // mm to meters
 
@@ -363,7 +363,7 @@ void ofApp::keyPressed(int key) {
 
 /* METHODS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 
-void ofApp::meshParameterizationLSCM(ofMesh& mesh, int textureSize) {
+void ofApp::meshParameterizationLSCM(const int textureSize, ofMesh& mesh) {
 	mesh.enableTextures();
 	ofVec2f* texCoords = new ofVec2f[mesh.getNumVertices()];
 	mesh.addTexCoords(texCoords, mesh.getNumVertices());
@@ -482,7 +482,7 @@ void ofApp::detectFolds() {
 				}
 
 				if (foldClusters[nCluster].nbPts != 0) {
-					foldClusters[nCluster].meanPt /= (float)foldClusters[nCluster].nbPts;
+					foldClusters[nCluster].meanPt /= static_cast<float>(foldClusters[nCluster].nbPts);
 					Eigen::MatrixX3f A(foldClusters[nCluster].nbPts, 3);
 					int AIdx = 0;
 					for (int i = 0; i < points.size(); ++i) {

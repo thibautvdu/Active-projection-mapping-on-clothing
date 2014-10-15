@@ -8,59 +8,57 @@ namespace garment {
 
 	class foldTracker {
 		public:
-			foldTracker(interactiveGarment *garment, ofRectangle roi) : pGarment_(garment), m_roi(roi) {
-				m_area = m_unfoldedArea = -1;
-				if (gaussianValues_.size() == 0)
+			foldTracker(interactiveGarment *garment, const ofRectangle roi) : pGarment_(garment), roi_(roi) {
+				area_ = unfoldedArea_ = -1;
+				if (kGaussianValues_.size() == 0)
 					computeGaussianDist(1);
 			}
 
-			inline void move(int x, int y) {
-				m_roi.translate(x, y);
-				m_area = m_unfoldedArea = -1;
+			inline void move(const int x, const int y) {
+				roi_.translate(x, y);
+				area_ = unfoldedArea_ = -1;
 			}
 
-			inline void moveTo(ofRectangle roi) {
-				m_roi = roi;
-				m_area = m_unfoldedArea = -1;
+			inline void moveTo(const ofRectangle roi) {
+				roi_ = roi;
+				area_ = unfoldedArea_ = -1;
 			}
 
 			inline float getArea() {
-				if (m_area == -1)
+				if (area_ == -1)
 					computeAreas();
 
-				return m_area;
+				return area_;
 			}
 
 			inline float getUnfoldedArea() {
-				if (m_unfoldedArea == -1)
+				if (unfoldedArea_ == -1)
 					computeAreas();
 
-				return m_unfoldedArea;
+				return unfoldedArea_;
 			}
 
 			inline float getDeformationPercent() {
 				return (getArea() - getUnfoldedArea()) * 100 / getUnfoldedArea();
 			}
 
-			int getMeshIndex(int x, int y);
+			int getMeshIndex(const int x, const int y) const;
 
 			std::vector<ofVec3f> getPoints();
-			void setColor(ofColor color);
+			void setColor(const ofColor color);
 
 			bool insideMesh();
 
 		private:
-			interactiveGarment *const pGarment_;
-			blobDetection::cloudPoint *mp_pointCloud;
-			ofRectangle m_roi;
-			float m_area;
-			float m_unfoldedArea;
+			static std::vector<float> kGaussianValues_;
 
+			static void computeGaussianDist(const float sigma);
 			void computeAreas();
 
-			// ( cover 99.7 % of the gaussian distribution )
-			static std::vector<float> gaussianValues_;
-			static void computeGaussianDist(float sigma);
+			interactiveGarment *const pGarment_;
+			ofRectangle roi_;
+			float area_;
+			float unfoldedArea_;
 	};
 
 } // namespace garment

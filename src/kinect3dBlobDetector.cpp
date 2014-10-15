@@ -5,13 +5,6 @@
 namespace garmentAugmentation {
 namespace blobDetection {
 
-	static int clockwiseBacktracking[] = { 6, 0, 0, 2, 2, 4, 4, 6 }; // newStart = clockwiseBacktraking[previous_backtrack]
-	static int clockwiseX[] = { -1, -1, 0, 1, 1, 1, 0, -1, -1, -1, 0, 1, 1, 1, 0, -1 };
-	static int clockwiseY[] = { 0, -1, -1, -1, 0, 1, 1, 1, 0, -1, -1, -1, 0, 1, 1, 1 };
-
-	// ***************************************************************************
-	//                                CONSTRUCTORS
-	// ***************************************************************************
 	kinect3dBlobDetector::kinect3dBlobDetector() {
 		m_pointCloud = NULL;
 		kinectPtr = NULL;
@@ -25,26 +18,16 @@ namespace blobDetection {
 	kinect3dBlobDetector::~kinect3dBlobDetector() {
 	}
 
-	// ***************************************************************************
-	//                                INIT
-	// ***************************************************************************
-	void kinect3dBlobDetector::init(ofxKinectCommonBridge *newKinect) {
+	void kinect3dBlobDetector::init(const ofxKinectCommonBridge *newKinect, const int width, const int height) {
 		kinectPtr = newKinect;
-		kWidth = kinectPtr->getColorPixelsRef().getWidth();
-		kHeight = kinectPtr->getColorPixelsRef().getHeight();
+		kWidth = width;
+		kHeight = height;
 		kNPix = kWidth*kHeight;
 		bFinderInited = setResolution(BF_MEDIUM_RES);
 	}
 
-	// ***************************************************************************
-	//                                FIND BLOBS
 
-	//  maskPixels : for background subtraction
-	// neighbour search range
 	// http://pointclouds.org/documentation/tutorials/cluster_extraction.php#cluster-extraction
-
-	// ***************************************************************************
-
 	bool kinect3dBlobDetector::findBlobs(ofImage * maskImage,
 		const ofVec3f thresh3D, const int thresh2D,
 		const float minVol, const float maxVol,
@@ -87,7 +70,7 @@ namespace blobDetection {
 			maxX = maxY = maxZ = -100;
 			//search for next unprocessed pixel
 			while ((pixIndex < nPix) &&
-				(m_pointCloud[pixIndex].flag != FLAG_IDLE)) pixIndex++;
+				(m_pointCloud[pixIndex].flag_ != FLAG_IDLE)) pixIndex++;
 
 			if (pixIndex == nPix) break;
 			else queue[0] = pixIndex;
@@ -103,9 +86,9 @@ namespace blobDetection {
 				pixelsToProcess--;
 
 				cloudPoint * p_cloudPoint = &m_pointCloud[queueIndexPix];
-				(*p_cloudPoint).flag = FLAG_PROCESSED;
+				(*p_cloudPoint).flag_ = FLAG_PROCESSED;
 
-				ofVec3f * posPtr = &((*p_cloudPoint).pos);
+				ofVec3f * posPtr = &((*p_cloudPoint).pos_);
 				float pointX = (*posPtr).x;
 				float pointY = (*posPtr).y;
 				float pointZ = (*posPtr).z;
@@ -124,15 +107,15 @@ namespace blobDetection {
 					for (int v = j - thresh2D; v <= j + thresh2D; v++) {
 						int neighbour = u + v*width;
 
-						if ((neighbour >= 0) && (neighbour < nPix) && (m_pointCloud[neighbour].flag == FLAG_IDLE)) {
-							ofVec3f nPoint = m_pointCloud[neighbour].pos;
+						if ((neighbour >= 0) && (neighbour < nPix) && (m_pointCloud[neighbour].flag_ == FLAG_IDLE)) {
+							ofVec3f nPoint = m_pointCloud[neighbour].pos_;
 							if ((abs(pointX - nPoint.x) <= thresh3D.x) &&
 								(abs(pointY - nPoint.y) <= thresh3D.y) &&
 								(abs(pointZ - nPoint.z) <= thresh3D.z)) {
 								lastQueued++;
 								if (lastQueued < nPix) {
 									queue[lastQueued] = neighbour;
-									m_pointCloud[neighbour].flag = FLAG_QUEUED;
+									m_pointCloud[neighbour].flag_ = FLAG_QUEUED;
 								}
 							}
 						}
@@ -154,8 +137,8 @@ namespace blobDetection {
 					simple3dBlob* newBlob = new simple3dBlob();
 
 					for (int i = 0; i < lastQueued; i++) {
-						m_pointCloud[queue[i]].flag = numBlobs;
-						newMassCenter += m_pointCloud[queue[i]].pos;//*pointWeight;
+						m_pointCloud[queue[i]].flag_ = numBlobs;
+						newMassCenter += m_pointCloud[queue[i]].pos_;//*pointWeight;
 					}
 
 					newBlob->boundingBoxMin = ofPoint(minX, minY, minZ);
@@ -171,8 +154,8 @@ namespace blobDetection {
 					newBlob->nbPoints = lastQueued;
 
 					// Mark the 2d contour of the blob
-					while ((m_pointCloud[pixIndex].flag != numBlobs) && (pixIndex < nPix)) pixIndex++;
-					m_pointCloud[pixIndex].boundary = true;
+					while ((m_pointCloud[pixIndex].flag_ != numBlobs) && (pixIndex < nPix)) pixIndex++;
+					m_pointCloud[pixIndex].boundary_ = true;
 					newBlob->contourIndices2d.push_back(pixIndex);
 
 					int i = pixIndex % width;
@@ -186,8 +169,8 @@ namespace blobDetection {
 						if (x > 0 && x < width && y > 0 && y < height){
 							int neighbour = x + y * width;
 
-							if (m_pointCloud[neighbour].flag == numBlobs) {
-								m_pointCloud[neighbour].boundary = true;
+							if (m_pointCloud[neighbour].flag_ == numBlobs) {
+								m_pointCloud[neighbour].boundary_ = true;
 								newBlob->contourIndices2d.push_back(neighbour);
 								k = clockwiseBacktracking[(k - 1) % 8];
 								i = neighbour % width;
@@ -217,53 +200,17 @@ namespace blobDetection {
 		return true;
 	}
 
-	// ************************************************************
-	//                CREATE POINT CLOUD AND SCALE IMAGES
-	// ************************************************************
-
-	bool kinect3dBlobDetector::createCloud(unsigned char * maskPix) {
-		ofVec3f thePos;
-		cloudPoint * p_cloudPoint = &m_pointCloud[0];
-		ofShortPixels distances = kinectPtr->getDepthPixels();
-
-		int row_incr = kWidth*(resolution - 1);
-
-		for (int j = 0; j < kHeight; j += resolution) {
-			for (int i = 0; i < kWidth; i += resolution) {
-				if (*maskPix == 0 || distances[j*kWidth + i] == 0){
-					(*p_cloudPoint).flag = FLAG_BACKGROUND;
-					(*p_cloudPoint).pos = nullPoint;
-				}
-				else {
-					(*p_cloudPoint).flag = FLAG_IDLE;
-					(*p_cloudPoint).pos = kinectPtr->getWorldCoordinates(i, j, distances[j*kWidth + i]) * scale;
-				}
-				p_cloudPoint++;
-				maskPix += resolution;
-			}
-			maskPix += row_incr;
-		}
-		return true;
-	}
-
-	// ************************************************************
-	//                SET POINT CLOUD SCALE
-	// ************************************************************
 	void kinect3dBlobDetector::setScale(const ofVec3f newScale) {
 		scale = newScale;
 	}
 
-	// ************************************************************
-	//                GET POINT CLOUD SCALE
-	// ************************************************************
+
 	ofVec3f kinect3dBlobDetector::getScale() const {
 		return scale;
 	};
 
-	// ************************************************************
-	//                SET ANALYSIS/POINTCLOUD RESOLUTON
-	// ************************************************************
-	bool kinect3dBlobDetector::setResolution(kinectBlobDetectorResolution newResolution) {
+
+	bool kinect3dBlobDetector::setResolution(const kinectBlobDetectorResolution newResolution) {
 		if ((m_pointCloud == NULL) || (resolution != newResolution)) {
 			resolution = newResolution;
 			width = kWidth / resolution;
@@ -279,18 +226,43 @@ namespace blobDetection {
 		return true;
 	}
 
-	// ************************************************************
-	//                GET ANALYSIS/POINTCLOUD RESOLUTON
-	// ************************************************************
 	enum kinectBlobDetectorResolution kinect3dBlobDetector::getResolution() {
 		return resolution;
 	}
 
-	// ************************************************************
-	//
-	// ************************************************************
-	bool kinect3dBlobDetector::isInited() {
+	bool kinect3dBlobDetector::isInited() const {
 		return bFinderInited;
+	}
+
+	// PRIVATE
+
+	const int kinect3dBlobDetector::clockwiseBacktracking[] = { 6, 0, 0, 2, 2, 4, 4, 6 }; // newStart = clockwiseBacktraking[previous_backtrack]
+	const int kinect3dBlobDetector::clockwiseX[] = { -1, -1, 0, 1, 1, 1, 0, -1, -1, -1, 0, 1, 1, 1, 0, -1 };
+	const int kinect3dBlobDetector::clockwiseY[] = { 0, -1, -1, -1, 0, 1, 1, 1, 0, -1, -1, -1, 0, 1, 1, 1 };
+
+	bool kinect3dBlobDetector::createCloud(unsigned char * maskPix) {
+		ofVec3f thePos;
+		cloudPoint * p_cloudPoint = &m_pointCloud[0];
+		ofShortPixels distances = kinectPtr->getDepthPixels();
+
+		int row_incr = kWidth*(resolution - 1);
+
+		for (int j = 0; j < kHeight; j += resolution) {
+			for (int i = 0; i < kWidth; i += resolution) {
+				if (*maskPix == 0 || distances[j*kWidth + i] == 0){
+					(*p_cloudPoint).flag_ = FLAG_BACKGROUND;
+					(*p_cloudPoint).pos_ = nullPoint;
+				}
+				else {
+					(*p_cloudPoint).flag_ = FLAG_IDLE;
+					(*p_cloudPoint).pos_ = kinectPtr->getWorldCoordinates(i, j, distances[j*kWidth + i]) * scale;
+				}
+				p_cloudPoint++;
+				maskPix += resolution;
+			}
+			maskPix += row_incr;
+		}
+		return true;
 	}
 
 } // namespace blobDetection

@@ -6,15 +6,15 @@
 namespace garmentAugmentation {
 namespace garment {
 
-	enum foldState {IDLE = 0, NEW = 1};
-
 	class fold {
 		public:
+			enum foldState { IDLE = 0, NEW = 1 };
+
 			inline fold() {
 				flag_ = NEW;
 			}
 
-			inline fold(ofVec3f a, ofVec3f b) : aPt_(a), bPt_(b) {
+			inline fold(const ofVec3f a, const ofVec3f b) : aPt_(a), bPt_(b) {
 				fold();
 			}
 
@@ -26,10 +26,16 @@ namespace garment {
 				ofLine(aPt_, bPt_);
 			}
 
-			inline ofVec3f getAPt() const { return aPt_; }
-			inline ofVec3f getBPt() const { return bPt_; }
+			inline ofVec3f getAPt() const { 
+				return aPt_; 
+			}
+
+			inline ofVec3f getBPt() const { 
+				return bPt_; 
+			}
 
 		private:
+
 			ofVec3f aPt_;
 			ofVec3f bPt_;
 			enum foldState flag_;

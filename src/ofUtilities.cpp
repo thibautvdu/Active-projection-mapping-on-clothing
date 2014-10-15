@@ -11,7 +11,7 @@ namespace ofUtilities {
 		ofPopMatrix();
 	}
 
-	void ofVirtualWindow::background(ofColor color) const {
+	void ofVirtualWindow::background(const ofColor color) const {
 		ofSetColor(color);
 		ofFill();
 		ofRect(xPosition_, yPosition_, width_, height_);
@@ -20,14 +20,14 @@ namespace ofUtilities {
 	}
 
 	// Map function for ofVec2f
-	ofVec2f mapVec2f(ofVec2f value, ofVec2f inputMin, ofVec2f inputMax, ofVec2f outputMin, ofVec2f outputMax, bool clamp) {
+	ofVec2f mapVec2f(const ofVec2f value, const ofVec2f inputMin, const ofVec2f inputMax, const ofVec2f outputMin, const ofVec2f outputMax, const bool clamp) {
 		float x = ofMap(value.x, inputMin.x, inputMax.x, outputMin.x, outputMax.x, clamp);
 		float y = ofMap(value.y, inputMin.y, inputMax.y, outputMin.y, outputMax.y, clamp);
 
 		return ofVec2f(x, y);
 	}
 
-	ofPath polylineToPath(ofPolyline polyline) {
+	ofPath polylineToPath(const ofPolyline polyline) {
 		ofPath path;
 		for (int i = 0; i < polyline.getVertices().size(); i++){
 			if (i == 0)

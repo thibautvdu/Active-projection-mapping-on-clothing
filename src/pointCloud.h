@@ -9,14 +9,14 @@ namespace blobDetection {
 	enum cloudPointFlag { FLAG_OFF_THRESHOLD = -5, FLAG_BACKGROUND = -4, FLAG_IDLE = -3, FLAG_QUEUED = -2, FLAG_PROCESSED = -1 };
 
 	class cloudPoint {
-	public:
-		cloudPoint() {
-			boundary = false;
-		}
+		public:
+			cloudPoint() {
+				boundary_ = false;
+			}
 
-		int flag;
-		bool boundary;
-		ofVec3f pos;
+			int flag_;
+			bool boundary_;
+			ofVec3f pos_;
 	};
 
 } // namespace blobDetection

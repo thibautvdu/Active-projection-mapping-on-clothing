@@ -1,6 +1,6 @@
 #include "ofFastMesh.h"
 
-void ofFastMesh::reserveCapacity(int capacity) {
+void ofFastMesh::reserveCapacity(const int capacity) {
 	this->vertices.reserve(capacity);
 	//this->normals.reserve(capacity);
 	this->colors.reserve(capacity);
@@ -8,7 +8,7 @@ void ofFastMesh::reserveCapacity(int capacity) {
 	//this->indices.reserve(capacity * 4);
 }
 
-void ofFastMesh::resize(int size) {
+void ofFastMesh::resize(const int size) {
 	this->vertices.resize(size);
 	this->colors.resize(size);
 	bVertsChanged = true;
@@ -16,7 +16,7 @@ void ofFastMesh::resize(int size) {
 	bFacesDirty = true;
 }
 
-void ofFastMesh::computeNormals(bool bNormalize){
+void ofFastMesh::computeNormals(const bool bNormalize){
 	for (int i = 0; i < this->getVertices().size(); i++) this->addNormal(ofPoint(0, 0, 0));
 
 	for (int i = 0; i < this->getIndices().size(); i += 3){

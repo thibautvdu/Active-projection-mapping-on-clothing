@@ -28,7 +28,7 @@ class ofApp : public ofBaseApp {
 		void keyPressed(int key);
 
 		/* METHODS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
-		void meshParameterizationLSCM(ofMesh& mesh, int textureSize);
+		void meshParameterizationLSCM(const int textureSize, ofMesh& mesh);
 		void detectFolds();
 
 

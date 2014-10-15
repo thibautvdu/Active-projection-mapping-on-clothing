@@ -23,7 +23,7 @@ class ofFastPolyline : public ofPolyline {
 			if (polyline.isClosed()) {
 				lastPosition++;
 			}
-			for (int i = 0; i < (int)lastPosition; i++) {
+			for (int i = 0; i < static_cast<int>(lastPosition); i++) {
 				bool repeatNext = i == (int)(polyline.size() - 1);
 
 				const ofPoint& cur = polyline[i];

@@ -20,7 +20,7 @@ namespace surfaceTracking {
 	class ofSemiImplicitActiveMesh : public ofMesh {
 
 		public :
-			ofSemiImplicitActiveMesh() : ofMesh() {
+			inline ofSemiImplicitActiveMesh() : ofMesh() {
 				mNeedComputation = false;
 
 				mMeshXResolution = mMeshYResolution = 10;
@@ -37,7 +37,7 @@ namespace surfaceTracking {
 				mpSolver = new Eigen::SparseLU<Eigen::SparseMatrix<double, Eigen::ColMajor>>();
 			}
 
-			ofSemiImplicitActiveMesh(int meshXRes, int meshYRes) : mMeshXResolution(meshXRes), mMeshYResolution(meshYRes) {
+			inline ofSemiImplicitActiveMesh(const int meshXRes, const int meshYRes) : mMeshXResolution(meshXRes), mMeshYResolution(meshYRes) {
 				mNeedComputation = false;
 
 				mGenerated = false;
@@ -53,41 +53,76 @@ namespace surfaceTracking {
 			};
 
 			// GETTERS/SETTERS
-			void setDepthWeight(float weight) { mDepthWeight = weight; }
-			float getDepthWeight() const { return mDepthWeight; }
+			inline void setDepthWeight(const float weight) { 
+				mDepthWeight = weight;
+			}
 
-			void setBoundaryWeight(float weight) { mBoundaryWeight = weight; }
-			float getBoundaryWeight() const { return mBoundaryWeight; }
+			inline float getDepthWeight() const {
+				return mDepthWeight; 
+			}
 
-			void setAdaptationRate(float rate) {
+			inline void setBoundaryWeight(const float weight) {
+				mBoundaryWeight = weight; 
+			}
+
+			inline float getBoundaryWeight() const {
+				return mBoundaryWeight;
+			}
+
+			inline void setAdaptationRate(const float rate) {
 				if (abs(rate - mAdaptationRate) > 0.01) {
 					mAdaptationRate = rate;
 					mNeedComputation = true;
 				}
 			}
-			float getAdaptationRate() const { return mAdaptationRate; }
 
-			void setMeshXResolution(int res) { mMeshXResolution = res; }
-			int getMeshXResolution() const { return mMeshXResolution; }
-			void setMeshYResolution(int res) { mMeshXResolution = res; }
-			int getMeshYResolution() const { return mMeshXResolution; }
-			void setGenerationAreaThresh(float thresh) { mGenerationAreaThresh = thresh; }
-			float getGenerationAreaThresh(float thresh) const { return mGenerationAreaThresh; }
+			inline float getAdaptationRate() const {
+				return mAdaptationRate; 
+			}
 
-			ofMesh& getWorldMeshRef() { return mKinectRelativeMesh; }
+			inline void setMeshXResolution(const int res) {
+				mMeshXResolution = res; 
+			}
+
+			inline int getMeshXResolution() const {
+				return mMeshXResolution; 
+			}
+
+			inline void setMeshYResolution(const int res) {
+				mMeshXResolution = res; 
+			}
+			
+			inline int getMeshYResolution() const {
+				return mMeshXResolution; 
+			}
+
+			inline void setGenerationAreaThresh(const float thresh) {
+				mGenerationAreaThresh = thresh; 
+			}
+
+			inline float getGenerationAreaThresh(const float thresh) const {
+				return mGenerationAreaThresh; 
+			}
 
 			// FLAGS
-			bool isGenerated() { return mGenerated; }
+			inline bool isGenerated() const {
+				return mGenerated; 
+			}
 
-			const ofMesh& getKinectRelativeMeshRef() const { return mKinectRelativeMesh; }
+			inline const ofMesh& getKinectRelativeMeshRef() const {
+				return mKinectRelativeMesh; 
+			}
 
 			// INITIALIZATION
-			void generateMesh(const blobDetection::kinect3dBlobDetector &detector, simple3dBlob &blob);
+			void generateMesh(const blobDetection::kinect3dBlobDetector &detector, const simple3dBlob &blob);
 
 			// COMPUTATION
-			void updateMesh(const blobDetection::kinect3dBlobDetector &detector, simple3dBlob &blob);
+			void updateMesh(const blobDetection::kinect3dBlobDetector &detector, const simple3dBlob &blob);
 
 		private :
+			// COMPUTATION METHODS
+			void computeSolver();
+			int intersectionArea(const ofPolyline& contour1, const ofPolyline& contour2);
 
 			// GENERATION PARAMETERS
 			int mMeshXResolution;
@@ -115,10 +150,6 @@ namespace surfaceTracking {
 			// FLAGS
 			bool mGenerated;
 			bool mNeedComputation;
-
-			// COMPUTATION METHODS
-			void computeSolver();
-			int intersectionArea(const ofPolyline& contour1, const ofPolyline& contour2);
 	};
 
 } // namespace surfaceTracking

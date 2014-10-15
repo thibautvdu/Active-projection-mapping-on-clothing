@@ -13,25 +13,25 @@ namespace ofUtilities {
 	class ofVirtualWindow {
 		public:
 			inline ofVirtualWindow() : xPosition_(0), yPosition_(0), width_(0), height_(0) {}
-			inline ofVirtualWindow(int x, int y, int w, int h) : xPosition_(x), yPosition_(y), width_(w), height_(h) {}
+			inline ofVirtualWindow(const int x, const int y, const int w, const int h) : xPosition_(x), yPosition_(y), width_(w), height_(h) {}
 
-			int getX() const { return xPosition_; }
-			int getY() const { return yPosition_; }
-			int getWidth() const { return width_; }
-			int getHeight() const { return height_; }
+			inline int getX() const { return xPosition_; }
+			inline int getY() const { return yPosition_; }
+			inline int getWidth() const { return width_; }
+			inline int getHeight() const { return height_; }
 
 			void begin() const;
 			void end() const;
 
-			void background(ofColor color) const;
+			void background(const ofColor color) const;
 
 		private:
 			int xPosition_, yPosition_;
 			int width_, height_;
 	};
 
-	ofVec2f mapVec2f(ofVec2f value, ofVec2f inputMin, ofVec2f inputMax, ofVec2f outputMin, ofVec2f outputMax, bool clamp = false);	// Map function for ofVec2f
-	ofPath polylineToPath(ofPolyline polyline);
+	ofVec2f mapVec2f(const ofVec2f value, const ofVec2f inputMin, const ofVec2f inputMax, const ofVec2f outputMin, const ofVec2f outputMax, const bool clamp = false);	// Map function for ofVec2f
+	ofPath polylineToPath(const ofPolyline polyline);
 
 } // namespace ofUtilities
 

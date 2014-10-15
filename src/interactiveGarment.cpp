@@ -19,8 +19,8 @@ namespace garment {
 		int vIdx = 0;
 		for (int y = 0; y < pcH; y++){
 			for (int x = 0; x < pcW; ++x) {
-				if (detector[y*pcW + x].flag == blob_.idx) {
-					mesh_.setVertex(vIdx, detector[y*pcW + x].pos);
+				if (detector.getCloudPoint(y*pcW + x).flag_ == blob_.idx) {
+					mesh_.setVertex(vIdx, detector.getCloudPoint(y*pcW + x).pos_);
 					mesh_.setColor(vIdx, ofColor::white);
 					mesh2dView_[x][y] = vIdx;
 					vIdx++;
@@ -33,7 +33,7 @@ namespace garment {
 		// Construct the 2d contour
 		contour2d_.resize(blob_.contourIndices2d.size());
 		for (int i = 0; i < blob_.contourIndices2d.size(); ++i) {
-			contour2d_[i] = detector[i].pos;
+			contour2d_[i] = detector.getCloudPoint(i).pos_;
 		}
 		contour2d_.close();
 	}

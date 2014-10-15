@@ -11,16 +11,33 @@ namespace garment {
 
 	class interactiveGarment {
 		public :
-			inline ofFastMesh &getMeshRef() { return mesh_; }
-			inline ofPolyline &getContour2dRef() { return contour2d_; }
-			inline const std::vector< std::vector<int> > &getMesh2dViewRef() const { return mesh2dView_; }
-			inline const simple3dBlob &getBlobRef() const { return blob_; }
-			inline std::vector<fold> &getFoldsRef() { return folds_; }
+			inline ofFastMesh &getMeshRef() { 
+				return mesh_; 
+			}
+
+			inline ofPolyline &getContour2dRef() { 
+				return contour2d_; 
+			}
+
+			inline const std::vector< std::vector<int> > &getMesh2dViewRef() const { 
+				return mesh2dView_;
+			}
+
+			inline const simple3dBlob &getBlobRef() const { 
+				return blob_; 
+			}
+
+			inline std::vector<fold> &getFoldsRef() { 
+				return folds_; 
+			}
 
 			void update(const blobDetection::kinect3dBlobDetector &detector, const simple3dBlob blob);
-			inline void drawMesh() { mesh_.drawVertices(); }
 
-			inline void addFold(fold f) {
+			inline void drawMesh() { 
+				mesh_.drawVertices(); 
+			}
+
+			inline void addFold(const fold f) {
 				folds_.push_back(f);
 			}
 

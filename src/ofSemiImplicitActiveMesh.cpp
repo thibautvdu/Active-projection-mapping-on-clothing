@@ -7,7 +7,7 @@ namespace garmentAugmentation {
 namespace surfaceTracking {
 
 	// INITIALIZATION
-	void ofSemiImplicitActiveMesh::generateMesh(const blobDetection::kinect3dBlobDetector &detector, simple3dBlob &blob) {
+	void ofSemiImplicitActiveMesh::generateMesh(const blobDetection::kinect3dBlobDetector &detector, const simple3dBlob &blob) {
 		this->clear();
 		this->setMode(OF_PRIMITIVE_TRIANGLES);
 		this->enableIndices();
@@ -192,7 +192,7 @@ namespace surfaceTracking {
 	}
 
 	// COMPUTATION
-	void ofSemiImplicitActiveMesh::updateMesh(const blobDetection::kinect3dBlobDetector &detector, simple3dBlob &blob) {
+	void ofSemiImplicitActiveMesh::updateMesh(const blobDetection::kinect3dBlobDetector &detector, const simple3dBlob &blob) {
 		if (mNeedComputation) {
 			computeSolver();
 		}
@@ -202,7 +202,7 @@ namespace surfaceTracking {
 
 		ofFastPolyline blobContour2dDepth;
 		for (int i = 0; i < blob.contourIndices2d.size(); ++i) {
-			blobContour2dDepth.addVertex(blob.contourIndices2d[i] % pointCloudWidth, blob.contourIndices2d[i] / pointCloudWidth, detector[blob.contourIndices2d[i]].pos.z / detector.getScale().z);
+			blobContour2dDepth.addVertex(blob.contourIndices2d[i] % pointCloudWidth, blob.contourIndices2d[i] / pointCloudWidth, detector.getCloudPoint(blob.contourIndices2d[i]).pos_.z / detector.getScale().z);
 		}
 
 		// Get closest points for each boundary vertex and construct the mesh contour
@@ -212,7 +212,7 @@ namespace surfaceTracking {
 		for (int i = 0; i < this->getNumVertices(); ++i) { closestImgPtForce[i] = ofVec3f::zero(); }
 		for (int i = 0; i < mMeshBoundaryIndices.size(); ++i) {
 			blobContour2dDepth.getClosestPoint(this->getVertex(mMeshBoundaryIndices[i]), &nearestIdx);
-			if (detector[blob.contourIndices2d[nearestIdx]].flag == blob.idx)
+			if (detector.getCloudPoint(blob.contourIndices2d[nearestIdx]).flag_ == blob.idx)
 				closestImgPtForce[mMeshBoundaryIndices[i]] = blobContour2dDepth[nearestIdx] - this->getVertex(mMeshBoundaryIndices[i]);
 			meshDepthContour.addVertex(this->getVertex(mMeshBoundaryIndices[i]));
 		}
@@ -223,7 +223,7 @@ namespace surfaceTracking {
 		ofVec3f* imgPtToMeshContourForce = new ofVec3f[this->getNumVertices()]; // 0 for non boundary vertices
 		for (int i = 0; i < this->getNumVertices(); ++i) { imgPtToMeshContourForce[i] = ofVec3f::zero(); }
 		for (int i = 0; i < blobContour2dDepth.size(); ++i) {
-			if (detector[blob.contourIndices2d[i]].flag == blob.idx) {
+			if (detector.getCloudPoint(blob.contourIndices2d[i]).flag_ == blob.idx) {
 				nearestPoint = meshDepthContour.getClosestPoint(blobContour2dDepth[i], &nearestIdx);
 				nearestIdx = mMeshBoundaryIndices[nearestIdx];
 				imgPtToMeshContourForce[nearestIdx] += blobContour2dDepth[i] - nearestPoint;
@@ -273,8 +273,8 @@ namespace surfaceTracking {
 				bZ[i] += mBoundaryWeight*(closestImgPtForce[i].z + imgPtToMeshContourForce[i].z);
 			}
 
-			if (detector[(int)Y[i] * pointCloudWidth + X[i]].flag == blob.idx) {
-				bZ[i] += mDepthWeight*((float)detector[(int)Y[i] * pointCloudWidth + X[i]].pos.z / detector.getScale().z - this->getVertex(i).z);
+			if (detector.getCloudPoint(static_cast<int>(Y[i]) * pointCloudWidth + X[i]).flag_ == blob.idx) {
+				bZ[i] += mDepthWeight*(static_cast<float>(detector.getCloudPoint(static_cast<int>(Y[i]) * pointCloudWidth + X[i]).pos_.z / detector.getScale().z - this->getVertex(i).z));
 			}
 		}
 
@@ -290,8 +290,8 @@ namespace surfaceTracking {
 		m_maxDepth = Z[0];
 		for (int i = 0; i < this->getNumVertices(); ++i) {
 			this->setVertex(i, ofVec3f(X[i], Y[i], Z[i]));
-			m_minDepth = min((float)Z[i], m_minDepth);
-			m_maxDepth = max((float)Z[i], m_maxDepth);
+			m_minDepth = min(static_cast<float>(Z[i]), m_minDepth);
+			m_maxDepth = max(static_cast<float>(Z[i]), m_maxDepth);
 		}
 	}
 
