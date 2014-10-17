@@ -1,13 +1,12 @@
 #include "ofApp.h"
 
 #include <stdlib.h>
-#include <Eigen/Core>
-#include <Eigen/SVD>
 
 #include "cv_helper.h"
 #include "lscm.h"
 #include "fold_tracker.h"
 #include "flying_lights.h"
+#include "ransac_lines.h"
 
 /* CONSTANTS	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 
@@ -411,143 +410,14 @@ void ofApp::detectFolds() {
 
 	// Compute folds from deformaed areas
 	if (askFoldComputation_) {
-
-		// Computation structure
-		typedef struct fold fold;
-		struct fold {
-			ofVec3f direction;
-			ofVec3f meanPt;
-			ofVec3f aPt;
-			ofVec3f top, bottom;
-
-			int nbPts;
-			std::vector<float> distToPts;
-
-			void clear() {
-				direction = ofVec3f(0, 0, 0);
-				meanPt = ofVec3f(0, 0, 0);
-				aPt = ofVec3f(0, 0, 0);
-				top.y = std::numeric_limits<float>::infinity();
-				bottom.y = -std::numeric_limits<float>::infinity();
-
-				nbPts = 0;
-			}
-
-			fold() {
-				clear();
-			}
-		};
-
-		// Initialize the clusters
-		std::vector<uchar> clusterLabel(points.size()); // rel. to points' vector
-		std::vector<fold> foldClusters(numFolds_);
-		if (numFolds_ > 1) {
-			float maxX = -std::numeric_limits<float>::infinity();
-			float minX = std::numeric_limits<float>::infinity();
-			for (int i = 0; i < points.size(); ++i) {
-				maxX = maxX < points[i].x ? points[i].x : maxX;
-				minX = minX > points[i].x ? points[i].x : minX;
-			}
-
-			float deltaX = (maxX - minX) / (numFolds_ - 1);
-			for (int i = 0; i < points.size(); ++i) {
-				clusterLabel[i] = floor(((points[i].x - minX) / deltaX) + 0.5);
-			}
-		}
-		else {
-			for (int i = 0; i < points.size(); ++i) {
-				clusterLabel[i] = 0;
-			}
-		}
-
-		// K-means
-		bool change = true;
-		float avgDist;
-		int ptsNbApprox = points.size() / numFolds_;
-		while (change) {
-			change = false;
-
-			// Update the clusters
-			for (int nCluster = 0; nCluster < foldClusters.size(); ++nCluster) {
-				foldClusters[nCluster].clear();
-				for (int i = 0; i < points.size(); ++i) {
-					if (clusterLabel[i] == nCluster) {
-						foldClusters[nCluster].meanPt.x += points[i].x;
-						foldClusters[nCluster].meanPt.y += points[i].y;
-						foldClusters[nCluster].meanPt.z += points[i].z;
-						foldClusters[nCluster].top.y = foldClusters[nCluster].top.y > points[i].y ? points[i].y : foldClusters[nCluster].top.y;
-						foldClusters[nCluster].bottom.y = foldClusters[nCluster].bottom.y < points[i].y ? points[i].y : foldClusters[nCluster].bottom.y;
-						++foldClusters[nCluster].nbPts;
-					}
-				}
-
-				if (foldClusters[nCluster].nbPts != 0) {
-					foldClusters[nCluster].meanPt /= static_cast<float>(foldClusters[nCluster].nbPts);
-					Eigen::MatrixX3f A(foldClusters[nCluster].nbPts, 3);
-					int AIdx = 0;
-					for (int i = 0; i < points.size(); ++i) {
-						if (clusterLabel[i] == nCluster) {
-							A(AIdx, 0) = points[i].x - foldClusters[nCluster].meanPt.x;
-							A(AIdx, 1) = points[i].y - foldClusters[nCluster].meanPt.y;
-							A(AIdx, 2) = points[i].z - foldClusters[nCluster].meanPt.z;
-							++AIdx;
-						}
-					}
-
-					Eigen::JacobiSVD<Eigen::MatrixXf> svd(A, Eigen::ComputeThinV);
-					foldClusters[nCluster].direction.x = svd.matrixV()(0, 0);
-					foldClusters[nCluster].direction.y = svd.matrixV()(1, 0);
-					foldClusters[nCluster].direction.z = svd.matrixV()(2, 0);
-					foldClusters[nCluster].direction.normalize();
-					foldClusters[nCluster].aPt = foldClusters[nCluster].meanPt + foldClusters[nCluster].direction;
-
-					// Compute the distance for each point	
-					foldClusters[nCluster].distToPts.resize(points.size());
-					for (int i = 0; i < points.size(); ++i) {
-						foldClusters[nCluster].distToPts[i] = ((points[i] - foldClusters[nCluster].meanPt).cross(points[i] - foldClusters[nCluster].aPt)).length();
-					}
-				}
-			}
-
-			// Assign in regard of the distance
-			avgDist = 0;
-			for (int i = 0; i < points.size(); ++i) {
-				float minDist = std::numeric_limits<float>::infinity();
-				int closestCluster = 255;
-				for (int nCluster = 0; nCluster < foldClusters.size(); ++nCluster) {
-					if (foldClusters[nCluster].nbPts != 0 && foldClusters[nCluster].distToPts[i] < minDist) {
-						minDist = foldClusters[nCluster].distToPts[i];
-						closestCluster = nCluster;
-					}
-				}
-				avgDist += minDist / points.size();
-				if (clusterLabel[i] != closestCluster) {
-					change = true;
-					clusterLabel[i] = closestCluster;
-				}
-			}
-		}
-
-		if (avgDist > 0.1) {
-			numFolds_++;
-		}
+		std::vector<std::pair<size_t, garment_augmentation::math::OfEigen3dsegment> > lines;
+		garment_augmentation::math::RansacDetect3Dsegments(points, lines, 0.05, 50);
 
 		garment_.folds_ref().clear();
-		for (int i = 0; i < foldClusters.size(); ++i) {
-			if (foldClusters[i].nbPts != 0) {
-				// Compute the segments
-				float t = (foldClusters[i].top.y - foldClusters[i].meanPt.y) / foldClusters[i].direction.y;
-				foldClusters[i].top = foldClusters[i].meanPt + t * foldClusters[i].direction;
-
-				t = (foldClusters[i].bottom.y - foldClusters[i].meanPt.y) / foldClusters[i].direction.y;
-				foldClusters[i].bottom = foldClusters[i].meanPt + t * foldClusters[i].direction;
-
-				// Update the garment folds
-				garment_.AddFold(garment_augmentation::garment::Fold(foldClusters[i].bottom, foldClusters[i].top));
-			}
-		}	
-
-		//m_askFoldComputation = false;
+		for (int i = 0; i < lines.size(); ++i) {
+			// Update the garment folds
+			garment_.AddFold(garment_augmentation::garment::Fold(lines[i].second.a(), lines[i].second.b()));
+		}
 	}
 }
 

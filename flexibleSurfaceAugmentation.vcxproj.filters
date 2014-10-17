@@ -2636,6 +2636,9 @@
     <ClInclude Include="src\ransac_lines.h">
       <Filter>src\math</Filter>
     </ClInclude>
+    <ClInclude Include="src\of_mrpt_3dsegment.h">
+      <Filter>src\math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />
