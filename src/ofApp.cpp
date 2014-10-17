@@ -292,7 +292,7 @@ void ofApp::draw() {
 				ofTranslate(kinectWidth_, kinectHeight_);
 				ofScale(1 / toWorldUnits_, 1 / toWorldUnits_, 1 / toWorldUnits_);
 				ofTranslate(0, 0, -garment_.blob().maxZ.z - 1);
-				garment_.DrawMesh();
+				//garment_.DrawMesh();
 				if (garment_.folds_ref().size() != 0) {
 					ofSetColor(ofColor::blue);
 					for (int i = 0; i < garment_.folds_ref().size(); ++i) {
@@ -300,7 +300,7 @@ void ofApp::draw() {
 					}
 					ofSetColor(ofColor::white);
 				}
-				garment_.DrawAnimations();
+				//garment_.DrawAnimations();
 				//ofDisableDepthTest();
 			ofPopMatrix();
 
@@ -318,11 +318,12 @@ void ofApp::draw() {
 		// PROJECTOR SCREEN	/	/	/	/	/	/	/	/	/	/	/	/	/
 
 		if (blobFound_) {
-			projectorWindow_.begin();
+			projectorWindow_.Begin();
 				ofMultMatrix(ofMatrix4x4::getTransposedOf(kinectProjectorToolkit_.getTransformMatrix()));
 				ofScale(1 / toWorldUnits_, 1 / toWorldUnits_, 1 / toWorldUnits_);
+				garment_.DrawMesh();
 				garment_.DrawAnimations();
-			projectorWindow_.end();
+			projectorWindow_.End();
 		}
 
 		// PROJECTOR SCREEN	-	-	-	-	-	-	-	-	-	-	-	-	-

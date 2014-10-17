@@ -2,12 +2,12 @@
 
 namespace of_utilities {
 
-	void VirtualWindow::begin() const {
+	void VirtualWindow::Begin() const {
 		ofPushMatrix();
 		ofTranslate(x_position_, y_position_);
 	}
 
-	void VirtualWindow::end() const {
+	void VirtualWindow::End() const {
 		ofPopMatrix();
 	}
 

@@ -20,8 +20,8 @@ namespace of_utilities {
 			inline int width() const { return width_; }
 			inline int height() const { return height_; }
 
-			void begin() const;
-			void end() const;
+			void Begin() const;
+			void End() const;
 
 			void background(const ofColor color) const;
 
