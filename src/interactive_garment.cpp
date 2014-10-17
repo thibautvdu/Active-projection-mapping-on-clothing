@@ -1,9 +1,9 @@
-#include "interactiveGarment.h"
+#include "interactive_garment.h"
 
-namespace garmentAugmentation {
+namespace garment_augmentation {
 namespace garment {
 
-	void interactiveGarment::update(const blobDetection::kinect3dBlobDetector &detector, const simple3dBlob blob) {
+	void InteractiveGarment::Update(const blob_detection::kinect3dBlobDetector &detector, const Simple3dblob blob) {
 		blob_ = blob;
 
 		int pcW = detector.getWidth();
@@ -11,7 +11,7 @@ namespace garment {
 
 		if (mesh_.getCapacity() != pcW*pcH) {
 			mesh_.reserveCapacity(pcW*pcH);
-			mesh2dView_.resize(pcW, vector<int>(pcH));
+			mesh2d_view_.resize(pcW, vector<int>(pcH));
 		}
 
 		mesh_.resize(blob_.nbPoints);
@@ -22,21 +22,21 @@ namespace garment {
 				if (detector.getCloudPoint(y*pcW + x).flag_ == blob_.idx) {
 					mesh_.setVertex(vIdx, detector.getCloudPoint(y*pcW + x).pos_);
 					mesh_.setColor(vIdx, ofColor::white);
-					mesh2dView_[x][y] = vIdx;
+					mesh2d_view_[x][y] = vIdx;
 					vIdx++;
 				}
 				else
-					mesh2dView_[x][y] = -1;
+					mesh2d_view_[x][y] = -1;
 			}
 		}
 
 		// Construct the 2d contour
-		contour2d_.resize(blob_.contourIndices2d.size());
-		for (int i = 0; i < blob_.contourIndices2d.size(); ++i) {
+		contour2d_.resize(blob_.contour2d_indices.size());
+		for (int i = 0; i < blob_.contour2d_indices.size(); ++i) {
 			contour2d_[i] = detector.getCloudPoint(i).pos_;
 		}
 		contour2d_.close();
 	}
 
 } // namespace garment
-} // namespace garmentAugmentation
+} // namespace garment_augmentation

@@ -4,10 +4,10 @@
 #include <Eigen/Core>
 #include <Eigen/SVD>
 
-#include "cvHelper.h"
+#include "cv_helper.h"
 #include "lscm.h"
-#include "foldTracker.h"
-#include "flyingLights.h"
+#include "fold_tracker.h"
+#include "flying_lights.h"
 
 /* CONSTANTS	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 
@@ -52,8 +52,8 @@ void ofApp::setup() {
 	}
 
 	// Projector
-	kinectProjectorToolkit_.loadCalibration("cal.xml", projectorWindow_.getWidth(), projectorWindow_.getHeight());
-	projectorWindow_ = ofUtilities::ofVirtualWindow(screenWidth_, 0, projectorWidth_, projectorHeight_);
+	kinectProjectorToolkit_.loadCalibration("cal.xml", projectorWindow_.width(), projectorWindow_.height());
+	projectorWindow_ = of_utilities::VirtualWindow(screenWidth_, 0, projectorWidth_, projectorHeight_);
 
 	// HARDWARE INIT	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -95,11 +95,11 @@ void ofApp::setup() {
 	numFolds_ = 1;
 
 	// Physic animations
-	std::unique_ptr<garmentAugmentation::garment::animation> lightsEffect(new garmentAugmentation::garment::flyingLights());
-	garment_.addAnimation(std::move(lightsEffect));
+	std::unique_ptr<garment_augmentation::garment::Animation> lightsEffect(new garment_augmentation::garment::FlyingLights());
+	garment_.AddAnimation(std::move(lightsEffect));
 
 	// Mesh
-	//m_blobMesh = garmentAugmentation::ofSemiImplicitActiveMesh(20, 20);
+	//m_blobMesh = garment_augmentation::ofSemiImplicitActiveMesh(20, 20);
 
 	// KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -251,9 +251,9 @@ void ofApp::update() {
 				blobFound_ = true;
 
 			if (blobFound_) {
-				garment_.update(blobFinder_, *blobFinder_.blobs[0]);
+				garment_.Update(blobFinder_, *blobFinder_.blobs[0]);
 				detectFolds();
-				garment_.updateAnimations();
+				garment_.UpdateAnimations();
 				/*
 				if (!m_blobMesh.isGenerated()) {
 					m_blobMesh.generateMesh(m_blobFinder, *m_modelBlob);
@@ -292,16 +292,16 @@ void ofApp::draw() {
 				//ofEnableDepthTest();
 				ofTranslate(kinectWidth_, kinectHeight_);
 				ofScale(1 / toWorldUnits_, 1 / toWorldUnits_, 1 / toWorldUnits_);
-				ofTranslate(0, 0, -garment_.getBlobRef().maxZ.z - 1);
-				garment_.drawMesh();
-				if (garment_.getFoldsRef().size() != 0) {
+				ofTranslate(0, 0, -garment_.blob().maxZ.z - 1);
+				garment_.DrawMesh();
+				if (garment_.folds_ref().size() != 0) {
 					ofSetColor(ofColor::blue);
-					for (int i = 0; i < garment_.getFoldsRef().size(); ++i) {
-						garment_.getFoldsRef()[i].draw();
+					for (int i = 0; i < garment_.folds_ref().size(); ++i) {
+						garment_.folds_ref()[i].Draw();
 					}
 					ofSetColor(ofColor::white);
 				}
-				garment_.drawAnimations();
+				garment_.DrawAnimations();
 				//ofDisableDepthTest();
 			ofPopMatrix();
 
@@ -322,7 +322,7 @@ void ofApp::draw() {
 			projectorWindow_.begin();
 				ofMultMatrix(ofMatrix4x4::getTransposedOf(kinectProjectorToolkit_.getTransformMatrix()));
 				ofScale(1 / toWorldUnits_, 1 / toWorldUnits_, 1 / toWorldUnits_);
-				garment_.drawAnimations();
+				garment_.DrawAnimations();
 			projectorWindow_.end();
 		}
 
@@ -377,7 +377,7 @@ void ofApp::meshParameterizationLSCM(const int textureSize, ofMesh& mesh) {
 	ofVec2f outputRange(textureSize*uRange / maxRange, textureSize*vRange / maxRange);
 
 	for (int i = 0; i < mesh.getNumVertices(); ++i) {
-		mesh.setTexCoord(i, ofUtilities::mapVec2f(mesh.getTexCoord(i), ofVec2f(lscm.umin, lscm.vmin), ofVec2f(lscm.umax, lscm.vmax), ofVec2f(0, 0), outputRange));
+		mesh.setTexCoord(i, of_utilities::MapVec2f(mesh.getTexCoord(i), ofVec2f(lscm.umin, lscm.vmin), ofVec2f(lscm.umax, lscm.vmax), ofVec2f(0, 0), outputRange));
 	}
 }
 
@@ -387,20 +387,20 @@ void ofApp::detectFolds() {
 	int width = kinectWidth_ / blobFinder_.getResolution();
 	int height = kinectHeight_ / blobFinder_.getResolution();
 
-	garmentAugmentation::garment::foldTracker tracker(&garment_, ofRectangle(0, 0, 0, 0));
+	garment_augmentation::garment::FoldTracker tracker(&garment_, ofRectangle(0, 0, 0, 0));
 	float deformation;
 	std::vector<ofVec3f> points;
 
 	for (int patchSize = 9; patchSize <= 11; patchSize += 2) {
 		for (int y = 0; y < height - 15; y += 20) {
 			for (int x = 0; x < width - patchSize; x += ((patchSize-1)/2)) {
-				tracker.moveTo(ofRectangle(x, y, patchSize, 10));
-				if (tracker.insideMesh()) {
-					deformation = tracker.getDeformationPercent();
+				tracker.MoveTo(ofRectangle(x, y, patchSize, 10));
+				if (tracker.IsInsideMesh()) {
+					deformation = tracker.GetDeformationPercent();
 					if (deformation  > deformationThres_) {
-						tracker.setColor(ofColor::red);
+						tracker.ColorFill(ofColor::red);
 						if (askFoldComputation_) {
-							std::vector<ofVec3f> patchPts = tracker.getPoints();
+							std::vector<ofVec3f> patchPts = tracker.GetPoints();
 							points.insert(points.end(), patchPts.begin(), patchPts.end());
 						}
 					}
@@ -532,7 +532,7 @@ void ofApp::detectFolds() {
 			numFolds_++;
 		}
 
-		garment_.getFoldsRef().clear();
+		garment_.folds_ref().clear();
 		for (int i = 0; i < foldClusters.size(); ++i) {
 			if (foldClusters[i].nbPts != 0) {
 				// Compute the segments
@@ -543,7 +543,7 @@ void ofApp::detectFolds() {
 				foldClusters[i].bottom = foldClusters[i].meanPt + t * foldClusters[i].direction;
 
 				// Update the garment folds
-				garment_.addFold(garmentAugmentation::garment::fold(foldClusters[i].bottom, foldClusters[i].top));
+				garment_.AddFold(garment_augmentation::garment::Fold(foldClusters[i].bottom, foldClusters[i].top));
 			}
 		}	
 

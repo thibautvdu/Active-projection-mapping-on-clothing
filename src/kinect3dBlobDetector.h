@@ -4,11 +4,11 @@
 #include "ofMain.h"
 
 #include "ofxKinectCommonBridge.h"
-#include "simple3dBlob.h"
-#include "pointCloud.h"
+#include "simple_3dblob.h"
+#include "point_cloud.h"
 
-namespace garmentAugmentation {
-namespace blobDetection {
+namespace garment_augmentation {
+namespace blob_detection {
 
 	enum kinectBlobDetectorResolution { BF_HIGH_RES = 1, BF_MEDIUM_RES = 2, BF_LOW_RES = 4 };
 
@@ -47,12 +47,12 @@ namespace blobDetection {
 				return height; 
 			}
 
-			inline const cloudPoint& getCloudPoint(const int idx) const {
+			inline const CloudPoint& getCloudPoint(const int idx) const {
 				return m_pointCloud[idx];
 			}
 
 			int nBlobs;
-			std::vector<simple3dBlob * > blobs;
+			std::vector<Simple3dblob * > blobs;
 
 		private:
 			const static int clockwiseBacktracking[];
@@ -72,7 +72,7 @@ namespace blobDetection {
 			int kNPix;
 			int nPix;
 
-			cloudPoint*  m_pointCloud;
+			CloudPoint*  m_pointCloud;
 
 			bool bFinderInited;
 			bool bAllocatedMap;
@@ -81,7 +81,7 @@ namespace blobDetection {
 
 	};
 
-} // namespace blobDetection
-} // namespace garmentAugmentation
+} // namespace blob_detection
+} // namespace garment_augmentation
 
 #endif // FLEXIBLE_SURFACE_AUGMENTATION_KINECT_3D_BLOB_DETECTOR_H_

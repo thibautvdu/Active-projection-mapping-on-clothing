@@ -3,18 +3,18 @@
 
 #include "fold.h"
 
-namespace garmentAugmentation {
+namespace garment_augmentation {
 namespace garment {
 
-	class animation {
+	class Animation {
 		public:
-			virtual void update() = 0;
-			virtual void update(const std::vector<fold> &folds) = 0;
-			virtual void draw() = 0;
+			virtual void Update() = 0;
+			virtual void Update(const std::vector<Fold> &folds) = 0;
+			virtual void Draw() = 0;
 
 	};
 
 } // namespace garment
-} // namespace garmentAugmentation
+} // namespace garment_augmentation
 
 #endif // FLEXIBLE_SURFACE_AUGMENTATION_ANIMATION_H_

@@ -9,9 +9,9 @@
 
 #include "ofxKinectCommonBridge.h"
 #include "ofxKinectProjectorToolkit.h"
-#include "ofUtilities.h"
+#include "of_utilities.h"
 #include "kinect3dBlobDetector.h"
-#include "interactiveGarment.h"
+#include "interactive_garment.h"
 
 class ofApp : public ofBaseApp {
 
@@ -41,7 +41,7 @@ class ofApp : public ofBaseApp {
 
 		static const int screenWidth_, screenHeight_, projectorWidth_, projectorHeight_;
 		ofxKinectProjectorToolkit kinectProjectorToolkit_;
-		ofUtilities::ofVirtualWindow projectorWindow_;
+		of_utilities::VirtualWindow projectorWindow_;
 
 		// HARDWARE HANDLERS	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -66,11 +66,11 @@ class ofApp : public ofBaseApp {
 		static const float toWorldUnits_;
 
 		// Blob finder and tracker
-		garmentAugmentation::blobDetection::kinect3dBlobDetector blobFinder_;
+		garment_augmentation::blob_detection::kinect3dBlobDetector blobFinder_;
 		bool blobFound_;
 
 		// Garment object
-		garmentAugmentation::garment::interactiveGarment garment_;
+		garment_augmentation::garment::InteractiveGarment garment_;
 
 		// Folds detection
 		ofxIntSlider deformationThres_;
@@ -78,7 +78,7 @@ class ofApp : public ofBaseApp {
 		uchar numFolds_;
 
 		// Tracking mesh
-		//garmentAugmentation::ofSemiImplicitActiveMesh m_blobMesh;
+		//garment_augmentation::ofSemiImplicitActiveMesh m_blobMesh;
 		//ofxFloatSlider m_adaptationRate, m_boundaryWeight, m_depthWeight;
 
 		// KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-

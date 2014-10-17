@@ -2,8 +2,8 @@
 
 #include "ofxCv.h"
 
-namespace garmentAugmentation {
-namespace blobDetection {
+namespace garment_augmentation {
+namespace blob_detection {
 
 	kinect3dBlobDetector::kinect3dBlobDetector() {
 		m_pointCloud = NULL;
@@ -60,7 +60,7 @@ namespace blobDetection {
 		float minX, minY, minZ, maxX, maxY, maxZ;
 
 		ofVec3f *minXPos, *minYPos, *minZPos, *maxXPos, *maxYPos, *maxZPos;
-		std::vector<simple3dBlob * > tempBlobs;
+		std::vector<Simple3dblob * > tempBlobs;
 
 		while ((pixIndex < nPix) && (pixelsToProcess > 0) &&
 			(tempBlobs.size() < maxBlobs)) {
@@ -85,7 +85,7 @@ namespace blobDetection {
 
 				pixelsToProcess--;
 
-				cloudPoint * p_cloudPoint = &m_pointCloud[queueIndexPix];
+				CloudPoint * p_cloudPoint = &m_pointCloud[queueIndexPix];
 				(*p_cloudPoint).flag_ = FLAG_PROCESSED;
 
 				ofVec3f * posPtr = &((*p_cloudPoint).pos_);
@@ -134,7 +134,7 @@ namespace blobDetection {
 				// minimum number of pixels to be considered as a blob
 				if ((blobVol >= minVol) && (blobVol <= maxVol)) {
 					ofVec3f newMassCenter = ofVec3f(0.0f, 0.0f, 0.0f);
-					simple3dBlob* newBlob = new simple3dBlob();
+					Simple3dblob* newBlob = new Simple3dblob();
 
 					for (int i = 0; i < lastQueued; i++) {
 						m_pointCloud[queue[i]].flag_ = numBlobs;
@@ -156,7 +156,7 @@ namespace blobDetection {
 					// Mark the 2d contour of the blob
 					while ((m_pointCloud[pixIndex].flag_ != numBlobs) && (pixIndex < nPix)) pixIndex++;
 					m_pointCloud[pixIndex].boundary_ = true;
-					newBlob->contourIndices2d.push_back(pixIndex);
+					newBlob->contour2d_indices.push_back(pixIndex);
 
 					int i = pixIndex % width;
 					int j = pixIndex / width;
@@ -171,7 +171,7 @@ namespace blobDetection {
 
 							if (m_pointCloud[neighbour].flag_ == numBlobs) {
 								m_pointCloud[neighbour].boundary_ = true;
-								newBlob->contourIndices2d.push_back(neighbour);
+								newBlob->contour2d_indices.push_back(neighbour);
 								k = clockwiseBacktracking[(k - 1) % 8];
 								i = neighbour % width;
 								j = neighbour / width;
@@ -217,7 +217,7 @@ namespace blobDetection {
 			height = kHeight / resolution;
 			nPix = width*height;
 			if (m_pointCloud != NULL) delete[] m_pointCloud;
-			m_pointCloud = new cloudPoint[nPix];
+			m_pointCloud = new CloudPoint[nPix];
 			if (m_pointCloud == NULL) {
 				ofLog(OF_LOG_WARNING, "ofxKinectBlobFinder: setResolution - error allocating memory for pointcloud ");
 				return false;
@@ -242,7 +242,7 @@ namespace blobDetection {
 
 	bool kinect3dBlobDetector::createCloud(unsigned char * maskPix) {
 		ofVec3f thePos;
-		cloudPoint * p_cloudPoint = &m_pointCloud[0];
+		CloudPoint * p_cloudPoint = &m_pointCloud[0];
 		ofShortPixels distances = kinectPtr->getDepthPixels();
 
 		int row_incr = kWidth*(resolution - 1);
@@ -265,5 +265,5 @@ namespace blobDetection {
 		return true;
 	}
 
-} // namespace blobDetection
-} // namespace garmentAugmentation
+} // namespace blob_detection
+} // namespace garment_augmentation

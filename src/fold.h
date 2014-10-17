@@ -3,45 +3,45 @@
 
 #include "ofMain.h"
 
-namespace garmentAugmentation {
+namespace garment_augmentation {
 namespace garment {
 
-	class fold {
+	class Fold {
 		public:
 			enum foldState { IDLE = 0, NEW = 1 };
 
-			inline fold() {
+			inline Fold() {
 				flag_ = NEW;
 			}
 
-			inline fold(const ofVec3f a, const ofVec3f b) : aPt_(a), bPt_(b) {
-				fold();
+			inline Fold(const ofVec3f a, const ofVec3f b) : a_pt_(a), b_pt_(b) {
+				Fold();
 			}
 
-			inline void update() {
+			inline void Update() {
 				flag_ = IDLE;
 			}
 
-			inline void draw() {
-				ofLine(aPt_, bPt_);
+			inline void Draw() {
+				ofLine(a_pt_, b_pt_);
 			}
 
-			inline ofVec3f getAPt() const { 
-				return aPt_; 
+			inline ofVec3f a_pt() const { 
+				return a_pt_; 
 			}
 
-			inline ofVec3f getBPt() const { 
-				return bPt_; 
+			inline ofVec3f b_pt() const { 
+				return b_pt_; 
 			}
 
 		private:
 
-			ofVec3f aPt_;
-			ofVec3f bPt_;
+			ofVec3f a_pt_;
+			ofVec3f b_pt_;
 			enum foldState flag_;
 	};
 
 } // namespace garment
-} // namespace garmentAugmentation
+} // namespace garment_augmentation
 
 #endif // FLEXIBLE_SURFACE_AUGMENTATION_FOLD_H_

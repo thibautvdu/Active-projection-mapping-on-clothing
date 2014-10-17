@@ -62,20 +62,21 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\addons\ofxOpenCv\libs;..\..\..\addons\ofxOpenCv\src;..\..\..\addons\ofxOpenCv\libs\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\calib3d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\contrib;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\core;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\features2d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\flann;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\highgui;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\imgproc;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\legacy;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ml;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\objdetect;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ts;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\video;..\..\..\addons\ofxOpenCv\libs\opencv\lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs;..\..\..\addons\ofxCv\libs;..\..\..\addons\ofxCv\src;..\..\..\addons\ofxCv\libs\CLD;..\..\..\addons\ofxCv\libs\CLD\include;..\..\..\addons\ofxCv\libs\CLD\include\CLD;..\..\..\addons\ofxCv\libs\CLD\src;..\..\..\addons\ofxCv\libs\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\include;..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\src;..\..\..\addons\ofxKinectCommonBridge\libs;..\..\..\addons\ofxKinectCommonBridge\src;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\include;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs64;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs64_Speech;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs_Speech;..\..\..\addons\ofxGui\src;src;..\..\..\addons\ofxOpenNL\src;..\..\..\addons\ofxEigen;..\..\..\addons\ofxKinectProjectorToolkit\src;..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib;..\..\..\addons\ofxKinectBlobFinder\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\addons\ofxOpenCv\libs;..\..\..\addons\ofxOpenCv\src;..\..\..\addons\ofxOpenCv\libs\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\calib3d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\contrib;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\core;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\features2d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\flann;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\highgui;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\imgproc;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\legacy;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ml;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\objdetect;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ts;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\video;..\..\..\addons\ofxOpenCv\libs\opencv\lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs;..\..\..\addons\ofxCv\libs;..\..\..\addons\ofxCv\src;..\..\..\addons\ofxCv\libs\CLD;..\..\..\addons\ofxCv\libs\CLD\include;..\..\..\addons\ofxCv\libs\CLD\include\CLD;..\..\..\addons\ofxCv\libs\CLD\src;..\..\..\addons\ofxCv\libs\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\include;..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\src;..\..\..\addons\ofxKinectCommonBridge\libs;..\..\..\addons\ofxKinectCommonBridge\src;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\include;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs64;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs64_Speech;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs_Speech;..\..\..\addons\ofxGui\src;src;..\..\..\addons\ofxOpenNL\src;..\..\..\addons\ofxEigen;..\..\..\addons\ofxKinectProjectorToolkit\src;..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib;..\..\..\addons\ofxKinectBlobFinder\src;..\..\..\addons\ofxMRPT\includes</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies);KinectCommonBridge.lib;Kinect10.lib;nl.lib;opencv_calib3d231d.lib;opencv_contrib231d.lib;opencv_core231d.lib;opencv_features2d231d.lib;opencv_flann231d.lib;opencv_gpu231d.lib;opencv_haartraining_engined.lib;opencv_highgui231d.lib;opencv_imgproc231d.lib;opencv_legacy231d.lib;opencv_ml231d.lib;opencv_objdetect231d.lib;opencv_video231d.lib;zlibd.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs;..\..\..\addons\ofxOpenNL\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies);KinectCommonBridge.lib;Kinect10.lib;nl.lib;libmrpt-base122-dbg.lib;opencv_calib3d231d.lib;opencv_contrib231d.lib;opencv_core231d.lib;opencv_features2d231d.lib;opencv_flann231d.lib;opencv_gpu231d.lib;opencv_haartraining_engined.lib;opencv_highgui231d.lib;opencv_imgproc231d.lib;opencv_legacy231d.lib;opencv_ml231d.lib;opencv_objdetect231d.lib;opencv_video231d.lib;zlibd.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs;..\..\..\addons\ofxOpenNL\lib;..\..\..\addons\ofxMRPT\libs</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /e /i /y "$(ProjectDir)..\..\..\export\vs\*.dll" "$(ProjectDir)bin"
 xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\*.dll" "$(ProjectDir)bin"
-xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs\*.dll" "$(ProjectDir)bin"</Command>
+xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs\*.dll" "$(ProjectDir)bin"
+xcopy /e /i /y "..\..\..\addons\ofxMRPT\libs\*.dll" "$(ProjectDir)bin"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -84,7 +85,7 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\addons\ofxOpenCv\libs;..\..\..\addons\ofxOpenCv\src;..\..\..\addons\ofxOpenCv\libs\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\calib3d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\contrib;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\core;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\features2d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\flann;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\highgui;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\imgproc;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\legacy;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ml;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\objdetect;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ts;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\video;..\..\..\addons\ofxOpenCv\libs\opencv\lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs;..\..\..\addons\ofxCv\libs;..\..\..\addons\ofxCv\src;..\..\..\addons\ofxCv\libs\CLD;..\..\..\addons\ofxCv\libs\CLD\include;..\..\..\addons\ofxCv\libs\CLD\include\CLD;..\..\..\addons\ofxCv\libs\CLD\src;..\..\..\addons\ofxCv\libs\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\include;..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\src;..\..\..\addons\ofxKinectCommonBridge\libs;..\..\..\addons\ofxKinectCommonBridge\src;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\include;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs64;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs64_Speech;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs_Speech;..\..\..\addons\ofxGui\src;src;..\..\..\addons\ofxOpenNL\src;..\..\..\addons\ofxEigen;..\..\..\addons\ofxKinectProjectorToolkit\src;..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib;..\..\..\addons\ofxKinectBlobFinder\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\addons\ofxOpenCv\libs;..\..\..\addons\ofxOpenCv\src;..\..\..\addons\ofxOpenCv\libs\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\calib3d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\contrib;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\core;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\features2d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\flann;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\highgui;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\imgproc;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\legacy;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ml;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\objdetect;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ts;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\video;..\..\..\addons\ofxOpenCv\libs\opencv\lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs;..\..\..\addons\ofxCv\libs;..\..\..\addons\ofxCv\src;..\..\..\addons\ofxCv\libs\CLD;..\..\..\addons\ofxCv\libs\CLD\include;..\..\..\addons\ofxCv\libs\CLD\include\CLD;..\..\..\addons\ofxCv\libs\CLD\src;..\..\..\addons\ofxCv\libs\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\include;..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\src;..\..\..\addons\ofxKinectCommonBridge\libs;..\..\..\addons\ofxKinectCommonBridge\src;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\include;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs64;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs64_Speech;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs_Speech;..\..\..\addons\ofxGui\src;src;..\..\..\addons\ofxOpenNL\src;..\..\..\addons\ofxEigen;..\..\..\addons\ofxKinectProjectorToolkit\src;..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib;..\..\..\addons\ofxKinectBlobFinder\src;..\..\..\addons\ofxMRPT\includes</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
@@ -94,8 +95,8 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalDependencies>%(AdditionalDependencies);KinectCommonBridge.lib;Kinect10.lib;nl.lib;opencv_calib3d231.lib;opencv_contrib231.lib;opencv_core231.lib;opencv_features2d231.lib;opencv_flann231.lib;opencv_gpu231.lib;opencv_haartraining_engine.lib;opencv_highgui231.lib;opencv_imgproc231.lib;opencv_legacy231.lib;opencv_ml231.lib;opencv_objdetect231.lib;opencv_video231.lib;zlib.lib;KinectCommonBridge.dll;KinectCommonBridge.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs;..\..\..\addons\ofxOpenNL\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies);KinectCommonBridge.lib;Kinect10.lib;nl.lib;libmrpt-base122-dbg.lib;opencv_calib3d231.lib;opencv_contrib231.lib;opencv_core231.lib;opencv_features2d231.lib;opencv_flann231.lib;opencv_gpu231.lib;opencv_haartraining_engine.lib;opencv_highgui231.lib;opencv_imgproc231.lib;opencv_legacy231.lib;opencv_ml231.lib;opencv_objdetect231.lib;opencv_video231.lib;zlib.lib;KinectCommonBridge.dll;KinectCommonBridge.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs;..\..\..\addons\ofxOpenNL\lib;..\..\..\addons\ofxMRPT\libs</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /e /i /y "$(ProjectDir)..\..\..\export\vs\*.dll" "$(ProjectDir)bin"
@@ -115,9 +116,9 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
     <ClCompile Include="..\..\..\addons\ofxKinectBlobFinder\src\ofxKinectBlobFinder.cpp" />
     <ClCompile Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\unicode\unicode.cpp" />
     <ClCompile Include="..\..\..\addons\ofxKinectProjectorToolkit\src\ofxKinectProjectorToolkit.cpp" />
-    <ClCompile Include="src\foldTracker.cpp" />
-    <ClCompile Include="src\interactiveGarment.cpp" />
-    <ClCompile Include="src\flyingLights.cpp" />
+    <ClCompile Include="src\fold_tracker.cpp" />
+    <ClCompile Include="src\interactive_garment.cpp" />
+    <ClCompile Include="src\flying_lights.cpp" />
     <ClCompile Include="src\lscm.cpp" />
     <ClCompile Include="src\lscmUtilities.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -142,11 +143,12 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
     <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Utilities.cpp" />
     <ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Wrappers.cpp" />
     <ClCompile Include="..\..\..\addons\ofxKinectCommonBridge\src\ofxKinectCommonBridge.cpp" />
-    <ClCompile Include="src\cvHelper.cpp" />
+    <ClCompile Include="src\cv_helper.cpp" />
     <ClCompile Include="src\kinect3dBlobDetector.cpp" />
     <ClCompile Include="src\ofFastMesh.cpp" />
+    <ClCompile Include="src\ransac_lines.cpp" />
     <ClCompile Include="src\ofSemiImplicitActiveMesh.cpp" />
-    <ClCompile Include="src\ofUtilities.cpp" />
+    <ClCompile Include="src\of_utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\..\..\..\Downloads\eigen-eigen-1306d75b4a21.tar\eigen-eigen-1306d75b4a21\Eigen\src\Core\arch\AltiVec\Complex.h" />
@@ -486,6 +488,247 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
     <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\unicode\unicode_abstract.h" />
     <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\windows_magic.h" />
     <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\src\ofxKinectProjectorToolkit.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\base.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\base\link_pragmas.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\bayes\CParticleFilter.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\bayes\CParticleFilterCapable.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\bayes\CParticleFilterData.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\bayes\CProbabilityParticle.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\compress.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\compress\zip.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\config.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CArray.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CArrayNumeric.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CBinaryRelation.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CHistogram.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CLevenbergMarquardt.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CMatrix.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CMatrixB.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CMatrixD.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CMatrixFixedNumeric.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CMatrixTemplate.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CMatrixTemplateNumeric.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CMatrixTemplateObjects.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CMonteCarlo.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CPolygon.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CQuaternion.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CSparseMatrix.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CSparseMatrixTemplate.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CSplineInterpolator1D.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\data_utils.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\distributions.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\eigen_frwds.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\eigen_plugins.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\eigen_plugins_impl.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\fourier.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\geometry.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\homog_matrices.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\interp_fit.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\jacobians.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\KDTreeCapable.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\kmeans.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\lightweight_geom_data.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\math_frwds.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\MatrixBlockSparseCols.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\matrix_adaptors.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\matrix_serialization.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\model_search.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\model_search_impl.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\num_jacobian.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\ops_containers.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\ops_matrices.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\ops_vectors.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\point_poses2vectors.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\ransac.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\ransac_applications.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\robust_kernels.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\slerp.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\transform_gaussian.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\utils.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\wrap2pi.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math_mrpt.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\CSparse\cs.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\do_opencv_includes.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\nanoflann\nanoflann.hpp" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\stlplus\containers_fixes.hpp" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\stlplus\exceptions.hpp" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\stlplus\smart_ptr.hpp" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\Arg.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\ArgException.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\CmdLine.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\CmdLineInterface.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\CmdLineOutput.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\Constraint.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\DocBookOutput.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\HelpVisitor.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\IgnoreRestVisitor.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\MultiArg.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\MultiSwitchArg.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\OptionalUnlabeledTracker.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\StdOutput.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\SwitchArg.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\UnlabeledMultiArg.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\UnlabeledValueArg.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\ValueArg.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\ValuesConstraint.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\VersionVisitor.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\Visitor.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\XorHandler.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPoint.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPoint2D.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPoint2DPDF.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPoint2DPDFGaussian.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPoint3D.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPointPDF.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPointPDFGaussian.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPointPDFParticles.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPointPDFSOG.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose2D.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose2DGridTemplate.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3D.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DInterpolator.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DPDF.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DPDFGaussian.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DPDFGaussianInf.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DPDFParticles.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DPDFSOG.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DQuat.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DQuatPDF.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DQuatPDFGaussian.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DQuatPDFGaussianInf.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DRotVec.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPoseOrPoint.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPoseOrPoint_detail.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPosePDF.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPosePDFGaussian.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPosePDFGaussianInf.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPosePDFGrid.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPosePDFParticles.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPosePDFSOG.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPoseRandomSampler.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPoses2DSequence.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPoses3DSequence.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CRobot2DPoseEstimator.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\poses_frwds.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\SE_traits.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\random.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\random\RandomGenerators.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\synch.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\synch\atomic_incr.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\synch\CCriticalSection.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\synch\CPipe.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\synch\CSemaphore.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\synch\CThreadSafeVariable.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\synch\MT_buffer.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\CDirectoryExplorer.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\CFileSystemWatcher.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\CGenericMemoryPool.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\datetime.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\filesystem.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\memory.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\os.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\parallelization.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\string_utils.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\threads.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\vector_loadsave.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\adapters.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\aligned_containers.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\bimap.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\bits.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\boost_join.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CCanvas.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CClientTCPSocket.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CConfigFile.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CConfigFileBase.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CConfigFileMemory.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CConfigFilePrefixer.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CConsoleRedirector.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CDebugOutputCapable.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CDynamicGrid.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CEnhancedMetaFile.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CFileGZInputStream.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CFileGZOutputStream.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CFileInputStream.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CFileOutputStream.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CFileStream.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CImage.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\circular_buffer.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\ci_less.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CListOfClasses.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CLoadableOptions.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CLog.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CMappedImage.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CMemoryChunk.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CMemoryStream.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CMessage.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CMessageQueue.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CMHPropertiesValuesList.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CObject.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CObservable.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CObserver.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\color_maps.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\compiler_fixes.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\core_defs.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CProbabilityDensityFunction.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CPropertiesValuesList.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\crc.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CReferencedMemBlock.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CRobotSimulator.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CSerializable.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CServerTCPSocket.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CSimpleDatabase.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CStartUpClassesRegister.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CStdOutStream.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CStream.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CStringList.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CTextFileLinesParser.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CThreadSafeQueue.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CTicTac.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CTimeLogger.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CTypeSelector.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CUncopiable.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\exceptions.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\list_searchable.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\map_as_vector.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\md5.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\metaprogramming.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\metaprogramming_serialization.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\mrptEvent.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\mrpt_inttypes.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\mrpt_macros.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\mrpt_stdint.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\msvc_inttypes.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\net_utils.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\PLY_import_export.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\printf_vector.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\pstdint.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\round.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\safe_pointers.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\SSE_macros.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\SSE_types.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\stl_containers_utils.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\stl_extensions.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\stl_serialization.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\TCamera.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\TColor.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\TEnumType.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\TMatchingPair.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\TParameters.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\TPixelCoord.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\traits_map.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\TStereoCamera.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\TTypeName.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\TTypeName_impl.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\types.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\types_math.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\types_simple.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\utils_defs.h" />
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\version.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_blas.h" />
     <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_cnc_gpu_cuda.h" />
@@ -498,11 +741,12 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
     <ClInclude Include="..\..\..\addons\ofxOpenNL\src\NL\nl_superlu.h" />
     <ClInclude Include="src\animation.h" />
     <ClInclude Include="src\fold.h" />
-    <ClInclude Include="src\flyingLights.h" />
-    <ClInclude Include="src\simple3dBlob.h" />
-    <ClInclude Include="src\cvHelper.h" />
-    <ClInclude Include="src\foldTracker.h" />
-    <ClInclude Include="src\interactiveGarment.h" />
+    <ClInclude Include="src\flying_lights.h" />
+    <ClInclude Include="src\ransac_lines.h" />
+    <ClInclude Include="src\simple_3dblob.h" />
+    <ClInclude Include="src\cv_helper.h" />
+    <ClInclude Include="src\fold_tracker.h" />
+    <ClInclude Include="src\interactive_garment.h" />
     <ClInclude Include="src\ofFastPolyline.h" />
     <ClInclude Include="src\kinect3dBlobDetector.h" />
     <ClInclude Include="src\lscm.h" />
@@ -619,8 +863,8 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
     <ClInclude Include="..\..\..\addons\ofxKinectCommonBridge\src\ofxKinectCommonBridge.h" />
     <ClInclude Include="..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\include\KinectCommonBridgeLib.h" />
     <ClInclude Include="src\ofSemiImplicitActiveMesh.h" />
-    <ClInclude Include="src\ofUtilities.h" />
-    <ClInclude Include="src\pointCloud.h" />
+    <ClInclude Include="src\of_utilities.h" />
+    <ClInclude Include="src\point_cloud.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">
@@ -665,8 +909,9 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
     <None Include="..\..\..\addons\ofxEigen\Eigen\SuperLUSupport" />
     <None Include="..\..\..\addons\ofxEigen\Eigen\SVD" />
     <None Include="..\..\..\addons\ofxEigen\Eigen\UmfPackSupport" />
-    <None Include="bin\data\shaders\toProjector.frag" />
-    <None Include="bin\data\shaders\toProjector.vert" />
+    <None Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\stlplus\smart_ptr.tpp" />
+    <None Include="bin\data\shaders\to_projector.frag" />
+    <None Include="bin\data\shaders\to_projector.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

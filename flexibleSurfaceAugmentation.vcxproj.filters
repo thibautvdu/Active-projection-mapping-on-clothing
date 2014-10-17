@@ -109,26 +109,29 @@
     <ClCompile Include="src\kinect3dBlobDetector.cpp">
       <Filter>src\blobDetection</Filter>
     </ClCompile>
-    <ClCompile Include="src\cvHelper.cpp">
+    <ClCompile Include="src\ofSemiImplicitActiveMesh.cpp">
+      <Filter>src\surfaceTracking</Filter>
+    </ClCompile>
+    <ClCompile Include="src\flying_lights.cpp">
+      <Filter>src\garment</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fold_tracker.cpp">
+      <Filter>src\garment</Filter>
+    </ClCompile>
+    <ClCompile Include="src\interactive_garment.cpp">
+      <Filter>src\garment</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cv_helper.cpp">
       <Filter>src\toolbox</Filter>
     </ClCompile>
-    <ClCompile Include="src\ofUtilities.cpp">
+    <ClCompile Include="src\of_utilities.cpp">
       <Filter>src\toolbox</Filter>
     </ClCompile>
     <ClCompile Include="src\ofFastMesh.cpp">
-      <Filter>src\toolbox</Filter>
+      <Filter>src\toolbox\rewritting</Filter>
     </ClCompile>
-    <ClCompile Include="src\foldTracker.cpp">
-      <Filter>src\garment</Filter>
-    </ClCompile>
-    <ClCompile Include="src\interactiveGarment.cpp">
-      <Filter>src\garment</Filter>
-    </ClCompile>
-    <ClCompile Include="src\flyingLights.cpp">
-      <Filter>src\garment</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ofSemiImplicitActiveMesh.cpp">
-      <Filter>src\surfaceTracking</Filter>
+    <ClCompile Include="src\ransac_lines.cpp">
+      <Filter>src\math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -431,6 +434,63 @@
     </Filter>
     <Filter Include="src\surfaceTracking">
       <UniqueIdentifier>{503b7d9e-5e71-4ebe-ad3e-661a304aff12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxMRPT">
+      <UniqueIdentifier>{5e2df074-9dd0-47bd-85fe-17e4219ed31f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxMRPT\includes">
+      <UniqueIdentifier>{39fe8265-988a-477b-b861-61a9491ba330}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxMRPT\includes\mrpt">
+      <UniqueIdentifier>{9f1c9862-9279-48be-9af2-261103b20aa3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxMRPT\includes\mrpt\base">
+      <UniqueIdentifier>{5079f191-fc4d-4b51-b776-256a18c65bb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxMRPT\includes\mrpt\bayes">
+      <UniqueIdentifier>{83501b2b-83d2-4b8e-acec-861f9220ad22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxMRPT\includes\mrpt\compress">
+      <UniqueIdentifier>{cb1b7f15-b2c6-45e7-9754-5098691dfc2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxMRPT\includes\mrpt\math">
+      <UniqueIdentifier>{fee572e6-b7d6-4af3-be26-05e16ba214ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxMRPT\includes\mrpt\otherlibs">
+      <UniqueIdentifier>{f93e71a2-d8ec-45d7-aecf-949f367fccad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxMRPT\includes\mrpt\poses">
+      <UniqueIdentifier>{b8515abb-0c32-4ab7-8e9c-afd2b6cd9823}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxMRPT\includes\mrpt\random">
+      <UniqueIdentifier>{a471b9e2-ec1a-46dc-9de4-5ee8836d5d32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxMRPT\includes\mrpt\synch">
+      <UniqueIdentifier>{0ae56c0f-696f-41ca-b01f-39973371ef04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxMRPT\includes\mrpt\system">
+      <UniqueIdentifier>{f37b92ef-6966-4329-8ca0-8f2ca8396392}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxMRPT\includes\mrpt\utils">
+      <UniqueIdentifier>{d1a0827b-6ec4-4859-a71c-5a6e40de1e5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxMRPT\includes\mrpt\otherlibs\CSparse">
+      <UniqueIdentifier>{c6e08fd5-566d-4879-88a1-5990f865c437}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxMRPT\includes\mrpt\otherlibs\tclap">
+      <UniqueIdentifier>{3572d592-5253-4d1a-a753-c1f512e04b8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxMRPT\includes\mrpt\otherlibs\stlplus">
+      <UniqueIdentifier>{c3ba744d-4fdc-441b-8201-200a782facf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxMRPT\includes\mrpt\otherlibs\nanoflann">
+      <UniqueIdentifier>{3747b87f-8b71-4c61-bbdd-ea3d7092c440}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\math">
+      <UniqueIdentifier>{322f607f-9690-4f90-b89b-d2a367c24447}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\toolbox\rewritting">
+      <UniqueIdentifier>{da332457-d64e-46e6-8850-3873c9cd3fac}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1811,32 +1871,8 @@
     <ClInclude Include="src\lscmUtilities.h">
       <Filter>src\lscm</Filter>
     </ClInclude>
-    <ClInclude Include="src\pointCloud.h">
-      <Filter>src\blobDetection</Filter>
-    </ClInclude>
     <ClInclude Include="src\kinect3dBlobDetector.h">
       <Filter>src\blobDetection</Filter>
-    </ClInclude>
-    <ClInclude Include="src\simple3dBlob.h">
-      <Filter>src\blobDetection</Filter>
-    </ClInclude>
-    <ClInclude Include="src\cvHelper.h">
-      <Filter>src\toolbox</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofUtilities.h">
-      <Filter>src\toolbox</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofFastMesh.h">
-      <Filter>src\toolbox</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ofFastPolyline.h">
-      <Filter>src\toolbox</Filter>
-    </ClInclude>
-    <ClInclude Include="src\foldTracker.h">
-      <Filter>src\garment</Filter>
-    </ClInclude>
-    <ClInclude Include="src\interactiveGarment.h">
-      <Filter>src\garment</Filter>
     </ClInclude>
     <ClInclude Include="src\fold.h">
       <Filter>src\garment</Filter>
@@ -1844,11 +1880,761 @@
     <ClInclude Include="src\animation.h">
       <Filter>src\garment</Filter>
     </ClInclude>
-    <ClInclude Include="src\flyingLights.h">
-      <Filter>src\garment</Filter>
-    </ClInclude>
     <ClInclude Include="src\ofSemiImplicitActiveMesh.h">
       <Filter>src\surfaceTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\base.h">
+      <Filter>addons\ofxMRPT\includes\mrpt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\compress.h">
+      <Filter>addons\ofxMRPT\includes\mrpt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math.h">
+      <Filter>addons\ofxMRPT\includes\mrpt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math_mrpt.h">
+      <Filter>addons\ofxMRPT\includes\mrpt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses.h">
+      <Filter>addons\ofxMRPT\includes\mrpt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\random.h">
+      <Filter>addons\ofxMRPT\includes\mrpt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\synch.h">
+      <Filter>addons\ofxMRPT\includes\mrpt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system.h">
+      <Filter>addons\ofxMRPT\includes\mrpt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils.h">
+      <Filter>addons\ofxMRPT\includes\mrpt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\base\link_pragmas.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\bayes\CParticleFilter.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\bayes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\bayes\CParticleFilterCapable.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\bayes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\bayes\CParticleFilterData.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\bayes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\bayes\CProbabilityParticle.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\bayes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\compress\zip.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CArray.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CArrayNumeric.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CBinaryRelation.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CHistogram.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CLevenbergMarquardt.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CMatrix.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CMatrixB.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CMatrixD.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CMatrixFixedNumeric.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CMatrixTemplate.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CMatrixTemplateNumeric.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CMatrixTemplateObjects.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CMonteCarlo.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CPolygon.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CQuaternion.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CSparseMatrix.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CSparseMatrixTemplate.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\CSplineInterpolator1D.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\data_utils.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\distributions.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\eigen_frwds.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\eigen_plugins.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\eigen_plugins_impl.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\fourier.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\geometry.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\homog_matrices.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\interp_fit.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\jacobians.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\KDTreeCapable.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\kmeans.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\lightweight_geom_data.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\math_frwds.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\matrix_adaptors.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\matrix_serialization.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\MatrixBlockSparseCols.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\model_search.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\model_search_impl.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\num_jacobian.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\ops_containers.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\ops_matrices.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\ops_vectors.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\point_poses2vectors.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\ransac.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\ransac_applications.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\robust_kernels.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\slerp.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\transform_gaussian.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\utils.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\math\wrap2pi.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\adapters.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\aligned_containers.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\bimap.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\bits.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\boost_join.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CCanvas.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CClientTCPSocket.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CConfigFile.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CConfigFileBase.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CConfigFileMemory.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CConfigFilePrefixer.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CConsoleRedirector.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CDebugOutputCapable.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CDynamicGrid.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CEnhancedMetaFile.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CFileGZInputStream.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CFileGZOutputStream.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CFileInputStream.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CFileOutputStream.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CFileStream.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\ci_less.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CImage.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\circular_buffer.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CListOfClasses.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CLoadableOptions.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CLog.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CMappedImage.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CMemoryChunk.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CMemoryStream.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CMessage.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CMessageQueue.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CMHPropertiesValuesList.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CObject.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CObservable.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CObserver.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\color_maps.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\compiler_fixes.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\core_defs.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CProbabilityDensityFunction.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CPropertiesValuesList.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\crc.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CReferencedMemBlock.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CRobotSimulator.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CSerializable.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CServerTCPSocket.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CSimpleDatabase.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CStartUpClassesRegister.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CStdOutStream.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CStream.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CStringList.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CTextFileLinesParser.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CThreadSafeQueue.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CTicTac.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CTimeLogger.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CTypeSelector.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\CUncopiable.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\exceptions.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\list_searchable.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\map_as_vector.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\md5.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\metaprogramming.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\metaprogramming_serialization.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\mrpt_inttypes.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\mrpt_macros.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\mrpt_stdint.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\mrptEvent.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\msvc_inttypes.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\net_utils.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\PLY_import_export.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\printf_vector.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\pstdint.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\round.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\safe_pointers.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\SSE_macros.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\SSE_types.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\stl_containers_utils.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\stl_extensions.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\stl_serialization.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\TCamera.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\TColor.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\TEnumType.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\TMatchingPair.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\TParameters.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\TPixelCoord.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\traits_map.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\TStereoCamera.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\TTypeName.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\TTypeName_impl.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\types.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\types_math.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\types_simple.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\utils\utils_defs.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\CDirectoryExplorer.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\CFileSystemWatcher.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\CGenericMemoryPool.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\datetime.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\filesystem.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\memory.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\os.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\parallelization.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\string_utils.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\threads.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\system\vector_loadsave.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\synch\atomic_incr.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\synch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\synch\CCriticalSection.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\synch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\synch\CPipe.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\synch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\synch\CSemaphore.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\synch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\synch\CThreadSafeVariable.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\synch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\synch\MT_buffer.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\synch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\random\RandomGenerators.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\random</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPoint.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPoint2D.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPoint2DPDF.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPoint2DPDFGaussian.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPoint3D.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPointPDF.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPointPDFGaussian.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPointPDFParticles.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPointPDFSOG.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose2D.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose2DGridTemplate.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3D.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DInterpolator.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DPDF.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DPDFGaussian.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DPDFGaussianInf.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DPDFParticles.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DPDFSOG.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DQuat.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DQuatPDF.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DQuatPDFGaussian.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DQuatPDFGaussianInf.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPose3DRotVec.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPoseOrPoint.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPoseOrPoint_detail.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPosePDF.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPosePDFGaussian.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPosePDFGaussianInf.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPosePDFGrid.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPosePDFParticles.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPosePDFSOG.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPoseRandomSampler.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPoses2DSequence.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CPoses3DSequence.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\CRobot2DPoseEstimator.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\poses_frwds.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\poses\SE_traits.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\poses</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\do_opencv_includes.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\CSparse\cs.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\CSparse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\nanoflann\nanoflann.hpp">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\nanoflann</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\stlplus\containers_fixes.hpp">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\stlplus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\stlplus\exceptions.hpp">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\stlplus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\stlplus\smart_ptr.hpp">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\stlplus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\Arg.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\ArgException.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\CmdLine.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\CmdLineInterface.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\CmdLineOutput.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\Constraint.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\DocBookOutput.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\HelpVisitor.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\IgnoreRestVisitor.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\MultiArg.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\MultiSwitchArg.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\OptionalUnlabeledTracker.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\StdOutput.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\SwitchArg.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\UnlabeledMultiArg.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\UnlabeledValueArg.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\ValueArg.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\ValuesConstraint.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\VersionVisitor.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\Visitor.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\tclap\XorHandler.h">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\tclap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\config.h">
+      <Filter>addons\ofxMRPT\includes\mrpt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxMRPT\includes\mrpt\version.h">
+      <Filter>addons\ofxMRPT\includes\mrpt</Filter>
+    </ClInclude>
+    <ClInclude Include="src\flying_lights.h">
+      <Filter>src\garment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fold_tracker.h">
+      <Filter>src\garment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\interactive_garment.h">
+      <Filter>src\garment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\simple_3dblob.h">
+      <Filter>src\blobDetection</Filter>
+    </ClInclude>
+    <ClInclude Include="src\point_cloud.h">
+      <Filter>src\blobDetection</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cv_helper.h">
+      <Filter>src\toolbox</Filter>
+    </ClInclude>
+    <ClInclude Include="src\of_utilities.h">
+      <Filter>src\toolbox</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofFastPolyline.h">
+      <Filter>src\toolbox\rewritting</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ofFastMesh.h">
+      <Filter>src\toolbox\rewritting</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ransac_lines.h">
+      <Filter>src\math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1951,10 +2737,13 @@
     <None Include="..\..\..\addons\ofxEigen\Eigen\Householder">
       <Filter>addons\ofxEigen\Eigen</Filter>
     </None>
-    <None Include="bin\data\shaders\toProjector.frag">
+    <None Include="..\..\..\addons\ofxMRPT\includes\mrpt\otherlibs\stlplus\smart_ptr.tpp">
+      <Filter>addons\ofxMRPT\includes\mrpt\otherlibs\stlplus</Filter>
+    </None>
+    <None Include="bin\data\shaders\to_projector.frag">
       <Filter>src\shaders</Filter>
     </None>
-    <None Include="bin\data\shaders\toProjector.vert">
+    <None Include="bin\data\shaders\to_projector.vert">
       <Filter>src\shaders</Filter>
     </None>
   </ItemGroup>

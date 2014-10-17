@@ -3,11 +3,11 @@
 
 #include "ofMain.h"
 
-namespace garmentAugmentation {
-	typedef struct simple3dBlob simple3dBlob;
-	struct simple3dBlob {
+namespace garment_augmentation {
+	typedef struct Simple3dblob Simple3dblob;
+	struct Simple3dblob {
 		int idx;
-		vector<int> contourIndices2d;
+		vector<int> contour2d_indices;
 		ofVec3f centroid;
 		ofVec3f minX, minY, minZ; // points with minimum x / y / z
 		ofVec3f maxX, maxY, maxZ; // points with maximum x / y / z

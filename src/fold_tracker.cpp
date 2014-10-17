@@ -1,18 +1,18 @@
-#include "foldTracker.h"
+#include "fold_tracker.h"
 
-namespace garmentAugmentation {
+namespace garment_augmentation {
 namespace garment {
 
-	std::vector<ofVec3f> foldTracker::getPoints() {
+	std::vector<ofVec3f> FoldTracker::GetPoints() {
 		std::vector<ofVec3f> res;
 
-		const std::vector< std::vector<int> > &mesh2dView = pGarment_->getMesh2dViewRef();
+		const std::vector< std::vector<int> > &mesh2dView = p_garment_->mesh2d_view();
 
 		int col = roi_.getTopLeft().x + ((roi_.width - 1) / 2);
 		for (int row = roi_.getTopLeft().y; row < roi_.getBottomRight().y; row++) {
 			//for (int col = m_roi.getTopLeft().x; col < m_roi.getBottomRight().x; col++) {
 				if (mesh2dView[col][row] != -1) {
-					res.push_back(pGarment_->getMeshRef().getVertex(mesh2dView[col][row]));
+					res.push_back(p_garment_->mesh_ref().getVertex(mesh2dView[col][row]));
 				}
 			//}
 		}
@@ -20,25 +20,25 @@ namespace garment {
 		return res;
 	}
 
-	void foldTracker::setColor(ofColor color) {
-		const std::vector< std::vector<int> > &mesh2dView = pGarment_->getMesh2dViewRef();
+	void FoldTracker::ColorFill(ofColor color) {
+		const std::vector< std::vector<int> > &mesh2dView = p_garment_->mesh2d_view();
 
 		int col = roi_.getTopLeft().x + ((roi_.width - 1) / 2);
 		for (int row = roi_.getTopLeft().y; row < roi_.getBottomRight().y; row++) {
 			//for (int col = m_roi.getTopLeft().x; col < m_roi.getBottomRight().x; col++) {
 				if (mesh2dView[col][row] != -1) {
-					pGarment_->getMeshRef().setColor(mesh2dView[col][row],color);
+					p_garment_->mesh_ref().setColor(mesh2dView[col][row],color);
 				}
 			//}
 		}
 	}
 
-	void foldTracker::computeAreas() {
+	void FoldTracker::ComputeAreas() {
 		area_ = 0;
-		unfoldedArea_ = 0;
+		unfolded_area_ = 0;
 
-		const std::vector< std::vector<int> > &mesh2dView = pGarment_->getMesh2dViewRef();
-		ofFastMesh &mesh = pGarment_->getMeshRef();
+		const std::vector< std::vector<int> > &mesh2dView = p_garment_->mesh2d_view();
+		ofFastMesh &mesh = p_garment_->mesh_ref();
 
 		// Unfolded ideal plane
 		ofVec3f topLeft = mesh.getVertex(mesh2dView[roi_.getTopLeft().x][roi_.getTopLeft().y]);
@@ -73,18 +73,18 @@ namespace garment {
 
 					if (pointAIdx >= 0 && pointBIdx >= 0 && pointDIdx >= 0) {
 						posToMiddle = (((posA + posB + posC) / 3) - unfoldedMiddle).dot(unfoldedHorizontal) / horizontalScale;
-						gaussianWeight = kGaussianValues_[99 * std::min(fabs(posToMiddle), 1.f)];
+						gaussianWeight = gaussian_values_[99 * std::min(fabs(posToMiddle), 1.f)];
 
 						// Triangle face 1
-						unfoldedArea_ += unfoldedTriangleArea * gaussianWeight;
+						unfolded_area_ += unfoldedTriangleArea * gaussianWeight;
 						area_ += (posB - posA).getCrossed(posD - posA).length() * gaussianWeight / 2;
 					}
 					if (pointBIdx >= 0 && pointCIdx >= 0 && pointDIdx >= 0) {
 						posToMiddle = (((posB + posC + posD) / 3) - unfoldedMiddle).dot(unfoldedHorizontal) / horizontalScale;
-						gaussianWeight = kGaussianValues_[99 * std::min(fabs(posToMiddle), 1.f)];
+						gaussianWeight = gaussian_values_[99 * std::min(fabs(posToMiddle), 1.f)];
 
 						// Triangle face 2
-						unfoldedArea_ += unfoldedTriangleArea * gaussianWeight;
+						unfolded_area_ += unfoldedTriangleArea * gaussianWeight;
 						area_ += (posC - posB).getCrossed(posD - posB).length() * gaussianWeight / 2;
 					}
 				}
@@ -92,20 +92,20 @@ namespace garment {
 		}
 	}
 
-	std::vector<float> foldTracker::kGaussianValues_;
-	void foldTracker::computeGaussianDist(float sigma) {
-		if (kGaussianValues_.size() == 0)
-			kGaussianValues_.resize(100);
+	std::vector<float> FoldTracker::gaussian_values_;
+	void FoldTracker::ComputeGaussianDistribution(float sigma) {
+		if (gaussian_values_.size() == 0)
+			gaussian_values_.resize(100);
 
 		float posI;
-		for (int i = 0; i < kGaussianValues_.size(); ++i) {
+		for (int i = 0; i < gaussian_values_.size(); ++i) {
 			posI = 3 * i / (float)99;
-			kGaussianValues_[i] = (1.0 / (sigma *sqrt(2 * PI))) * exp(-(posI*posI) / (2 * sigma*sigma));
+			gaussian_values_[i] = (1.0 / (sigma *sqrt(2 * PI))) * exp(-(posI*posI) / (2 * sigma*sigma));
 		}
 	}
 
-	bool foldTracker::insideMesh() {
-		const std::vector< std::vector<int> > &mesh2dView = pGarment_->getMesh2dViewRef();
+	bool FoldTracker::IsInsideMesh() {
+		const std::vector< std::vector<int> > &mesh2dView = p_garment_->mesh2d_view();
 
 		return mesh2dView[roi_.getTopLeft().x][roi_.getTopLeft().y] != -1 &&
 			mesh2dView[roi_.getBottomLeft().x][roi_.getBottomLeft().y] != -1 &&
@@ -114,4 +114,4 @@ namespace garment {
 	}
 
 } // namespace garment
-} // namespace garmentAugmentation
+} // namespace garment_augmentation

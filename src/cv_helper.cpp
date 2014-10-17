@@ -1,8 +1,8 @@
-#include "cvHelper.h"
+#include "cv_helper.h"
 
-namespace cvHelper {
+namespace cv_helper {
 
-	std::string getImageType(const cv::Mat& image) {
+	std::string GetImageType(const cv::Mat& image) {
 		// find type
 		int imgTypeInt = image.type() % 8;
 		std::string imgTypeString;

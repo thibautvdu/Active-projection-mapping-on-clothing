@@ -10,8 +10,8 @@
 #include "ofxKinectCommonBridge.h"
 #include "kinect3dBlobDetector.h"
 
-namespace garmentAugmentation {
-namespace surfaceTracking {
+namespace garment_augmentation {
+namespace surface_tracking {
 
 	/*
 	An object oriented implementation of "3D Non-Rigid Deformable Surface Estimation Without Feature
@@ -114,10 +114,10 @@ namespace surfaceTracking {
 			}
 
 			// INITIALIZATION
-			void generateMesh(const blobDetection::kinect3dBlobDetector &detector, const simple3dBlob &blob);
+			void generateMesh(const blob_detection::kinect3dBlobDetector &detector, const Simple3dblob &blob);
 
 			// COMPUTATION
-			void updateMesh(const blobDetection::kinect3dBlobDetector &detector, const simple3dBlob &blob);
+			void updateMesh(const blob_detection::kinect3dBlobDetector &detector, const Simple3dblob &blob);
 
 		private :
 			// COMPUTATION METHODS
@@ -152,7 +152,7 @@ namespace surfaceTracking {
 			bool mNeedComputation;
 	};
 
-} // namespace surfaceTracking
-} // namespace garmentAugmentation
+} // namespace surface_tracking
+} // namespace garment_augmentation
 
 #endif // FLEXIBLE_SURFACE_AUGMENTATION_SEMI_IMPLICIT_ACTIVE_MESH_H_
