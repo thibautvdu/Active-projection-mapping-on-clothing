@@ -51,7 +51,7 @@ void ofApp::setup() {
 	}
 
 	// Projector
-	kinectProjectorToolkit_.loadCalibration("cal.xml", projectorWindow_.width(), projectorWindow_.height());
+	kinectProjectorToolkit_.loadCalibration("cal.xml", projectorWidth_, projectorHeight_);
 	projectorWindow_ = of_utilities::VirtualWindow(screenWidth_, 0, projectorWidth_, projectorHeight_);
 
 	// HARDWARE INIT	-	-	-	-	-	-	-	-	-	-	-	-
