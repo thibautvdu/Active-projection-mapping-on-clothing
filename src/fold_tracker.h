@@ -9,37 +9,25 @@ namespace garment {
 	class FoldTracker {
 		public:
 			FoldTracker(InteractiveGarment *garment, const ofRectangle roi) : p_garment_(garment), roi_(roi) {
-				area_ = unfolded_area_ = -1;
-				if (gaussian_values_.size() == 0)
-					ComputeGaussianDistribution(1);
+				need_computation_ = true;
 			}
+
 
 			inline void Move(const int x, const int y) {
 				roi_.translate(x, y);
-				area_ = unfolded_area_ = -1;
+				need_computation_ = true;
 			}
 
 			inline void MoveTo(const ofRectangle roi) {
 				roi_ = roi;
-				area_ = unfolded_area_ = -1;
+				need_computation_ = true;
 			}
 
-			inline float area() {
-				if (area_ == -1)
-					ComputeAreas();
+			inline float GetFoldness() {
+				if (need_computation_)
+					ComputeDeltaDepth();
 
-				return area_;
-			}
-
-			inline float unfolded_area() {
-				if (unfolded_area_ == -1)
-					ComputeAreas();
-
-				return unfolded_area_;
-			}
-
-			inline float GetDeformationPercent() {
-				return (area() - unfolded_area()) * 100 / unfolded_area();
+				return delta_depth_;
 			}
 
 			std::vector<ofVec3f> GetPoints();
@@ -48,15 +36,12 @@ namespace garment {
 			bool IsInsideMesh();
 
 		private:
-			static std::vector<float> gaussian_values_;
-
-			static void ComputeGaussianDistribution(const float sigma);
-			void ComputeAreas();
+			void ComputeDeltaDepth();
 
 			InteractiveGarment *const p_garment_;
 			ofRectangle roi_;
-			float area_;
-			float unfolded_area_;
+			bool need_computation_;
+			float delta_depth_;
 	};
 
 } // namespace garment

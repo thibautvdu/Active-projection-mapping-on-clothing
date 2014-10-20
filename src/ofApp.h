@@ -73,7 +73,7 @@ class ofApp : public ofBaseApp {
 		garment_augmentation::garment::InteractiveGarment garment_;
 
 		// Folds detection
-		ofxIntSlider deformationThres_;
+		ofxFloatSlider deformationThres_;
 		bool askFoldComputation_;
 		uchar numFolds_;
 

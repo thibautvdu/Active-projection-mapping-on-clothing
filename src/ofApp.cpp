@@ -114,7 +114,7 @@ void ofApp::setup() {
 
 	gui_.setup();
 	gui_.add(bgLearningCycleGui_.setup("bg learning iterations", 10, 1, 50));
-	gui_.add(deformationThres_.setup("canny thres 1", 100, 0, 200));
+	gui_.add(deformationThres_.setup("canny thres 1", 0.01, 0.01, 0.03));
 
 	// Mesh
 	//m_gui.add(m_adaptationRate.setup("adaptation rate", 2, 0, 10));
@@ -292,7 +292,7 @@ void ofApp::draw() {
 				ofTranslate(kinectWidth_, kinectHeight_);
 				ofScale(1 / toWorldUnits_, 1 / toWorldUnits_, 1 / toWorldUnits_);
 				ofTranslate(0, 0, -garment_.blob().maxZ.z - 1);
-				//garment_.DrawMesh();
+				garment_.DrawMesh();
 				if (garment_.folds_ref().size() != 0) {
 					ofSetColor(ofColor::blue);
 					for (int i = 0; i < garment_.folds_ref().size(); ++i) {
@@ -388,16 +388,14 @@ void ofApp::detectFolds() {
 	int height = kinectHeight_ / blobFinder_.getResolution();
 
 	garment_augmentation::garment::FoldTracker tracker(&garment_, ofRectangle(0, 0, 0, 0));
-	float deformation;
 	std::vector<ofVec3f> points;
 
-	for (int patchSize = 9; patchSize <= 11; patchSize += 2) {
-		for (int y = 0; y < height - 15; y += 20) {
-			for (int x = 0; x < width - patchSize; x += ((patchSize-1)/2)) {
+	for (int patchSize = 5; patchSize <= 7; patchSize += 2) {
+		for (int y = 0; y < height - 15; y += 10) {
+			for (int x = 0; x < width - patchSize; x += 1) {
 				tracker.MoveTo(ofRectangle(x, y, patchSize, 10));
-				if (tracker.IsInsideMesh()) {
-					deformation = tracker.GetDeformationPercent();
-					if (deformation  > deformationThres_) {
+				if (tracker.IsInsideMesh()) {\
+					if (tracker.GetFoldness()  > deformationThres_) {
 						tracker.ColorFill(ofColor::red);
 						if (askFoldComputation_) {
 							std::vector<ofVec3f> patchPts = tracker.GetPoints();
@@ -412,7 +410,7 @@ void ofApp::detectFolds() {
 	// Compute folds from deformaed areas
 	if (askFoldComputation_) {
 		std::vector<std::pair<size_t, garment_augmentation::math::OfEigen3dsegment> > lines;
-		garment_augmentation::math::RansacDetect3Dsegments(points, lines, 0.05, 50);
+		garment_augmentation::math::RansacDetect3Dsegments(points, lines, 0.05, 10); // threshold : 5cm, minimum points : 10
 
 		garment_.folds_ref().clear();
 		for (int i = 0; i < lines.size(); ++i) {

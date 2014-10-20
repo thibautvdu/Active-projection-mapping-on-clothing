@@ -1,9 +1,7 @@
 #ifndef FLEXIBLE_SURFACE_AUGMENTATION_OF_UTILITIES_H_
 #define FLEXIBLE_SURFACE_AUGMENTATION_OF_UTILITIES_H_
 
-#include "ofGraphics.h"
-#include "ofPolyline.h"
-#include "ofPath.h"
+#include "ofMain.h"
 
 namespace of_utilities {
 
@@ -30,6 +28,7 @@ namespace of_utilities {
 			int width_, height_;
 	};
 
+	ofMatrix3x3 VectorRotationMatrix(ofVec3f from, ofVec3f to);
 	ofVec2f MapVec2f(const ofVec2f value, const ofVec2f input_min, const ofVec2f input_max, const ofVec2f output_min, const ofVec2f output_max, const bool clamp = false);	// Map function for ofVec2f
 	ofPath PolylineToPath(const ofPolyline polyline);
 
