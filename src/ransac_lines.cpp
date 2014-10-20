@@ -107,12 +107,21 @@ using mrpt::math::CMatrixTemplateNumeric;
 				size_t max_index;
 				double sqrt_eigen_value = std::sqrt(solver.eigenvalues().real().maximum(&max_index));
 				Eigen::Vector3d director = solver.eigenvectors().col(max_index).real();
-	
-				// Discriminate the points on their y coordinate to get consistant results over time
+				director.normalize();
+
+				// Get the projection of each inlier on the line
+				Eigen::VectorXd a_projection = centered * director;
+				Eigen::Vector3d mean = matrix_a.colwise().mean().transpose();
+				Eigen::Vector3d a = mean + a_projection.maximum() * director;
+				Eigen::Vector3d b = mean + a_projection.minimum() * director;
+				
+				/*
 				Eigen::Vector3d mean = matrix_a.colwise().mean().transpose();
 				Eigen::Vector3d a = mean - sqrt_eigen_value * director;
 				Eigen::Vector3d b = mean + sqrt_eigen_value * director;
+				*/
 
+				// Discriminate the points on their y coordinate to get consistant results over time
 				if (a.y() < b.y())
 					out_detected_segments.push_back(std::make_pair<size_t, OfEigen3dsegment>(this_best_inliers.size(), OfEigen3dsegment(b, a)));
 				else
