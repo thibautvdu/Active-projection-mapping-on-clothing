@@ -182,6 +182,8 @@ namespace blob_detection {
 							else
 								k++;
 						}
+						else
+							k++;
 					}
 
 					tempBlobs.push_back(newBlob);
