@@ -8,7 +8,7 @@
 #include <Eigen/Core>
 #include <Eigen/SVD>
 
-#include "of_mrpt_3dsegment.h"
+#include "of_3dsegment.h"
 
 namespace garment_augmentation {
 namespace math {
@@ -33,8 +33,8 @@ using mrpt::math::TLine3D;
 		return false;
 	}
 
-	void  RansacDetect3Dsegments(const std::vector<ofVec3f> &point_cloud, std::vector<std::pair<size_t, OfEigen3dsegment> > &out_detected_segments,
-		const double threshold, const size_t min_inliers_for_valid_line);
+	void  RansacDetect3Dsegments(const std::vector<ofVec3f> &point_cloud, const double threshold, const size_t min_inliers_for_valid_line,
+		std::vector<std::pair<size_t, Of3dsegment> > &out_detected_segments);
 
 } // namespace math
 } // namespace garment_augmentation

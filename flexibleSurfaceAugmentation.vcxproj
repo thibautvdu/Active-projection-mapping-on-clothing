@@ -742,7 +742,7 @@ xcopy /e /i /y "..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\li
     <ClInclude Include="src\animation.h" />
     <ClInclude Include="src\fold.h" />
     <ClInclude Include="src\flying_lights.h" />
-    <ClInclude Include="src\of_mrpt_3dsegment.h" />
+    <ClInclude Include="src\of_3dsegment.h" />
     <ClInclude Include="src\ransac_lines.h" />
     <ClInclude Include="src\simple_3dblob.h" />
     <ClInclude Include="src\cv_helper.h" />

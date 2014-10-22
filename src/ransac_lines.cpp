@@ -51,8 +51,8 @@ using mrpt::math::CMatrixTemplateNumeric;
 		}
 	}
 
-	void RansacDetect3Dsegments(const std::vector<ofVec3f> &point_cloud, std::vector<std::pair<size_t, OfEigen3dsegment> > &out_detected_segments,
-		const double threshold, const size_t min_inliers_for_valid_line) {
+	void RansacDetect3Dsegments(const std::vector<ofVec3f> &point_cloud, const double threshold, const size_t min_inliers_for_valid_line, 
+		std::vector<std::pair<size_t, Of3dsegment> > &out_detected_segments) {
 
 		out_detected_segments.clear();
 
@@ -123,9 +123,9 @@ using mrpt::math::CMatrixTemplateNumeric;
 
 				// Discriminate the points on their y coordinate to get consistant results over time
 				if (a.y() < b.y())
-					out_detected_segments.push_back(std::make_pair<size_t, OfEigen3dsegment>(this_best_inliers.size(), OfEigen3dsegment(b, a)));
+					out_detected_segments.push_back(std::make_pair<size_t, Of3dsegment>(this_best_inliers.size(), Of3dsegment(b.x(), b.y(), b.z(), a.x(), a.y(), a.z())));
 				else
-					out_detected_segments.push_back(std::make_pair<size_t, OfEigen3dsegment>(this_best_inliers.size(), OfEigen3dsegment(a, b)));
+					out_detected_segments.push_back(std::make_pair<size_t, Of3dsegment>(this_best_inliers.size(), Of3dsegment(a.x(), a.y(), a.z(), b.x(), b.y(), b.z())));
 
 				/*
 				out_detected_segments.push_back(std::make_pair<size_t, OfEigen3dsegment>(this_best_inliers.size(), 

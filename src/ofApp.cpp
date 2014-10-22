@@ -300,7 +300,7 @@ void ofApp::draw() {
 					}
 					ofSetColor(ofColor::white);
 				}
-				//garment_.DrawAnimations();
+				garment_.DrawAnimations();
 				//ofDisableDepthTest();
 			ofPopMatrix();
 
@@ -321,7 +321,7 @@ void ofApp::draw() {
 			projectorWindow_.Begin();
 				ofMultMatrix(ofMatrix4x4::getTransposedOf(kinectProjectorToolkit_.getTransformMatrix()));
 				ofScale(1 / toWorldUnits_, 1 / toWorldUnits_, 1 / toWorldUnits_);
-				garment_.DrawMesh();
+				//garment_.DrawMesh();
 				garment_.DrawAnimations();
 			projectorWindow_.End();
 		}
@@ -391,9 +391,9 @@ void ofApp::detectFolds() {
 	std::vector<ofVec3f> points;
 
 	for (int patchSize = 5; patchSize <= 7; patchSize += 2) {
-		for (int y = 0; y < height - 10; y += 10) {
+		for (int y = 0; y < height - 3; y += 3) {
 			for (int x = 0; x < width - patchSize; x += (patchSize/2)) {
-				tracker.MoveTo(ofRectangle(x, y, patchSize, 10));
+				tracker.MoveTo(ofRectangle(x, y, patchSize, 3));
 				if (tracker.IsInsideMesh()) {
 					if (tracker.GetFoldness()  > deformationThres_) {
 						tracker.ColorFill(ofColor::red);
@@ -409,14 +409,16 @@ void ofApp::detectFolds() {
 
 	// Compute folds from deformaed areas
 	if (askFoldComputation_) {
-		std::vector<std::pair<size_t, garment_augmentation::math::OfEigen3dsegment> > lines;
-		garment_augmentation::math::RansacDetect3Dsegments(points, lines, 0.05, 10); // threshold : 5cm, minimum points : 10
+		std::vector<std::pair<size_t, garment_augmentation::math::Of3dsegment> > lines;
+		garment_augmentation::math::RansacDetect3Dsegments(points, 0.05, 10, lines); // threshold : 5cm, minimum points : 10
 
-		garment_.folds_ref().clear();
+		std::vector<garment_augmentation::garment::Fold> new_folds(lines.size());
 		for (int i = 0; i < lines.size(); ++i) {
 			// Update the garment folds
-			garment_.AddFold(garment_augmentation::garment::Fold(lines[i].second.a(), lines[i].second.b()));
+			new_folds[i] = garment_augmentation::garment::Fold(lines[i].second.a(), lines[i].second.b());
 		}
+
+		garment_.UpdateFolds(new_folds);
 	}
 }
 

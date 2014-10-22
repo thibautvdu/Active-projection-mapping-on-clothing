@@ -33,6 +33,8 @@ namespace garment {
 
 			void Update(const blob_detection::kinect3dBlobDetector &detector, const Simple3dblob blob);
 
+			void UpdateFolds(std::vector<Fold> &folds);
+
 			inline void DrawMesh() { 
 				mesh_.drawVertices(); 
 			}
@@ -58,12 +60,19 @@ namespace garment {
 			}
 
 		private :
+			template <typename P_TYPE_A, typename P_TYPE_B>
+			static bool ComparePairSecond(const std::pair<P_TYPE_A, P_TYPE_B> a, const std::pair<P_TYPE_A, P_TYPE_B> b);
+
+			static bool CompareFoldsConfigurations(const std::pair<std::vector<int>, float> a, const std::pair<std::vector<int>, float> b);
+			void FoldsPermutation(const std::vector<Fold> &new_folds, std::pair<std::vector<int>,float> &current_configuration, const float threshold, int new_folds_idx);
+
 			Simple3dblob blob_;
 			ofFastMesh mesh_;
 			std::vector< std::vector<int> > mesh2d_view_;
 			ofPolyline contour2d_;
 
 			std::vector<Fold> folds_;
+			std::vector <std::pair<std::vector<int>,float>> folds_tracking_permutations_;
 			std::vector<std::unique_ptr<Animation>> animations_;
 	};
 
