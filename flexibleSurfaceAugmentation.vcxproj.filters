@@ -130,6 +130,9 @@
     <ClCompile Include="src\ransac_lines.cpp">
       <Filter>src\math</Filter>
     </ClCompile>
+    <ClCompile Include="src\animation.cpp">
+      <Filter>src\garment</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
