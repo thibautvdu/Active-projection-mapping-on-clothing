@@ -60,7 +60,7 @@ void ofApp::setup() {
 	// OPEN GL	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
 	ofDisableAlphaBlending();
-	ofSetFrameRate(30);
+	ofSetFrameRate(50);
 
 	// OPEN GL	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 
