@@ -27,7 +27,7 @@ namespace garment {
 					life_time_--;
 				}
 				else if (UPDATED == flag_) {
-					life_time_ = 3;
+					life_time_ = 10;
 				}
 
 				if (life_time_ <= 0)
@@ -37,8 +37,8 @@ namespace garment {
 			}
 
 			inline void Update(const Fold &new_measure) {
-				a_pt_ = new_measure.a_pt_;
-				b_pt_ = new_measure.b_pt_;
+				a_pt_ = (a_pt_ * 2 + new_measure.a_pt_) / 3;
+				b_pt_ = (b_pt_ * 2 + new_measure.b_pt_) / 3;
 				flag_ = UPDATED;
 			}
 

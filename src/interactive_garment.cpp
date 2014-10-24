@@ -20,7 +20,7 @@ namespace garment {
 		for (int y = 0; y < pcH; y++){
 			for (int x = 0; x < pcW; ++x) {
 				if (detector.getCloudPoint(y*pcW + x).flag_ == blob_.idx) {
-					mesh_.setVertex(vIdx, detector.getCloudPoint(y*pcW + x).pos_);
+					mesh_.setVertex(vIdx, detector.getCloudPoint(y*pcW + x).pos_ - blob.massCenter);
 					mesh_.setColor(vIdx, ofColor::white);
 					mesh2d_view_[x][y] = vIdx;
 					vIdx++;

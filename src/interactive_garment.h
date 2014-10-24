@@ -27,20 +27,24 @@ namespace garment {
 				return blob_; 
 			}
 
-			inline std::vector<Fold> &folds_ref() { 
-				return folds_; 
-			}
-
 			void Update(const blob_detection::kinect3dBlobDetector &detector, const Simple3dblob blob);
 
 			void UpdateFolds(std::vector<Fold> &folds);
 
 			inline void DrawMesh() { 
-				mesh_.drawVertices(); 
+				ofPushMatrix();
+					ofTranslate(blob_.massCenter);
+					mesh_.drawVertices(); 
+				ofPopMatrix();
 			}
 
-			inline void AddFold(const Fold f) {
-				folds_.push_back(f);
+			inline void DrawFolds() {
+				ofPushMatrix();
+				ofTranslate(blob_.massCenter);
+				for (int i = 0; i < folds_.size(); ++i) {
+					folds_[i].Draw();
+				}
+				ofPopMatrix();
 			}
 
 			inline void AddAnimation(std::unique_ptr<Animation> anim) {
@@ -54,9 +58,12 @@ namespace garment {
 			}
 
 			inline void DrawAnimations() {
-				for (int i = 0; i < animations_.size(); ++i) {
-					animations_[i]->Draw();
-				}
+				ofPushMatrix();
+					ofTranslate(blob_.massCenter);
+					for (int i = 0; i < animations_.size(); ++i) {
+						animations_[i]->Draw();
+					}
+				ofPopMatrix();
 			}
 
 		private :

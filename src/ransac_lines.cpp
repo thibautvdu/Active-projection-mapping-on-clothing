@@ -111,9 +111,33 @@ using mrpt::math::CMatrixTemplateNumeric;
 
 				// Get the projection of each inlier on the line
 				Eigen::VectorXd a_projection = centered * director;
+				// Try to remove the potential outliners at the end and begining of the segments
+				std::sort(a_projection.data(), a_projection.data() + a_projection.size());
+
+				double a_std_deviation_sq = 0;
+				double a_mean = a_projection.mean();
+				for (int i = 0; i < a_projection.size(); ++i) {
+					a_std_deviation_sq += std::pow(a_projection[i] - a_mean, 2);
+				}
+				a_std_deviation_sq /= a_projection.size();
+				double a_max = a_projection[a_projection.size() - 1];
+				double a_min = a_projection[0];
+				int i = 0;
+				while (i < a_projection.size() - 1 &&
+					std::pow(a_projection[i] - a_projection[i + 1],2) > 0.001) {
+					a_min = a_projection[i + 1];
+					++i;
+				}
+				i = a_projection.size() - 1;
+				while (i > 1 &&
+					std::pow(a_projection[i] - a_projection[i - 1], 2) > 0.001) {
+					a_max = a_projection[i - 1];
+					--i;
+				}
+
 				Eigen::Vector3d mean = matrix_a.colwise().mean().transpose();
-				Eigen::Vector3d a = mean + a_projection.maximum() * director;
-				Eigen::Vector3d b = mean + a_projection.minimum() * director;
+				Eigen::Vector3d a = mean + a_max * director;
+				Eigen::Vector3d b = mean + a_min * director;
 				
 				/*
 				Eigen::Vector3d mean = matrix_a.colwise().mean().transpose();

@@ -293,13 +293,7 @@ void ofApp::draw() {
 				ofScale(1 / toWorldUnits_, 1 / toWorldUnits_, 1 / toWorldUnits_);
 				ofTranslate(0, 0, -garment_.blob().maxZ.z - 1);
 				garment_.DrawMesh();
-				if (garment_.folds_ref().size() != 0) {
-					ofSetColor(ofColor::blue);
-					for (int i = 0; i < garment_.folds_ref().size(); ++i) {
-						garment_.folds_ref()[i].Draw();
-					}
-					ofSetColor(ofColor::white);
-				}
+				garment_.DrawFolds();
 				garment_.DrawAnimations();
 				//ofDisableDepthTest();
 			ofPopMatrix();
