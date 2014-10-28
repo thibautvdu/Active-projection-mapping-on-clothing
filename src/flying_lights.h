@@ -14,6 +14,7 @@ namespace garment {
 
 			void Update();
 			void Update(const std::vector<Fold> &folds);
+			void Update(const std::vector<ofVec3f> &contour_points) {};
 			void Draw();
 
 			inline void set_light_radius(float radius) {

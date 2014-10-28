@@ -133,6 +133,15 @@
     <ClCompile Include="src\animation.cpp">
       <Filter>src\garment</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxUbo\src\ofxUbo.cpp">
+      <Filter>addons\ofxUbo\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gl_shader.cpp">
+      <Filter>src\toolbox</Filter>
+    </ClCompile>
+    <ClCompile Include="src\contour_vector_field.cpp">
+      <Filter>src\garment</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -488,6 +497,12 @@
     </Filter>
     <Filter Include="libs\Eigen3\Eigen\src\OrderingMethods">
       <UniqueIdentifier>{0e2ebdd8-c387-42bd-88c3-14b167956360}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxUbo">
+      <UniqueIdentifier>{a9c2d08b-5434-4ab9-80d8-ee3d81762a11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxUbo\src">
+      <UniqueIdentifier>{8936e041-a9b1-4bae-bea6-44049e158b29}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2630,6 +2645,15 @@
     <ClInclude Include="libs\OpenNL\src\NL\nl_superlu.h">
       <Filter>libs\OpenNL\src\NL</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxUbo\src\ofxUbo.h">
+      <Filter>addons\ofxUbo\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gl_shader.h">
+      <Filter>src\toolbox</Filter>
+    </ClInclude>
+    <ClInclude Include="src\contour_vector_field.h">
+      <Filter>src\garment</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />
@@ -2739,6 +2763,15 @@
     </None>
     <None Include="libs\MRPT_base\includes\mrpt\otherlibs\stlplus\smart_ptr.tpp">
       <Filter>libs\MRPT_base\includes\mrpt\otherlibs\stlplus</Filter>
+    </None>
+    <None Include="bin\data\shaders\contour_vector_field.frag">
+      <Filter>src\shaders</Filter>
+    </None>
+    <None Include="bin\data\shaders\contour_vector_field.vert">
+      <Filter>src\shaders</Filter>
+    </None>
+    <None Include="bin\data\shaders\contour_vector_field.geom">
+      <Filter>src\shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -12,6 +12,7 @@ namespace garment {
 		public:
 			virtual void Update() = 0;
 			virtual void Update(const std::vector<Fold> &folds) = 0;
+			virtual void Update(const std::vector<ofVec3f> &contour_points) = 0;
 			virtual void Draw() = 0;
 
 		protected:

@@ -6,6 +6,7 @@
 #include "ofMain.h"
 #include "ofxCv.h"
 #include "ofxGui.h"
+#include "ofxUbo.h"
 
 #include "ofxKinectCommonBridge.h"
 #include "ofxKinectProjectorToolkit.h"

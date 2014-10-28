@@ -62,7 +62,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\addons\ofxOpenCv\libs;..\..\..\addons\ofxOpenCv\src;..\..\..\addons\ofxOpenCv\libs\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\calib3d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\contrib;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\core;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\features2d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\flann;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\highgui;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\imgproc;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\legacy;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ml;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\objdetect;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ts;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\video;..\..\..\addons\ofxOpenCv\libs\opencv\lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs;..\..\..\addons\ofxCv\libs;..\..\..\addons\ofxCv\src;..\..\..\addons\ofxCv\libs\CLD;..\..\..\addons\ofxCv\libs\CLD\include;..\..\..\addons\ofxCv\libs\CLD\include\CLD;..\..\..\addons\ofxCv\libs\CLD\src;..\..\..\addons\ofxCv\libs\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\include;..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\src;..\..\..\addons\ofxKinectCommonBridge\libs;..\..\..\addons\ofxKinectCommonBridge\src;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\include;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs64;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs64_Speech;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs_Speech;..\..\..\addons\ofxGui\src;src;..\..\..\addons\ofxKinectProjectorToolkit\src;..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib;libs\MRPT_base\includes;libs\OpenNL\src;libs\Eigen3</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);..\..\..\addons\ofxOpenCv\libs;..\..\..\addons\ofxOpenCv\src;..\..\..\addons\ofxOpenCv\libs\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\calib3d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\contrib;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\core;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\features2d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\flann;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\highgui;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\imgproc;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\legacy;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ml;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\objdetect;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ts;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\video;..\..\..\addons\ofxOpenCv\libs\opencv\lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs;..\..\..\addons\ofxCv\libs;..\..\..\addons\ofxCv\src;..\..\..\addons\ofxCv\libs\CLD;..\..\..\addons\ofxCv\libs\CLD\include;..\..\..\addons\ofxCv\libs\CLD\include\CLD;..\..\..\addons\ofxCv\libs\CLD\src;..\..\..\addons\ofxCv\libs\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\include;..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\src;..\..\..\addons\ofxKinectCommonBridge\libs;..\..\..\addons\ofxKinectCommonBridge\src;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\include;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs64;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs64_Speech;..\..\..\addons\ofxKinectCommonBridge\libs\KinectCommonBridge\lib\windows\vs_Speech;..\..\..\addons\ofxUbo\src;..\..\..\addons\ofxGui\src;src;..\..\..\addons\ofxKinectProjectorToolkit\src;..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib;libs\MRPT_base\includes;libs\OpenNL\src;libs\Eigen3</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
@@ -116,8 +116,11 @@ xcopy /e /i /y "$(ProjectDir)libs\MRPT_base\libs\*.dll" "$(ProjectDir)bin"</Comm
     <ClCompile Include="..\..\..\addons\ofxGui\src\ofxToggle.cpp" />
     <ClCompile Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\unicode\unicode.cpp" />
     <ClCompile Include="..\..\..\addons\ofxKinectProjectorToolkit\src\ofxKinectProjectorToolkit.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxUbo\src\ofxUbo.cpp" />
     <ClCompile Include="src\animation.cpp" />
+    <ClCompile Include="src\contour_vector_field.cpp" />
     <ClCompile Include="src\fold_tracker.cpp" />
+    <ClCompile Include="src\gl_shader.cpp" />
     <ClCompile Include="src\interactive_garment.cpp" />
     <ClCompile Include="src\flying_lights.cpp" />
     <ClCompile Include="src\lscm.cpp" />
@@ -233,6 +236,7 @@ xcopy /e /i /y "$(ProjectDir)libs\MRPT_base\libs\*.dll" "$(ProjectDir)bin"</Comm
     <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\unicode\unicode_abstract.h" />
     <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\windows_magic.h" />
     <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\src\ofxKinectProjectorToolkit.h" />
+    <ClInclude Include="..\..\..\addons\ofxUbo\src\ofxUbo.h" />
     <ClInclude Include="libs\Eigen\src\Cholesky\LDLT.h" />
     <ClInclude Include="libs\Eigen\src\Cholesky\LLT.h" />
     <ClInclude Include="libs\Eigen\src\Cholesky\LLT_MKL.h" />
@@ -739,8 +743,10 @@ xcopy /e /i /y "$(ProjectDir)libs\MRPT_base\libs\*.dll" "$(ProjectDir)bin"</Comm
     <ClInclude Include="libs\OpenNL\src\NL\nl_private.h" />
     <ClInclude Include="libs\OpenNL\src\NL\nl_superlu.h" />
     <ClInclude Include="src\animation.h" />
+    <ClInclude Include="src\contour_vector_field.h" />
     <ClInclude Include="src\fold.h" />
     <ClInclude Include="src\flying_lights.h" />
+    <ClInclude Include="src\gl_shader.h" />
     <ClInclude Include="src\of_3dsegment.h" />
     <ClInclude Include="src\ransac_lines.h" />
     <ClInclude Include="src\simple_3dblob.h" />
@@ -877,6 +883,9 @@ xcopy /e /i /y "$(ProjectDir)libs\MRPT_base\libs\*.dll" "$(ProjectDir)bin"</Comm
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="bin\data\shaders\contour_vector_field.frag" />
+    <None Include="bin\data\shaders\contour_vector_field.geom" />
+    <None Include="bin\data\shaders\contour_vector_field.vert" />
     <None Include="bin\data\shaders\to_projector.frag" />
     <None Include="bin\data\shaders\to_projector.vert" />
     <None Include="libs\Eigen\Array" />

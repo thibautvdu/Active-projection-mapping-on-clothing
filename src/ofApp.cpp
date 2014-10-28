@@ -6,7 +6,9 @@
 #include "lscm.h"
 #include "fold_tracker.h"
 #include "flying_lights.h"
+#include "contour_vector_field.h"
 #include "ransac_lines.h"
+#include "gl_shader.h"
 
 /* CONSTANTS	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 
@@ -34,19 +36,19 @@ void ofApp::setup() {
 
 	bool initSensor = ofxKinect_.initSensor();
 	if (!initSensor) {
-		ofLog(OF_LOG_FATAL_ERROR) << "Couldn't init the kinect's sensor";
+		ofLogFatalError("ofApp::setup") << "Couldn't init the kinect's sensor";
 		exit();
 	}
 
 	bool initStreams = ofxKinect_.initColorStream(kinectWidth_, kinectHeight_) && ofxKinect_.initDepthStream(kinectWidth_, kinectHeight_, false, true);
 	if (!initStreams) {
-		ofLog(OF_LOG_FATAL_ERROR) << "Couldn't init the kinect's color and/or depth streams";
+		ofLogFatalError("ofApp::setup") << "Couldn't init the kinect's color and/or depth streams";
 		exit();
 	}
 
 	bool kinectStarted = ofxKinect_.start();
 	if (!kinectStarted) {
-		ofLog(OF_LOG_FATAL_ERROR) << "Couldn't start the kinect";
+		ofLogFatalError("ofApp::setup") << "Couldn't start the kinect";
 		exit();
 	}
 
@@ -96,6 +98,8 @@ void ofApp::setup() {
 	// Physic animations
 	std::unique_ptr<garment_augmentation::garment::Animation> lightsEffect(new garment_augmentation::garment::FlyingLights());
 	garment_.AddAnimation(std::move(lightsEffect));
+	std::unique_ptr<garment_augmentation::garment::Animation> contourEffect(new garment_augmentation::garment::ContourVectorField());
+	garment_.AddAnimation(std::move(contourEffect));
 
 	// Mesh
 	//m_blobMesh = garment_augmentation::ofSemiImplicitActiveMesh(20, 20);
@@ -288,14 +292,12 @@ void ofApp::draw() {
 				easyCam_.begin();
 
 			ofPushMatrix();
-				//ofEnableDepthTest();
 				ofTranslate(kinectWidth_, kinectHeight_);
 				ofScale(1 / toWorldUnits_, 1 / toWorldUnits_, 1 / toWorldUnits_);
 				ofTranslate(0, 0, -garment_.blob().maxZ.z - 1);
-				garment_.DrawMesh();
-				garment_.DrawFolds();
+				//garment_.DrawMesh();
+				//garment_.DrawFolds();
 				garment_.DrawAnimations();
-				//ofDisableDepthTest();
 			ofPopMatrix();
 
 			if (askPause_)
@@ -315,7 +317,7 @@ void ofApp::draw() {
 			projectorWindow_.Begin();
 				ofMultMatrix(ofMatrix4x4::getTransposedOf(kinectProjectorToolkit_.getTransformMatrix()));
 				ofScale(1 / toWorldUnits_, 1 / toWorldUnits_, 1 / toWorldUnits_);
-				//garment_.DrawMesh();
+				garment_.DrawMesh();
 				garment_.DrawAnimations();
 			projectorWindow_.End();
 		}

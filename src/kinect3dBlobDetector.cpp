@@ -156,7 +156,6 @@ namespace blob_detection {
 					// Mark the 2d contour of the blob
 					while ((m_pointCloud[pixIndex].flag_ != numBlobs) && (pixIndex < nPix)) pixIndex++;
 					m_pointCloud[pixIndex].boundary_ = true;
-					newBlob->contour2d_indices.push_back(pixIndex);
 
 					int i = pixIndex % width;
 					int j = pixIndex / width;
@@ -171,7 +170,6 @@ namespace blob_detection {
 
 							if (m_pointCloud[neighbour].flag_ == numBlobs) {
 								m_pointCloud[neighbour].boundary_ = true;
-								newBlob->contour2d_indices.push_back(neighbour);
 								k = clockwiseBacktracking[(k - 1) % 8];
 								i = neighbour % width;
 								j = neighbour / width;

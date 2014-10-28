@@ -15,10 +15,6 @@ namespace garment {
 				return mesh_; 
 			}
 
-			inline ofPolyline &contour2d_ref() { 
-				return contour2d_; 
-			}
-
 			inline const std::vector< std::vector<int> > &mesh2d_view() const { 
 				return mesh2d_view_;
 			}
@@ -54,6 +50,7 @@ namespace garment {
 			inline void UpdateAnimations() {
 				for (int i = 0; i < animations_.size(); ++i) {
 					animations_[i]->Update(folds_);
+					animations_[i]->Update(contour_);
 				}
 			}
 
@@ -75,8 +72,8 @@ namespace garment {
 
 			Simple3dblob blob_;
 			ofFastMesh mesh_;
+			std::vector<ofVec3f> contour_;
 			std::vector< std::vector<int> > mesh2d_view_;
-			ofPolyline contour2d_;
 
 			std::vector<Fold> folds_;
 			std::vector <std::pair<std::vector<int>,float>> folds_tracking_permutations_;
