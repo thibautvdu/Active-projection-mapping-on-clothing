@@ -386,10 +386,10 @@ void ofApp::detectFolds() {
 	garment_augmentation::garment::FoldTracker tracker(&garment_, ofRectangle(0, 0, 0, 0));
 	std::vector<ofVec3f> points;
 
-	for (int patchSize = 5; patchSize <= 7; patchSize += 2) {
-		for (int y = 0; y < height - 3; y += 3) {
+	for (int patchSize = 3; patchSize <= 7; patchSize += 2) {
+		for (int y = 0; y < height - 3; y += patchSize) {
 			for (int x = 0; x < width - patchSize; x += (patchSize/2)) {
-				tracker.MoveTo(ofRectangle(x, y, patchSize, 3));
+				tracker.MoveTo(ofRectangle(x, y, patchSize, patchSize));
 				if (tracker.IsInsideMesh()) {
 					if (tracker.GetFoldness()  > deformationThres_) {
 						tracker.ColorFill(ofColor::red);
