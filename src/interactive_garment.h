@@ -55,12 +55,16 @@ namespace garment {
 			}
 
 			inline void DrawAnimations() {
-				ofPushMatrix();
-					ofTranslate(blob_.massCenter);
 					for (int i = 0; i < animations_.size(); ++i) {
+						ofPushMatrix();
+						
+						if (animations_[i]->RelativeToModel())
+							ofTranslate(blob_.massCenter);
+						
 						animations_[i]->Draw();
+
+						ofPopMatrix();
 					}
-				ofPopMatrix();
 			}
 
 		private :

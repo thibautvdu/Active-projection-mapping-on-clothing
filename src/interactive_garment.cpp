@@ -24,9 +24,12 @@ namespace garment {
 				if (detector.getCloudPoint(y*pcW + x).flag_ == blob_.idx) {
 					mesh_.setVertex(vIdx, detector.getCloudPoint(y*pcW + x).pos_ - blob.massCenter);
 					if (detector.getCloudPoint(y*pcW + x).boundary_) {
-						contour_.push_back(detector.getCloudPoint(y*pcW + x).pos_ - blob.massCenter);
+						contour_.push_back(detector.getCloudPoint(y*pcW + x).pos_);
+						mesh_.setColor(vIdx, ofColor::blue);
 					}
-					mesh_.setColor(vIdx, ofColor::white);
+					else {
+						mesh_.setColor(vIdx, ofColor::white);
+					}
 					mesh2d_view_[x][y] = vIdx;
 					vIdx++;
 				}
@@ -79,7 +82,7 @@ namespace garment {
 					folds_.push_back(new_folds[i]);
 				}
 				else {
-					folds_[best_config[i]].Update(new_folds[i]);
+					folds_[best_config[i]].UpdatePosition(new_folds[i]);
 				}
 			}
 			for (int i = 0; i < folds_.size(); ++i) {

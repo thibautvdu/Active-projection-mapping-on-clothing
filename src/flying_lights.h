@@ -17,6 +17,8 @@ namespace garment {
 			void Update(const std::vector<ofVec3f> &contour_points) {};
 			void Draw();
 
+			bool RelativeToModel() { return true; }
+
 			inline void set_light_radius(float radius) {
 				light_radius_ = radius;
 			}

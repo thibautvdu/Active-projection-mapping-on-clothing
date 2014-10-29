@@ -2,7 +2,6 @@
 #define FLEXIBLE_SURFACE_AUGMENTATION_CONTOUR_VECTOR_FIELD_H_
 
 #include "animation.h"
-#include "ofxUbo.h"
 
 namespace garment_augmentation {
 namespace garment {
@@ -12,24 +11,26 @@ namespace garment {
 		public  :
 		
 			ContourVectorField();
+			~ContourVectorField();
 
 			void Update() {};
 			void Update(const std::vector<Fold> &folds) {};
 			void Update(const std::vector<ofVec3f> &contour_points);
 			void Draw();
 
-		private :
-			ofVbo custom_vbo_;
-			ofxUboShader custom_ubo_shader_;
-			GLuint position_attrib_idx_;
-			static const int k_max_contour_vertices_ = 1000; // Must also be changed in the geometry shader !
-			struct ContourBlock {
-				ofVec3f data[k_max_contour_vertices_];
-				int size;
-			};
-			struct ContourBlock previous_contour_, current_contour_;
+			bool RelativeToModel() { return false; }
 
-			bool stored_a_previous_contour_;
+		private :
+			void FillTbo(const std::vector<ofVec3f> &vector);
+
+			ofVbo custom_vbo_;
+			ofShader custom_shader_;
+			GLuint position_attrib_idx_;
+			GLuint texture_buffer_object_, texture_buffer_object_idx_, texture_buffer_;
+			static const int k_max_contour_vertices_ = 3000;
+			std::vector<ofVec3f> previous_contour_, current_contour_;
+
+			bool initialized_contour_;
 	};
 
 } // namespace garment

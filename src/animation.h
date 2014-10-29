@@ -15,6 +15,8 @@ namespace garment {
 			virtual void Update(const std::vector<ofVec3f> &contour_points) = 0;
 			virtual void Draw() = 0;
 
+			virtual bool RelativeToModel() = 0;
+
 		protected:
 			static void RefreshTime() {
 				last_frame_time_ = ofGetLastFrameTime();

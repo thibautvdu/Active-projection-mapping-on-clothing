@@ -278,6 +278,7 @@ namespace blob_detection {
 					(*p_cloudPoint).flag_ = FLAG_IDLE;
 					(*p_cloudPoint).pos_ = kinectPtr->getWorldCoordinates(i, j, distances[j*kWidth + i]) * scale;
 				}
+				(*p_cloudPoint).boundary_ = false;
 				p_cloudPoint++;
 				maskPix += resolution;
 			}

@@ -62,8 +62,7 @@ void ofApp::setup() {
 	// OPEN GL	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
 	ofDisableAlphaBlending();
-	ofSetFrameRate(50);
-	ofLog() << glGetString(GL_VERSION);
+	ofSetFrameRate(30);
 
 	// OPEN GL	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -297,8 +296,8 @@ void ofApp::draw() {
 				ofScale(1 / toWorldUnits_, 1 / toWorldUnits_, 1 / toWorldUnits_);
 				ofTranslate(0, 0, -garment_.blob().maxZ.z - 1);
 				garment_.DrawMesh();
-				//garment_.DrawFolds();
-				garment_.DrawAnimations();
+				garment_.DrawFolds();
+				//garment_.DrawAnimations();
 			ofPopMatrix();
 
 			if (askPause_)
@@ -318,7 +317,7 @@ void ofApp::draw() {
 			projectorWindow_.Begin();
 				ofMultMatrix(ofMatrix4x4::getTransposedOf(kinectProjectorToolkit_.getTransformMatrix()));
 				ofScale(1 / toWorldUnits_, 1 / toWorldUnits_, 1 / toWorldUnits_);
-				garment_.DrawMesh();
+				//garment_.DrawMesh();
 				garment_.DrawAnimations();
 			projectorWindow_.End();
 		}
