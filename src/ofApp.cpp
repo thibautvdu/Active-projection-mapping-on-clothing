@@ -63,6 +63,7 @@ void ofApp::setup() {
 
 	ofDisableAlphaBlending();
 	ofSetFrameRate(50);
+	ofLog() << glGetString(GL_VERSION);
 
 	// OPEN GL	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -295,7 +296,7 @@ void ofApp::draw() {
 				ofTranslate(kinectWidth_, kinectHeight_);
 				ofScale(1 / toWorldUnits_, 1 / toWorldUnits_, 1 / toWorldUnits_);
 				ofTranslate(0, 0, -garment_.blob().maxZ.z - 1);
-				//garment_.DrawMesh();
+				garment_.DrawMesh();
 				//garment_.DrawFolds();
 				garment_.DrawAnimations();
 			ofPopMatrix();

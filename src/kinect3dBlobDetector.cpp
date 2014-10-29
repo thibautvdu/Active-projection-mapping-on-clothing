@@ -153,8 +153,29 @@ namespace blob_detection {
 					newBlob->idx = numBlobs;
 					newBlob->nbPoints = lastQueued;
 
+					cv::Mat test_mat;
+					test_mat.create(cv::Size(width, height), CV_8UC1);
+					uchar* p_row_ptr;
+					for (int y = 0; y < height; ++y) {
+						p_row_ptr = test_mat.ptr<uchar>(y);
+						for (int x = 0; x < width; ++x) {
+							if (m_pointCloud[y*width + x].flag_ == numBlobs)
+								*(p_row_ptr + x) = 255;
+							else
+								*(p_row_ptr + x) = 0;
+						}
+					}
+					std::vector<std::vector<cv::Point>> contours;
+					cv::findContours(test_mat, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+					for (int c = 0; c < contours.size(); ++c) {
+						for (int cc = 0; cc < contours[c].size(); ++cc) {
+							if (m_pointCloud[contours[c][cc].y * width + contours[c][cc].x].flag_ == numBlobs)
+								m_pointCloud[contours[c][cc].y * width + contours[c][cc].x].boundary_ = true;
+						}
+					}
+
 					// Mark the 2d contour of the blob
-					while ((m_pointCloud[pixIndex].flag_ != numBlobs) && (pixIndex < nPix)) pixIndex++;
+					/*while ((m_pointCloud[pixIndex].flag_ != numBlobs) && (pixIndex < nPix)) pixIndex++;
 					m_pointCloud[pixIndex].boundary_ = true;
 
 					int i = pixIndex % width;
@@ -182,7 +203,7 @@ namespace blob_detection {
 						}
 						else
 							k++;
-					}
+					}*/
 
 					tempBlobs.push_back(newBlob);
 					numBlobs++;
