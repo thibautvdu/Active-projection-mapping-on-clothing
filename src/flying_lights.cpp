@@ -6,7 +6,7 @@ namespace garment {
 	FlyingLights::FlyingLights() {
 		lights_.reserve(100);
 		light_radius_ = 0.01f;
-		light_speed_ = 0.03f; // 30 cm/s
+		light_speed_ = 0.3f; // 30 cm/s
 		light_acceleration_ = 0.0005f;
 	}
 

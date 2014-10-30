@@ -122,6 +122,7 @@ using mrpt::math::CMatrixTemplateNumeric;
 				a_std_deviation_sq /= a_projection.size();
 				double a_max = a_projection[a_projection.size() - 1];
 				double a_min = a_projection[0];
+				/*
 				int i = 0;
 				while (i < a_projection.size() - 1 &&
 					std::pow(a_projection[i] - a_projection[i + 1],2) > 0.001) {
@@ -133,7 +134,7 @@ using mrpt::math::CMatrixTemplateNumeric;
 					std::pow(a_projection[i] - a_projection[i - 1], 2) > 0.001) {
 					a_max = a_projection[i - 1];
 					--i;
-				}
+				}*/
 
 				Eigen::Vector3d mean = matrix_a.colwise().mean().transpose();
 				Eigen::Vector3d a = mean + a_max * director;

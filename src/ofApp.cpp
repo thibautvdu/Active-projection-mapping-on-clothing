@@ -88,7 +88,7 @@ void ofApp::setup() {
 
 	// Blob finder and tracker
 	blobFinder_.init(&ofxKinect_, kinectWidth_, kinectHeight_); // standarized coordinate system: z in the direction of gravity
-	//m_blobFinder.setResolution(BF_HIGH_RES);
+	//blobFinder_.setResolution(garment_augmentation::blob_detection::BF_HIGH_RES);
 	blobFinder_.setScale(ofVec3f(toWorldUnits_)); // mm to meters
 
 	// Fold processing
@@ -297,7 +297,7 @@ void ofApp::draw() {
 				ofTranslate(0, 0, -garment_.blob().maxZ.z - 1);
 				garment_.DrawMesh();
 				garment_.DrawFolds();
-				//garment_.DrawAnimations();
+				garment_.DrawAnimations();
 			ofPopMatrix();
 
 			if (askPause_)
@@ -387,7 +387,7 @@ void ofApp::detectFolds() {
 	std::vector<ofVec3f> points;
 
 	for (int patchSize = 3; patchSize <= 7; patchSize += 2) {
-		for (int y = 0; y < height - 3; y += patchSize) {
+		for (int y = 0; y < height - patchSize; y += patchSize) {
 			for (int x = 0; x < width - patchSize; x += (patchSize/2)) {
 				tracker.MoveTo(ofRectangle(x, y, patchSize, patchSize));
 				if (tracker.IsInsideMesh()) {
@@ -406,7 +406,7 @@ void ofApp::detectFolds() {
 	// Compute folds from deformaed areas
 	if (askFoldComputation_) {
 		std::vector<std::pair<size_t, garment_augmentation::math::Of3dsegment> > lines;
-		garment_augmentation::math::RansacDetect3Dsegments(points, 0.05, 10, lines); // threshold : 5cm, minimum points : 10
+		garment_augmentation::math::RansacDetect3Dsegments(points, 0.05, 15, lines); // threshold : 5cm, minimum points : 10
 
 		std::vector<garment_augmentation::garment::Fold> new_folds(lines.size());
 		for (int i = 0; i < lines.size(); ++i) {
