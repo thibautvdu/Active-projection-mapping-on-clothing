@@ -97,9 +97,9 @@ void ofApp::setup() {
 
 	// Physic animations
 	std::unique_ptr<garment_augmentation::garment::Animation> lightsEffect(new garment_augmentation::garment::FlyingLights());
-	//garment_.AddAnimation(std::move(lightsEffect));
+	garment_.AddAnimation(std::move(lightsEffect));
 	std::unique_ptr<garment_augmentation::garment::Animation> contourEffect(new garment_augmentation::garment::ContourVectorField());
-	//garment_.AddAnimation(std::move(contourEffect));
+	garment_.AddAnimation(std::move(contourEffect));
 
 	// Mesh
 	//m_blobMesh = garment_augmentation::ofSemiImplicitActiveMesh(20, 20);
@@ -117,12 +117,8 @@ void ofApp::setup() {
 	// GUI	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
 	gui_.setup();
-	gui_.add(new ofxLabel(std::string("BACKGROUND LEARNING")));
-	gui_.add(bgLearningCycleGui_.setup("nb iterations", 10, 1, 50));
-	gui_.add(new ofxLabel(std::string("FOLD DETECTION")));
-	gui_.add(fold_deformation_thresh_.setup("deformation thresh", 0.01, 0.01, 0.03));
-	gui_.add(fold_distance_thresh_.setup("distance thresh", 0.03, 0.01, 0.08));
-	gui_.add(fold_points_num_thresh_.setup("nb points thresh", 7, 5, 20));
+	gui_.add(bgLearningCycleGui_.setup("bg learning iterations", 10, 1, 50));
+	gui_.add(deformationThres_.setup("canny thres 1", 0.01, 0.01, 0.03));
 
 	// Mesh
 	//m_gui.add(m_adaptationRate.setup("adaptation rate", 2, 0, 10));
@@ -301,7 +297,7 @@ void ofApp::draw() {
 				ofTranslate(0, 0, -garment_.blob().maxZ.z - 1);
 				garment_.DrawMesh();
 				garment_.DrawFolds();
-				//garment_.DrawAnimations();
+				garment_.DrawAnimations();
 			ofPopMatrix();
 
 			if (askPause_)
@@ -395,7 +391,7 @@ void ofApp::detectFolds() {
 			for (int x = 0; x < width - patchSize; x += (patchSize/2)) {
 				tracker.MoveTo(ofRectangle(x, y, patchSize, patchSize));
 				if (tracker.IsInsideMesh()) {
-					if (tracker.GetFoldness()  > fold_deformation_thresh_) {
+					if (tracker.GetFoldness()  > deformationThres_) {
 						tracker.ColorFill(ofColor::red);
 						if (askFoldComputation_) {
 							std::vector<ofVec3f> patchPts = tracker.GetPoints();
@@ -410,7 +406,7 @@ void ofApp::detectFolds() {
 	// Compute folds from deformaed areas
 	if (askFoldComputation_) {
 		std::vector<std::pair<size_t, garment_augmentation::math::Of3dsegment> > lines;
-		garment_augmentation::math::RansacDetect3Dsegments(points, fold_distance_thresh_, fold_points_num_thresh_, lines); // threshold : 5cm, minimum points : 10
+		garment_augmentation::math::RansacDetect3Dsegments(points, 0.05, 15, lines); // threshold : 5cm, minimum points : 10
 
 		std::vector<garment_augmentation::garment::Fold> new_folds(lines.size());
 		for (int i = 0; i < lines.size(); ++i) {

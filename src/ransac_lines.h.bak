@@ -15,6 +15,7 @@ namespace math {
 
 using mrpt::vector_size_t;
 using mrpt::math::CMatrixDouble;
+using mrpt::math::TLine3D;
 
 	// Define the line fitting fun
 	void  Ransac3DsegmentFit(const CMatrixDouble  &all_data, const vector_size_t  &use_indices, std::vector< CMatrixDouble > &fit_models);

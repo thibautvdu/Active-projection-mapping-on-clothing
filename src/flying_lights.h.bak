@@ -47,7 +47,7 @@ namespace garment {
 					}
 
 					inline void Update() {
-						vel_ += acc_ * Animation::last_frame_time(); // m/s^2
+						vel_ += acc_;
 
 						this->setPosition(this->getPosition() + vel_ * Animation::last_frame_time());
 
