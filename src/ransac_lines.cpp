@@ -4,6 +4,7 @@ namespace garment_augmentation {
 namespace math {
 
 using mrpt::math::TPoint3D;
+using mrpt::math::TLine3D;
 using mrpt::math::CMatrixTemplateNumeric;
 
 	void Ransac3DsegmentFit(const CMatrixDouble  &all_data, const vector_size_t  &use_indices, std::vector< CMatrixDouble > &fit_models) {
@@ -31,12 +32,12 @@ using mrpt::math::CMatrixTemplateNumeric;
 			out_bestModelIndex = 0;
 		const CMatrixDouble &M = test_models[0];
 
-		ASSERT_(size(M, 1) == 2 && size(M, 2) == 1;
+		ASSERT_(size(M, 1) == 2 && size(M, 2) == 1);
 		TLine3D line;
 		try
 		{
 			line = TLine3D(
-				TPoint3D(all_data.get_unsafe(0, M(0, 0)),all_data.get_unsafe(1, M(0, 0)),all_data.get_unsafe(2, M(0, 0)))
+				TPoint3D(all_data.get_unsafe(0, M(0, 0)),all_data.get_unsafe(1, M(0, 0)),all_data.get_unsafe(2, M(0, 0))),
 				TPoint3D(all_data.get_unsafe(0, M(1, 0)),all_data.get_unsafe(1, M(1, 0)),all_data.get_unsafe(2, M(1, 0)))
 			);
 		}
