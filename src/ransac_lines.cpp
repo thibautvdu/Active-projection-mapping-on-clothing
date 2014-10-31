@@ -34,15 +34,20 @@ using mrpt::math::CMatrixTemplateNumeric;
 		const CMatrixDouble &M = test_models[0];
 
 		ASSERT_(size(M, 1) == 2 && size(M, 2) == 3);
-
-		TSegment3D segment;
-		segment.point1 = TPoint3D(M(0, 0), M(0, 1), M(0, 2));
-		segment.point2 = TPoint3D(M(1, 0), M(1, 1), M(1, 2));
-		TLine3D line(segment);
+		TLine3D line;
+		try
+		{
+			line = TLine3D(TPoint3D(M(0, 0), M(0, 1), M(0, 2)), TPoint3D(M(1, 0), M(1, 1), M(1, 2)));
+		}
+		catch (std::logic_error &)
+		{
+			out_inlierIndices.clear();
+			return;
+		}
 
 		const size_t N = size(all_data, 2);
 		out_inlierIndices.clear();
-		out_inlierIndices.reserve(100);
+		out_inlierIndices.reserve(30);
 		for (size_t i = 0; i<N; i++)
 		{
 			const double d = line.distance(TPoint3D(all_data.get_unsafe(0, i), all_data.get_unsafe(1, i), all_data.get_unsafe(2, i)));
