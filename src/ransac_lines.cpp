@@ -26,6 +26,9 @@ using mrpt::math::CMatrixTemplateNumeric;
 		}
 	}
 
+	namespace {
+		int k_min_inliers_for_valid_line;
+	}
 	void Ransac3DsegmentDistance(const CMatrixDouble &all_data, const std::vector< CMatrixDouble > & test_models, const double distance_threshold,
 		unsigned int & out_bestModelIndex, vector_size_t & out_inlierIndices) {
 		ASSERT_(test_models.size() == 1)
@@ -47,24 +50,64 @@ using mrpt::math::CMatrixTemplateNumeric;
 			return;
 		}
 
+		// Test the verticality of the line first
+		double director[3];
+		line.getUnitaryDirectorVector(director);
+		double angle_cos = /*director[0] * 0 +*/ director[1] * 1 /* + director[2] * 0*/; // angle with vector (0,1,0)
+		if (angle_cos < 0.9 && angle_cos > -0.9)
+			return;
+
 		const size_t N = size(all_data, 2);
-		out_inlierIndices.clear();
-		out_inlierIndices.reserve(30);
+		std::vector<std::pair<size_t, float>> inliers;
+		inliers.reserve(30);
+		TPoint3D candidate;
 		for (size_t i = 0; i<N; i++)
 		{
-			const double d = line.distance(TPoint3D(all_data.get_unsafe(0, i), all_data.get_unsafe(1, i), all_data.get_unsafe(2, i)));
-			if (d<distance_threshold)
-				out_inlierIndices.push_back(i);
+			candidate = TPoint3D(all_data.get_unsafe(0, i), all_data.get_unsafe(1, i), all_data.get_unsafe(2, i));
+			const double d = line.distance(candidate);
+			if (d < distance_threshold) {
+				inliers.push_back(std::pair<size_t, float>(i, candidate.y));
+			}
+		}
+
+		// Sort the inliers according to the Y axis
+		if (inliers.size() > k_min_inliers_for_valid_line) {
+			std::sort(inliers.begin(), inliers.end(), ComparePoints);
+
+			// Look for the biggest group if there is undesired gap along Y
+			int max_group_begin = 0, max_group_size = 1;
+			int temp_group_begin = 0;
+			for (int i = 1; i < inliers.size(); ++i) {
+				if (inliers[i].second - inliers[i - 1].second > 0.1) { // 10cm
+					if ((i - 1) - temp_group_begin > max_group_size) {
+						max_group_begin = temp_group_begin;
+						max_group_size = (i - 1) - temp_group_begin;
+					}
+					temp_group_begin = i;
+				}
+			}
+			if ((inliers.size() - 1) - temp_group_begin > max_group_size) {
+				max_group_begin = temp_group_begin;
+				max_group_size = (inliers.size() - 1) - temp_group_begin;
+			}
+
+			out_inlierIndices.clear();
+			out_inlierIndices.reserve(max_group_size);
+			for (int i = max_group_begin; i < max_group_begin + max_group_size; ++i) {
+				out_inlierIndices.push_back(inliers[i].first);
+			}
 		}
 	}
 
-	void RansacDetect3Dsegments(const std::vector<ofVec3f> &point_cloud, const double threshold, const size_t min_inliers_for_valid_line, 
+	void RansacDetect3Dsegments(const std::vector<ofVec3f> &point_cloud, const double threshold, const size_t min_inliers_for_valid_line,
 		std::vector<std::pair<size_t, Of3dsegment> > &out_detected_segments) {
 
 		out_detected_segments.clear();
 
 		if (point_cloud.empty())
 			return;
+
+		k_min_inliers_for_valid_line = min_inliers_for_valid_line;
 
 		// The running lists of remaining points after each plane, as a matrix:
 		CMatrixDouble remainingPoints(3, point_cloud.size());
