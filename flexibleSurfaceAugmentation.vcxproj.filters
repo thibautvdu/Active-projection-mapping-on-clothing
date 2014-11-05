@@ -142,6 +142,9 @@
     <ClCompile Include="src\contour_vector_field.cpp">
       <Filter>src\garment</Filter>
     </ClCompile>
+    <ClCompile Include="src\fold_video_texture.cpp">
+      <Filter>src\garment</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -2652,6 +2655,9 @@
       <Filter>src\toolbox</Filter>
     </ClInclude>
     <ClInclude Include="src\contour_vector_field.h">
+      <Filter>src\garment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fold_video_texture.h">
       <Filter>src\garment</Filter>
     </ClInclude>
   </ItemGroup>

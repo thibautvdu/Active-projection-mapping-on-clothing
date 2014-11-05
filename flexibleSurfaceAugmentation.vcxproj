@@ -120,6 +120,7 @@ xcopy /e /i /y "$(ProjectDir)libs\MRPT_base\libs\*.dll" "$(ProjectDir)bin"</Comm
     <ClCompile Include="src\animation.cpp" />
     <ClCompile Include="src\contour_vector_field.cpp" />
     <ClCompile Include="src\fold_tracker.cpp" />
+    <ClCompile Include="src\fold_video_texture.cpp" />
     <ClCompile Include="src\gl_shader.cpp" />
     <ClCompile Include="src\interactive_garment.cpp" />
     <ClCompile Include="src\flying_lights.cpp" />
@@ -746,6 +747,7 @@ xcopy /e /i /y "$(ProjectDir)libs\MRPT_base\libs\*.dll" "$(ProjectDir)bin"</Comm
     <ClInclude Include="src\contour_vector_field.h" />
     <ClInclude Include="src\fold.h" />
     <ClInclude Include="src\flying_lights.h" />
+    <ClInclude Include="src\fold_video_texture.h" />
     <ClInclude Include="src\gl_shader.h" />
     <ClInclude Include="src\of_3dsegment.h" />
     <ClInclude Include="src\ransac_lines.h" />

@@ -10,14 +10,6 @@ namespace garment {
 		light_acceleration_ = 0.001f;
 	}
 
-	void FlyingLights::Update() {
-		RefreshTime();
-
-		for (int i = 0; i < lights_.size(); ++i) {
-			lights_[i].Update();
-		}
-	}
-
 	void FlyingLights::Update(const std::vector<Fold> &folds) {
 		RefreshTime();
 

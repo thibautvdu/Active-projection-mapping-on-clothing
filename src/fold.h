@@ -60,6 +60,10 @@ namespace garment {
 				return (b_pt_ - a_pt_).getNormalized();
 			}
 
+			inline float GetLength() const {
+				return (b_pt_ - a_pt_).length();
+			}
+
 			inline float GetSquaredLength() const {
 				return (b_pt_ - a_pt_).lengthSquared();
 			}
@@ -80,7 +84,7 @@ namespace garment {
 
 		private:
 			static const int k_default_life_time_ = 500; // 1/2 second, if no position update are received in this time frame the fold is destroyed
-			static const int k_update_time_ = 200; // 200ms, time frame on which the updates are summed and averaged
+			static const int k_update_time_ = 400; // 200ms, time frame on which the updates are summed and averaged
 
 			ofVec3f a_pt_;
 			ofVec3f b_pt_;

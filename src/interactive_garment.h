@@ -49,6 +49,7 @@ namespace garment {
 
 			inline void UpdateAnimations() {
 				for (int i = 0; i < animations_.size(); ++i) {
+					animations_[i]->Update();
 					animations_[i]->Update(folds_);
 					animations_[i]->Update(contour_);
 				}
