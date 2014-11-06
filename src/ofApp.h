@@ -74,10 +74,12 @@ class ofApp : public ofBaseApp {
 
 		// Folds detection
 		ofxFloatSlider fold_deformation_thresh_;
+		ofxFloatSlider fold_deformation_thresh_2_;
 		bool askFoldComputation_;
 		uchar numFolds_;
 		ofxFloatSlider fold_distance_thresh_;
 		ofxIntSlider fold_points_num_thresh_;
+		ofxIntSlider fold_width_;
 
 		// Tracking mesh
 		//garment_augmentation::ofSemiImplicitActiveMesh m_blobMesh;

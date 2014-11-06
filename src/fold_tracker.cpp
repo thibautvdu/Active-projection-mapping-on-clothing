@@ -25,6 +25,52 @@ namespace garment {
 		return res;
 	}
 
+	ofVec3f FoldTracker::GetCenter() {
+		const std::vector< std::vector<int> > &mesh2dView = p_garment_->mesh2d_view();
+		int col = roi_.getTopLeft().x + ((roi_.width - 1) / 2);
+		int row = roi_.getTopLeft().y + ((roi_.height - 1) / 2);
+
+		if (mesh2dView[col][row] != -1)
+			return p_garment_->mesh_ref().getVertex(mesh2dView[col][row]);
+
+		return ofVec3f(std::numeric_limits<float>::infinity());
+	}
+
+	void FoldTracker::ShapeOn(const int x, const int y) {
+		roi_.setPosition(x, y);
+		const std::vector< std::vector<int> > &mesh_2dview = p_garment_->mesh2d_view();
+		ofFastMesh &mesh = p_garment_->mesh_ref();
+
+		// Unfolded ideal plane
+		ofVec3f top_left = mesh.getVertex(mesh_2dview[roi_.getTopLeft().x][roi_.getTopLeft().y]);
+		ofVec3f bottom_left = mesh.getVertex(mesh_2dview[roi_.getBottomLeft().x][roi_.getBottomLeft().y]);
+		ofVec3f top_right = mesh.getVertex(mesh_2dview[roi_.getTopRight().x][roi_.getTopRight().y]);
+		ofVec3f bottom_right = mesh.getVertex(mesh_2dview[roi_.getBottomRight().x][roi_.getBottomRight().y]);
+		ofVec3f middle = (top_left + bottom_left + top_right + bottom_right) / 4;
+
+		// Compute the local z-axis
+		ofVec3f local_z = (top_right - top_left).getCrossed(top_left - bottom_left).normalize() * -1; // -1 : compensate for the right and left inversion of the kinect
+
+		ofMatrix3x3 to_local_coords = of_utilities::VectorRotationMatrix(local_z, ofVec3f(0, 0, 1));
+
+		ofVec3f point;
+		int image_row = roi_.getTopLeft().y;
+		int image_col = roi_.getTopLeft().x;
+		for (int row = 0; row < roi_.height; row++) {
+			for (int col = 0; col < roi_.width; col++) {
+				if (mesh_2dview[image_col][image_row] != -1) {
+					point = mesh.getVertex(mesh_2dview[image_col][image_row]) - middle; // Relative to the middle of the patch
+					patch_depth_map_[col][row] = point.x * to_local_coords.g + point.y * to_local_coords.h + point.z * to_local_coords.i; // Rotation to the normal of the patch
+				}
+				else {
+					patch_depth_map_[col][row] = std::numeric_limits<float>::infinity();
+				}
+				++image_col;
+			}
+			++image_row;
+		}
+	}
+
 	void FoldTracker::ColorFill(ofColor color) {
 		const std::vector< std::vector<int> > &mesh2dView = p_garment_->mesh2d_view();
 
@@ -83,6 +129,104 @@ namespace garment {
 		delta_depth_ /= nb_points;
 	}
 
+	void FoldTracker::ComputeDissimilarity() {
+		const std::vector< std::vector<int> > &mesh_2dview = p_garment_->mesh2d_view();
+		ofFastMesh &mesh = p_garment_->mesh_ref();
+
+		// Unfolded ideal plane
+		ofVec3f top_left = mesh.getVertex(mesh_2dview[roi_.getTopLeft().x][roi_.getTopLeft().y]);
+		ofVec3f bottom_left = mesh.getVertex(mesh_2dview[roi_.getBottomLeft().x][roi_.getBottomLeft().y]);
+		ofVec3f top_right = mesh.getVertex(mesh_2dview[roi_.getTopRight().x][roi_.getTopRight().y]);
+		ofVec3f bottom_right = mesh.getVertex(mesh_2dview[roi_.getBottomRight().x][roi_.getBottomRight().y]);
+		ofVec3f middle = (top_left + bottom_left + top_right + bottom_right) / 4;
+
+		// Compute the local z-axis
+		ofVec3f local_z = (top_right - top_left).getCrossed(top_left - bottom_left).normalize() * -1; // -1 : compensate for the right and left inversion of the kinect
+
+		// Compute the rotation from the world z-axis to the local z-axis
+		ofMatrix3x3 to_local_coords = of_utilities::VectorRotationMatrix(local_z, ofVec3f(0, 0, 1));
+
+		// For each known point in the patch
+		ofVec3f point;
+		dissimilarity_ = 0;
+		int nb_points = 0;
+		int image_row = roi_.getTopLeft().y;
+		int image_col = roi_.getTopLeft().x;
+		for (int row = 0; row < roi_.height; row++) {
+			for (int col = 0; col < roi_.width; col++) {
+				if (mesh_2dview[image_col][image_row] != -1 && patch_depth_map_[col][row] != std::numeric_limits<float>::infinity()) {
+					// Transform to local coordinate and get the relative depth
+					point = mesh.getVertex(mesh_2dview[image_col][image_row]) - middle; // Relative to the middle of the patch
+					dissimilarity_ += abs(patch_depth_map_[col][row] - point.x * to_local_coords.g + point.y * to_local_coords.h + point.z * to_local_coords.i); // Rotation to the normal of the patch
+					nb_points++;
+				}
+				image_col++;
+			}
+			image_row++;
+		}
+		dissimilarity_ /= nb_points;
+	}
+
+	void FoldTracker::ComputeDeltaDepthGaussian() {
+		float m_area = 0;
+		float m_unfoldedArea = 0;
+
+		const std::vector< std::vector<int> > &mesh_2dview = p_garment_->mesh2d_view();
+		ofFastMesh &mesh = p_garment_->mesh_ref();
+
+		// Unfolded ideal plane
+		ofVec3f top_left = mesh.getVertex(mesh_2dview[roi_.getTopLeft().x][roi_.getTopLeft().y]);
+		ofVec3f bottom_left = mesh.getVertex(mesh_2dview[roi_.getBottomLeft().x][roi_.getBottomLeft().y]);
+		ofVec3f top_right = mesh.getVertex(mesh_2dview[roi_.getTopRight().x][roi_.getTopRight().y]);
+		ofVec3f bottom_right = mesh.getVertex(mesh_2dview[roi_.getBottomRight().x][roi_.getBottomRight().y]);
+		float unfoldedTriangleArea = ((top_left - bottom_left).getCrossed(top_right - bottom_left).length() + (bottom_left - top_right).getCrossed(bottom_right - top_right).length()) / (2 * 2 * (roi_.width - 1)*(roi_.height - 1));
+
+		// Attribute a gaussian weigth along the horizontal of the unfolded patch
+		ofVec3f unfoldedHorizontal = ((top_right - top_left) + (bottom_right - bottom_left)) / 2;
+		float horizontalScale = unfoldedHorizontal.length() / 2;
+		unfoldedHorizontal.normalize();
+		ofVec3f unfoldedMiddle = (top_right + top_left + bottom_right + bottom_left) / 4;
+		float posToMiddle, gaussianWeight;
+
+
+		int pointAIdx = -1, pointBIdx, pointCIdx, pointDIdx;
+		ofVec3f posA, posB, posC, posD;
+		for (int row = roi_.getTopLeft().y; row < roi_.getBottomRight().y; row++) {
+			for (int col = roi_.getTopLeft().x; col < roi_.getBottomRight().x; col++) {
+				if (mesh_2dview[col][row] != pointAIdx) {
+
+					// The square face
+					pointAIdx = mesh_2dview[col][row];
+					posA = pointAIdx >= 0 ? mesh.getVertex(pointAIdx) : posA;
+					pointBIdx = mesh_2dview[col + 1][row];
+					posB = pointBIdx >= 0 ? mesh.getVertex(pointBIdx) : posB;
+					pointCIdx = mesh_2dview[col + 1][row + 1];
+					posC = pointCIdx >= 0 ? mesh.getVertex(pointCIdx) : posC;
+					pointDIdx = mesh_2dview[col][row + 1];
+					posD = pointDIdx >= 0 ? mesh.getVertex(pointDIdx) : posD;
+
+					if (pointAIdx >= 0 && pointBIdx >= 0 && pointDIdx >= 0) {
+						posToMiddle = (((posA + posB + posC) / 3) - unfoldedMiddle).dot(unfoldedHorizontal) / horizontalScale;
+						gaussianWeight = gaussian_values_[99 * std::min(fabs(posToMiddle), 1.f)];
+
+						// Triangle face 1
+						m_unfoldedArea += unfoldedTriangleArea * gaussianWeight;
+						m_area += (posB - posA).getCrossed(posD - posA).length() * gaussianWeight / 2;
+					}
+					if (pointBIdx >= 0 && pointCIdx >= 0 && pointDIdx >= 0) {
+						posToMiddle = (((posB + posC + posD) / 3) - unfoldedMiddle).dot(unfoldedHorizontal) / horizontalScale;
+						gaussianWeight = gaussian_values_[99 * std::min(fabs(posToMiddle), 1.f)];
+
+						// Triangle face 2
+						m_unfoldedArea += unfoldedTriangleArea * gaussianWeight;
+						m_area += (posC - posB).getCrossed(posD - posB).length() * gaussianWeight / 2;
+					}
+				}
+			}
+		}
+		delta_depth_gaussian_ = (m_area - m_unfoldedArea) * 100 / m_unfoldedArea;
+	}
+
 	bool FoldTracker::IsInsideMesh() {
 		const std::vector< std::vector<int> > &mesh2dView = p_garment_->mesh2d_view();
 
@@ -90,6 +234,19 @@ namespace garment {
 			mesh2dView[roi_.getBottomLeft().x][roi_.getBottomLeft().y] != -1 &&
 			mesh2dView[roi_.getTopRight().x][roi_.getTopRight().y] != -1 &&
 			mesh2dView[roi_.getBottomRight().x][roi_.getBottomRight().y] != -1;
+	}
+
+	std::vector<float> FoldTracker::gaussian_values_;
+	void FoldTracker::ComputeGaussianDist(float sigma) {
+		if (gaussian_values_.size() == 0) {
+			gaussian_values_.resize(100);
+
+			float posI;
+			for (int i = 0; i < gaussian_values_.size(); ++i) {
+				posI = 3 * i / (float)99;
+				gaussian_values_[i] = (1.0 / (sigma *sqrt(2 * PI))) * exp(-(posI*posI) / (2 * sigma*sigma));
+			}
+		}
 	}
 
 } // namespace garment

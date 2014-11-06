@@ -10,6 +10,7 @@ namespace garment {
 		public:
 			FoldTracker(InteractiveGarment *garment, const ofRectangle roi) : p_garment_(garment), roi_(roi) {
 				need_computation_ = true;
+				patch_depth_map_.resize(static_cast<int>(roi_.width), std::vector<float>(static_cast<int>(roi_.height),std::numeric_limits<float>::infinity()));
 			}
 
 
@@ -18,10 +19,27 @@ namespace garment {
 				need_computation_ = true;
 			}
 
-			inline void MoveTo(const ofRectangle roi) {
-				roi_ = roi;
+			inline void MoveTo(const int x, const int y) {
+				roi_.setPosition(x, y);
 				need_computation_ = true;
 			}
+
+			inline void Resize(const int w, const int h) {
+				roi_.setWidth(w);
+				roi_.setHeight(h);
+				patch_depth_map_ = std::vector<std::vector<float>>(static_cast<int>(roi_.width), std::vector<float>(static_cast<int>(roi_.height), std::numeric_limits<float>::infinity()));
+				need_computation_ = true;
+			}
+
+			inline int GetX() const {
+				return roi_.x;
+			}
+
+			inline int GetY() const {
+				return roi_.y;
+			}
+
+			void ShapeOn(const int x, const int y);
 
 			inline float GetFoldness() {
 				if (need_computation_)
@@ -30,18 +48,42 @@ namespace garment {
 				return delta_depth_;
 			}
 
+			inline float GetDissimilarityWithPatch() {
+				if (need_computation_)
+					ComputeDissimilarity();
+
+				return dissimilarity_;
+			}
+
+			inline float GetFoldnessGaussian() {
+				if (need_computation_) {
+					ComputeGaussianDist(1);
+					ComputeDeltaDepthGaussian();
+				}
+
+				return delta_depth_gaussian_;
+			}
+
 			std::vector<ofVec3f> GetPoints();
+			ofVec3f GetCenter();
 			void ColorFill(const ofColor color);
 
 			bool IsInsideMesh();
 
 		private:
 			void ComputeDeltaDepth();
+			void ComputeDissimilarity();
+			void ComputeDeltaDepthGaussian();
+			static void ComputeGaussianDist(float sigma);
 
+			std::vector<std::vector<float>> patch_depth_map_;
 			InteractiveGarment *const p_garment_;
 			ofRectangle roi_;
 			bool need_computation_;
 			float delta_depth_;
+			float dissimilarity_;
+			float delta_depth_gaussian_;
+			static std::vector<float> gaussian_values_;
 	};
 
 } // namespace garment

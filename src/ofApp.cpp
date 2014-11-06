@@ -102,7 +102,7 @@ void ofApp::setup() {
 	std::unique_ptr<garment_augmentation::garment::Animation> contourEffect(new garment_augmentation::garment::ContourVectorField());
 	//garment_.AddAnimation(std::move(contourEffect));
 	std::unique_ptr<garment_augmentation::garment::Animation> videoEffect(new garment_augmentation::garment::FoldVideoTexture("videos/halluc_edit.mp4"));
-	garment_.AddAnimation(std::move(videoEffect));
+	//garment_.AddAnimation(std::move(videoEffect));
 
 	// Mesh
 	//m_blobMesh = garment_augmentation::ofSemiImplicitActiveMesh(20, 20);
@@ -123,9 +123,11 @@ void ofApp::setup() {
 	gui_.add(new ofxLabel(std::string("BACKGROUND LEARNING")));
 	gui_.add(bgLearningCycleGui_.setup("nb iterations", 10, 1, 50));
 	gui_.add(new ofxLabel(std::string("FOLD DETECTION")));
-	gui_.add(fold_deformation_thresh_.setup("deformation thresh", 0.01, 0.01, 0.03));
+	gui_.add(fold_deformation_thresh_.setup("deformation thresh", 0.01, 0.00, 0.03));
+	gui_.add(fold_deformation_thresh_2_.setup("deformation thresh 2", 50, 0.00, 100));
 	gui_.add(fold_distance_thresh_.setup("distance thresh", 0.03, 0.01, 0.08));
 	gui_.add(fold_points_num_thresh_.setup("nb points thresh", 7, 5, 20));
+	gui_.add(fold_width_.setup("fold's width",5,3,21));
 
 	// Mesh
 	//m_gui.add(m_adaptationRate.setup("adaptation rate", 2, 0, 10));
@@ -150,6 +152,7 @@ void ofApp::update() {
 		//m_blobMesh.save("mesh_export.ply");
 		ofSaveImage(ofxKinect_.getColorPixelsRef(), "color_ir_export.tif");
 		ofSaveImage(ofxKinect_.getDepthPixelsRef(), "depth_export.tif");
+		ofSaveImage(bgMask_, "bg_mask.tif");
 		ofLogNotice("ofApp::update") << "Exported the 3D mesh, IR/color and depth image";
 		askSaveAssets_ = false;
 	}
@@ -183,36 +186,36 @@ void ofApp::update() {
 	// PROCESS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 	if (ofxKinect_.isFrameNew()) {
 		// Background learning
-		/*
-		if (m_askBgLearning) {
-			m_bgLearningCycleCount = m_bgLearningCycleGui;
-			m_learntBg = false;
-			m_askBgLearning = false;
+		
+		if (askBgLearning_) {
+			bgLearningCycleCount_ = bgLearningCycleGui_;
+			learntBg_ = false;
+			askBgLearning_ = false;
 
 			ofLogNotice("ofApp::update()") << "Learning background . . .";
-			m_depthBg = mOfxKinect.getDepthPixels();
-			m_cvDepthBg = ofxCv::toCv(m_depthBg);
-			--m_bgLearningCycleCount;
+			depthBg_ = ofxKinect_.getDepthPixels();
+			cvDepthBg_ = ofxCv::toCv(depthBg_);
+			--bgLearningCycleCount_;
 
-			if (m_bgLearningCycleCount == 0) {
-				m_learntBg = true;
+			if (bgLearningCycleCount_ == 0) {
+				learntBg_ = true;
 				ofLogNotice("ofApp::update()") << "Background learning complete";
 			}
 		}
-		else if (m_bgLearningCycleCount != 0) {
-			for (int i = 0; i < m_depthBg.getWidth()*m_depthBg.getHeight(); ++i) {
-				if (0 == m_depthBg[i]) {
-					m_depthBg[i] = mOfxKinect.getDepthPixelsRef()[i];
+		else if (bgLearningCycleCount_ != 0) {
+			for (int i = 0; i < depthBg_.getWidth()*depthBg_.getHeight(); ++i) {
+				if (0 == depthBg_[i]) {
+					depthBg_[i] = ofxKinect_.getDepthPixelsRef()[i];
 				}
 			}
 
-			--m_bgLearningCycleCount;
-			if (m_bgLearningCycleCount == 0) {
-				m_learntBg = true;
+			--bgLearningCycleCount_;
+			if (bgLearningCycleCount_ == 0) {
+				learntBg_ = true;
 				ofLogNotice("ofApp::update()") << "Background learning complete";
 			}
 		}
-		*/
+		
 		if (!learntBg_) {
 			bool importedPixels = ofLoadImage(depthBg_, "background_export.tif");
 			if (importedPixels) {
@@ -392,18 +395,73 @@ void ofApp::detectFolds() {
 
 	garment_augmentation::garment::FoldTracker tracker(&garment_, ofRectangle(0, 0, 0, 0));
 	std::vector<ofVec3f> points;
+	std::vector<std::pair<int, int>> points_coords;
 
-	for (int patchSize = 3; patchSize <= 7; patchSize += 2) {
+	for (int patchSize = fold_width_; patchSize <= fold_width_ + 2; patchSize += 2) {
+		tracker.Resize(patchSize, patchSize);
 		for (int y = 0; y < height - patchSize; y += patchSize) {
 			for (int x = 0; x < width - patchSize; x += (patchSize/2)) {
-				tracker.MoveTo(ofRectangle(x, y, patchSize, patchSize));
+				tracker.MoveTo(x, y);
 				if (tracker.IsInsideMesh()) {
-					if (tracker.GetFoldness()  > fold_deformation_thresh_) {
+					float foldness = tracker.GetFoldness();
+					if (foldness  > fold_deformation_thresh_) {
 						tracker.ColorFill(ofColor::red);
-						if (askFoldComputation_) {
-							std::vector<ofVec3f> patchPts = tracker.GetPoints();
-							points.insert(points.end(), patchPts.begin(), patchPts.end());
+						points.push_back(tracker.GetCenter());/*
+						// Try to grow the detected region
+						float sub_foldness_threshold = foldness * 0.1;
+						float max_foldness = foldness;
+						int max_foldness_idx = std::numeric_limits<int>::infinity();
+
+						struct GrowedFold {
+							GrowedFold(float init_foldness, int x, int y) {
+								total_foldness = init_foldness;
+								fold_points.reserve(10);
+								fold_points.push_back(std::pair<int,int>(x,y));
+							}
+
+							std::vector<std::pair<int,int>> fold_points;
+							float total_foldness;
+						};
+						typedef struct GrowedFold GrowedFold;
+						std::vector<GrowedFold> growed_folds(patchSize * 2 + 1, GrowedFold(foldness, x,y));
+
+						for (int grow_direc_x = -patchSize; grow_direc_x <= patchSize; ++grow_direc_x) {
+							GrowedFold &growing_fold = growed_folds[patchSize + grow_direc_x];
+
+							// Grow up
+							float current_patch_foldness;
+							tracker.MoveTo(x - grow_direc_x,y - patchSize);
+							while (tracker.IsInsideMesh() && 
+								(current_patch_foldness = tracker.GetFoldness()) > sub_foldness_threshold) {
+								growing_fold.total_foldness += current_patch_foldness;
+								growing_fold.fold_points.push_back(std::pair<int,int>(tracker.GetX(), tracker.GetY()));
+								tracker.MoveTo(tracker.GetX() - grow_direc_x, tracker.GetY() - patchSize);
+							}
+
+							// Grow down
+							tracker.MoveTo(x + grow_direc_x, y + patchSize);
+							while (tracker.IsInsideMesh() && 
+								(current_patch_foldness = tracker.GetFoldness()) > sub_foldness_threshold) {
+								growing_fold.total_foldness += current_patch_foldness;
+								growing_fold.fold_points.push_back(std::pair<int, int>(tracker.GetX(), tracker.GetY()));
+								tracker.MoveTo(tracker.GetX() + grow_direc_x, tracker.GetY() + patchSize);
+							}
+
+							if (growing_fold.total_foldness > max_foldness) {
+								max_foldness_idx = grow_direc_x;
+								max_foldness = growing_fold.total_foldness;
+							}
 						}
+
+						if (max_foldness_idx != std::numeric_limits<int>::infinity()
+								&& growed_folds[patchSize + max_foldness_idx].fold_points.size() > fold_points_num_thresh_) { // was able to grow a fold
+							for (int i = 0; i < growed_folds[patchSize + max_foldness_idx].fold_points.size(); ++i) {
+								tracker.MoveTo(growed_folds[patchSize + max_foldness_idx].fold_points[i].first, growed_folds[patchSize + max_foldness_idx].fold_points[i].second);
+								tracker.ColorFill(ofColor::red);
+								if (i == 0 || i == growed_folds[patchSize + max_foldness_idx].fold_points.size() / 2 || i == growed_folds[patchSize + max_foldness_idx].fold_points.size() - 1)
+									points.push_back(tracker.GetCenter());
+							}
+						}*/
 					}
 				}
 			}
