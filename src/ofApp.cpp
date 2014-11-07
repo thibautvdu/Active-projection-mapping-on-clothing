@@ -397,71 +397,42 @@ void ofApp::detectFolds() {
 	std::vector<ofVec3f> points;
 	std::vector<std::pair<int, int>> points_coords;
 
-	for (int patchSize = fold_width_; patchSize <= fold_width_ + 2; patchSize += 2) {
-		tracker.Resize(patchSize, patchSize);
-		for (int y = 0; y < height - patchSize; y += patchSize) {
-			for (int x = 0; x < width - patchSize; x += (patchSize/2)) {
-				tracker.MoveTo(x, y);
+	if (fold_width_ % 2 == 0)
+		fold_width_ =  fold_width_ + 1;
+
+	int patch_size_range = 2;
+	int max_half_fold_width = (fold_width_ + patch_size_range - 1) / 2;
+
+	for (int y = max_half_fold_width; y < height - max_half_fold_width; y += 1) {
+		int previous_center_x = -1;
+		int previous_patch_size = -1;
+		int previous_center_idx = -1;
+		for (int x = max_half_fold_width; x < width - max_half_fold_width; x += 1) {
+			tracker.MoveCenterTo(x, y);
+
+			// Test the location for various patch size
+			bool got_positive_result = false;
+			for (int patch_size = fold_width_ + patch_size_range; patch_size >= fold_width_ && ! got_positive_result; patch_size -= 2) {
+				tracker.Resize(fold_width_, fold_width_);
+
 				if (tracker.IsInsideMesh()) {
 					float foldness = tracker.GetFoldness();
 					if (foldness  > fold_deformation_thresh_) {
-						tracker.ColorFill(ofColor::red);
-						points.push_back(tracker.GetCenter()); /*
-						// Try to grow the detected region
-						float sub_foldness_threshold = foldness * 0.5;
-						float max_foldness = foldness;
-						int max_foldness_idx = std::numeric_limits<int>::infinity();
-
-						struct GrowedFold {
-							GrowedFold(float init_foldness, int x, int y) {
-								total_foldness = init_foldness;
-								fold_points.reserve(10);
-								fold_points.push_back(std::pair<int,int>(x,y));
-							}
-
-							std::vector<std::pair<int,int>> fold_points;
-							float total_foldness;
-						};
-						typedef struct GrowedFold GrowedFold;
-						std::vector<GrowedFold> growed_folds(patchSize * 2 + 1, GrowedFold(foldness, x,y));
-
-						for (int grow_direc_x = -patchSize; grow_direc_x <= patchSize; ++grow_direc_x) {
-							GrowedFold &growing_fold = growed_folds[patchSize + grow_direc_x];
-
-							// Grow up
-							float current_patch_foldness;
-							tracker.MoveTo(x - grow_direc_x,y - patchSize);
-							while (tracker.IsInsideMesh() && 
-								(current_patch_foldness = tracker.GetFoldness()) > sub_foldness_threshold) {
-								growing_fold.total_foldness += current_patch_foldness;
-								growing_fold.fold_points.push_back(std::pair<int,int>(tracker.GetX(), tracker.GetY()));
-								tracker.MoveTo(tracker.GetX() - grow_direc_x, tracker.GetY() - patchSize);
-							}
-
-							// Grow down
-							tracker.MoveTo(x + grow_direc_x, y + patchSize);
-							while (tracker.IsInsideMesh() && 
-								(current_patch_foldness = tracker.GetFoldness()) > sub_foldness_threshold) {
-								growing_fold.total_foldness += current_patch_foldness;
-								growing_fold.fold_points.push_back(std::pair<int, int>(tracker.GetX(), tracker.GetY()));
-								tracker.MoveTo(tracker.GetX() + grow_direc_x, tracker.GetY() + patchSize);
-							}
-
-							if (growing_fold.total_foldness > max_foldness) {
-								max_foldness_idx = grow_direc_x;
-								max_foldness = growing_fold.total_foldness;
-							}
+						// Test if the center is not contained in a previous valid patch horizontaly aligned
+						if (previous_center_x != -1 && x - previous_center_x < previous_patch_size ) {
+							// average a new center, incorrect but there is not often more than two patches in the merging
+							points[previous_center_idx] += tracker.GetCenter();
+							points[previous_center_idx] /= 2;
+						}
+						else {
+							previous_center_idx = points.size();
+							points.push_back(tracker.GetCenter());
 						}
 
-						if (max_foldness_idx != std::numeric_limits<int>::infinity()
-								&& growed_folds[patchSize + max_foldness_idx].fold_points.size() > fold_points_num_thresh_) { // was able to grow a fold
-							for (int i = 0; i < growed_folds[patchSize + max_foldness_idx].fold_points.size(); ++i) {
-								tracker.MoveTo(growed_folds[patchSize + max_foldness_idx].fold_points[i].first, growed_folds[patchSize + max_foldness_idx].fold_points[i].second);
-								tracker.ColorFill(ofColor::red);
-								if (i == 0 || i == growed_folds[patchSize + max_foldness_idx].fold_points.size() / 2 || i == growed_folds[patchSize + max_foldness_idx].fold_points.size() - 1)
-									points.push_back(tracker.GetCenter());
-							}
-						}*/
+						previous_patch_size = patch_size;
+						previous_center_x = x;
+						tracker.ColorFill(ofColor::red);
+						got_positive_result = true;
 					}
 				}
 			}

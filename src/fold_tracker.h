@@ -10,7 +10,7 @@ namespace garment {
 		public:
 			FoldTracker(InteractiveGarment *garment, const ofRectangle roi) : p_garment_(garment), roi_(roi) {
 				need_computation_ = true;
-				patch_depth_map_.resize(static_cast<int>(roi_.width), std::vector<float>(static_cast<int>(roi_.height),std::numeric_limits<float>::infinity()));
+				//patch_depth_map_.resize(static_cast<int>(roi_.width), std::vector<float>(static_cast<int>(roi_.height),std::numeric_limits<float>::infinity()));
 			}
 
 
@@ -19,23 +19,27 @@ namespace garment {
 				need_computation_ = true;
 			}
 
-			inline void MoveTo(const int x, const int y) {
+			inline void MoveLeftTopTo(const int x, const int y) {
 				roi_.setPosition(x, y);
 				need_computation_ = true;
+			}
+
+			inline void MoveCenterTo(const int x, const int y) {
+				roi_.setFromCenter(x, y, roi_.width, roi_.height);
 			}
 
 			inline void Resize(const int w, const int h) {
 				roi_.setWidth(w);
 				roi_.setHeight(h);
-				patch_depth_map_ = std::vector<std::vector<float>>(static_cast<int>(roi_.width), std::vector<float>(static_cast<int>(roi_.height), std::numeric_limits<float>::infinity()));
+				//patch_depth_map_ = std::vector<std::vector<float>>(static_cast<int>(roi_.width), std::vector<float>(static_cast<int>(roi_.height), std::numeric_limits<float>::infinity()));
 				need_computation_ = true;
 			}
 
-			inline int GetX() const {
+			inline int GetLeftTopX() const {
 				return roi_.x;
 			}
 
-			inline int GetY() const {
+			inline int GetLeftTopY() const {
 				return roi_.y;
 			}
 
@@ -68,6 +72,7 @@ namespace garment {
 			std::vector<ofVec3f> GetPoints();
 			ofVec3f GetCenter();
 			void ColorFill(const ofColor color);
+			void WritePatchLocation(const int index);
 
 			bool IsInsideMesh();
 
