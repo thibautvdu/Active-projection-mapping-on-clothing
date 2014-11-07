@@ -61,12 +61,17 @@ using mrpt::math::CMatrixTemplateNumeric;
 		std::vector<std::pair<size_t, float>> inliers;
 		inliers.reserve(30);
 		TPoint3D candidate;
+		double last_x = std::numeric_limits<double>::infinity(); // Used to ensure we don't include horizontally aligned inliers
+		double current_x;
 		for (size_t i = 0; i<N; i++)
 		{
-			candidate = TPoint3D(all_data.get_unsafe(0, i), all_data.get_unsafe(1, i), all_data.get_unsafe(2, i));
-			const double d = line.distance(candidate);
-			if (d < distance_threshold) {
-				inliers.push_back(std::pair<size_t, float>(i, candidate.y));
+			if (fabs((current_x = all_data.get_unsafe(0, i)) - last_x) > 0.001) { // > 1mm
+				candidate = TPoint3D(current_x, all_data.get_unsafe(1, i), all_data.get_unsafe(2, i));
+				const double d = line.distance(candidate);
+				if (d < distance_threshold) {
+					inliers.push_back(std::pair<size_t, float>(i, candidate.y));
+					last_x = current_x;
+				}
 			}
 		}
 
@@ -78,7 +83,7 @@ using mrpt::math::CMatrixTemplateNumeric;
 			int max_group_begin = 0, max_group_size = 1;
 			int temp_group_begin = 0;
 			for (int i = 1; i < inliers.size(); ++i) {
-				if (inliers[i].second - inliers[i - 1].second > 0.1) { // 10cm
+				if (inliers[i].second - inliers[i - 1].second > 0.2) { // 20cm
 					if ((i - 1) - temp_group_begin > max_group_size) {
 						max_group_begin = temp_group_begin;
 						max_group_size = (i - 1) - temp_group_begin;
