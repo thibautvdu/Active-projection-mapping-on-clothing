@@ -71,10 +71,22 @@ namespace garment {
 		}
 	}
 
+	void FoldTracker::HalfTubeShaping(float depth) {
+		const int width = roi_.width;
+		const int height = roi_.height;
+		const int half_width = (width-1) / 2;
+		int middle_x = roi_.getTopLeft().x + ((width - 1) / 2);
+
+		for (int x = 0; x < width; ++x) {
+			for (int y = 0; y < height; ++y) {
+				patch_depth_map_[x][y] = (1 - abs((x - middle_x) / half_width)) * depth;
+			}
+		}
+	}
+
 	void FoldTracker::ColorFill(ofColor color) {
 		const std::vector< std::vector<int> > &mesh2dView = p_garment_->mesh2d_view();
 
-		int col = roi_.getTopLeft().x + ((roi_.width - 1) / 2);
 		for (int row = roi_.getTopLeft().y; row < roi_.getBottomRight().y; row++) {
 			for (int col = roi_.getTopLeft().x; col < roi_.getBottomRight().x; col++) {
 				if (mesh2dView[col][row] != -1) {

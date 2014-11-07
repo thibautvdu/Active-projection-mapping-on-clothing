@@ -40,6 +40,7 @@ namespace garment {
 			}
 
 			void ShapeOn(const int x, const int y);
+			void HalfTubeShaping(float depth);
 
 			inline float GetFoldness() {
 				if (need_computation_)

@@ -149,7 +149,7 @@ void ofApp::update() {
 	// EVENTS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
 	if (askSaveAssets_) {
-		//m_blobMesh.save("mesh_export.ply");
+		garment_.mesh_ref().save("mesh_export.ply");
 		ofSaveImage(ofxKinect_.getColorPixelsRef(), "color_ir_export.tif");
 		ofSaveImage(ofxKinect_.getDepthPixelsRef(), "depth_export.tif");
 		ofSaveImage(bgMask_, "bg_mask.tif");
@@ -406,9 +406,9 @@ void ofApp::detectFolds() {
 					float foldness = tracker.GetFoldness();
 					if (foldness  > fold_deformation_thresh_) {
 						tracker.ColorFill(ofColor::red);
-						points.push_back(tracker.GetCenter());/*
+						points.push_back(tracker.GetCenter()); /*
 						// Try to grow the detected region
-						float sub_foldness_threshold = foldness * 0.1;
+						float sub_foldness_threshold = foldness * 0.5;
 						float max_foldness = foldness;
 						int max_foldness_idx = std::numeric_limits<int>::infinity();
 
