@@ -145,6 +145,9 @@
     <ClCompile Include="src\fold_video_texture.cpp">
       <Filter>src\garment</Filter>
     </ClCompile>
+    <ClCompile Include="src\ransac_kalman_segments.cpp">
+      <Filter>src\math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -2659,6 +2662,9 @@
     </ClInclude>
     <ClInclude Include="src\fold_video_texture.h">
       <Filter>src\garment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ransac_kalman_segments.h">
+      <Filter>src\math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

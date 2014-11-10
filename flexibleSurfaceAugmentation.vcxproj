@@ -151,6 +151,7 @@ xcopy /e /i /y "$(ProjectDir)libs\MRPT_base\libs\*.dll" "$(ProjectDir)bin"</Comm
     <ClCompile Include="src\cv_helper.cpp" />
     <ClCompile Include="src\kinect3dBlobDetector.cpp" />
     <ClCompile Include="src\ofFastMesh.cpp" />
+    <ClCompile Include="src\ransac_kalman_segments.cpp" />
     <ClCompile Include="src\ransac_lines.cpp" />
     <ClCompile Include="src\ofSemiImplicitActiveMesh.cpp" />
     <ClCompile Include="src\of_utilities.cpp" />
@@ -750,6 +751,7 @@ xcopy /e /i /y "$(ProjectDir)libs\MRPT_base\libs\*.dll" "$(ProjectDir)bin"</Comm
     <ClInclude Include="src\fold_video_texture.h" />
     <ClInclude Include="src\gl_shader.h" />
     <ClInclude Include="src\of_3dsegment.h" />
+    <ClInclude Include="src\ransac_kalman_segments.h" />
     <ClInclude Include="src\ransac_lines.h" />
     <ClInclude Include="src\simple_3dblob.h" />
     <ClInclude Include="src\cv_helper.h" />
