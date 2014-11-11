@@ -20,10 +20,10 @@ namespace math {
 	class RansacKalman3dSegmentTracker {
 
 		public :
+			RansacKalman3dSegmentTracker() : segments_life_time_(1) {}
+			RansacKalman3dSegmentTracker(const float segments_life_time) : segments_life_time_(segments_life_time) {}
 
-			RansacKalman3dSegmentTracker() {}
-
-			void Track3Dsegments(const std::vector<ofVec3f> &point_cloud, const double threshold, const size_t min_inliers_for_valid_line);
+			void Track3Dsegments(const std::vector<ofVec3f> &point_cloud, const double threshold, const size_t min_inliers_for_valid_line, std::vector<std::pair<Of3dsegment, float>> &out_segments);
 
 			inline void SuppressSegment(int idx) {
 				if (segments_.size() <= idx) {
@@ -33,6 +33,10 @@ namespace math {
 
 				segments_.erase(segments_.begin() + idx);
 				kalman_filters_.erase(kalman_filters_.begin() + idx);
+			}
+
+			inline void set_segments_life_time(const float lifetime) {
+				segments_life_time_ = lifetime;
 			}
 
 		private :
@@ -57,18 +61,37 @@ namespace math {
 			static Of3dsegment LeastSquareFit(const vector_size_t &best_inliers, const CMatrixDouble &point_cloud);
 			static Of3dsegment LeastSquareFit(const std::vector<int> &best_inliers, const std::vector<ofVec3f> &point_cloud);
 
-			static void InitKalmanFilter(cv::KalmanFilter &kalman_filter) {
-				kalman_filter.transitionMatrix = kalman_transition_matrix_init_;
-				setIdentity(kalman_filter.measurementMatrix);
-				setIdentity(kalman_filter.processNoiseCov, cv::Scalar::all(0));
-				setIdentity(kalman_filter.measurementNoiseCov, cv::Scalar::all(0));
-				setIdentity(kalman_filter.errorCovPost, cv::Scalar::all(0));
+			inline static void InitKalmanFilter(cv::KalmanFilter &kalman_filter, ofVec3f point_a, ofVec3f point_b) {
+				kalman_filter.transitionMatrix = k_kalman_transition_matrix_init_;
+
+				float *p_post_state = kalman_filter.statePost.ptr<float>(0);
+				// Two segments points
+				p_post_state[0] = point_a.x; p_post_state[1] = point_a.y; p_post_state[2] = point_a.z;
+				p_post_state[3] = point_b.x; p_post_state[4] = point_b.y; p_post_state[5] = point_b.z;
+				// Velocity to 0
+				p_post_state[6] = 0; p_post_state[7] = 0; p_post_state[8] = 0;
+				p_post_state[9] = 0; p_post_state[10] = 0; p_post_state[11] = 0;
+
+				cv::setIdentity(kalman_filter.measurementMatrix);
+				cv::setIdentity(kalman_filter.processNoiseCov, cv::Scalar::all(0.001));
+				cv::setIdentity(kalman_filter.measurementNoiseCov, cv::Scalar::all(0.01));
+				cv::setIdentity(kalman_filter.errorCovPost, cv::Scalar::all(0.1));
 			}
 
-			std::vector<std::pair<Of3dsegment,bool>> segments_; // true: has been updated with measurements, false: pure estimation
-			std::vector<cv::KalmanFilter> kalman_filters_;
+			inline static void UpdateKalmanDeltaTime(cv::KalmanFilter &kalman_filter, float delta_time) {
+				kalman_filter.transitionMatrix.ptr<float>(0)[6] = delta_time;
+				kalman_filter.transitionMatrix.ptr<float>(1)[7] = delta_time;
+				kalman_filter.transitionMatrix.ptr<float>(2)[8] = delta_time;
+				kalman_filter.transitionMatrix.ptr<float>(3)[9] = delta_time;
+				kalman_filter.transitionMatrix.ptr<float>(4)[10] = delta_time;
+				kalman_filter.transitionMatrix.ptr<float>(5)[11] = delta_time;
+			}
 
-			const static cv::Mat kalman_transition_matrix_init_;
+			std::vector<std::pair<Of3dsegment,float>> segments_; // float => lifetime
+			std::vector<cv::KalmanFilter> kalman_filters_;
+			float segments_life_time_;
+
+			const static cv::Mat k_kalman_transition_matrix_init_;
 	};
 
 } // namespace math

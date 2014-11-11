@@ -45,6 +45,8 @@ namespace garment {
 	}
 
 	void InteractiveGarment::UpdateFolds(std::vector<Fold> &new_folds) {
+		folds_ = new_folds;
+		/*
 		float threshold = 0.3;
 		float orientation_weight = 0.7, proximity_weight = 0.3;
 
@@ -93,6 +95,7 @@ namespace garment {
 				}
 			}
 		}
+		*/
 	}
 
 	void InteractiveGarment::FoldsPermutation(const std::vector<Fold> &new_folds, std::pair<std::vector<int>,float> &current_configuration,  const float threshold, int new_fold_idx) {

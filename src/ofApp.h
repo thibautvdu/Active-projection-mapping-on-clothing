@@ -12,6 +12,7 @@
 #include "of_utilities.h"
 #include "kinect3dBlobDetector.h"
 #include "interactive_garment.h"
+#include "ransac_kalman_segments.h"
 
 class ofApp : public ofBaseApp {
 
@@ -75,7 +76,9 @@ class ofApp : public ofBaseApp {
 		// Folds detection
 		ofxFloatSlider fold_deformation_thresh_;
 		ofxFloatSlider fold_deformation_thresh_2_;
+
 		bool askFoldComputation_;
+		garment_augmentation::math::RansacKalman3dSegmentTracker ransac_kalman_tracker_;
 		uchar numFolds_;
 		ofxFloatSlider fold_distance_thresh_;
 		ofxIntSlider fold_points_num_thresh_;

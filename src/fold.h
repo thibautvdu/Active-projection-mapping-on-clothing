@@ -22,6 +22,12 @@ namespace garment {
 				random_col_ = ofColor(ofRandomf() * 255, ofRandomf() * 255, ofRandomf() * 255);
 			}
 
+			inline Fold(const ofVec3f a, const ofVec3f b, ofColor color) : a_pt_(a), b_pt_(b) {
+				flag_ = NEW;
+				life_time_ = k_default_life_time_; // 1 second
+				random_col_ = color;
+			}
+
 			inline void Update() {
 				if (IDLE == flag_) {
 					life_time_ -= static_cast<int>(ofGetLastFrameTime() * 1000);

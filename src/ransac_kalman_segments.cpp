@@ -105,7 +105,7 @@ namespace math {
 		}
 	}
 
-	void RansacKalman3dSegmentTracker::Track3Dsegments(const std::vector<ofVec3f> &point_cloud, const double threshold, const size_t min_inliers_for_valid_segment) {
+	void RansacKalman3dSegmentTracker::Track3Dsegments(const std::vector<ofVec3f> &point_cloud, const double threshold, const size_t min_inliers_for_valid_segment, std::vector<std::pair<Of3dsegment,float>> &out_segments) {
 
 		if (point_cloud.empty())
 			return;
@@ -114,10 +114,15 @@ namespace math {
 		std::vector<int> point_cloud_index_remaining;
 		point_cloud_index_remaining.reserve(point_cloud.size());
 		if (!kalman_filters_.empty()) {
+
 			// Compute the estimate of the segments
 			cv::Mat prediction_mat;
-			std::vector<std::pair<TSegment3D, std::vector<int>>> predictions;
+			std::vector<std::pair<TSegment3D, std::vector<int>>> predictions(kalman_filters_.size());
+			float last_frame_time = ofGetLastFrameTime();
 			for (int i = 0; i < kalman_filters_.size(); ++i) {
+
+				UpdateKalmanDeltaTime(kalman_filters_[i], last_frame_time);
+
 				prediction_mat = kalman_filters_[i].predict();
 				float * p_prediction_mat = prediction_mat.ptr<float>(0);
 				predictions[i].first = TSegment3D(
@@ -131,11 +136,11 @@ namespace math {
 			TPoint3D candidate;
 			for (size_t i = 0; i < point_cloud.size(); ++i)
 			{
-				candidate = TPoint3D(point_cloud[0].x, point_cloud[0].y, point_cloud[0].z);
 				double d_min = std::numeric_limits<double>::infinity();
 				int d_min_segment_idx = -1;
 				for (int j = 0; j < predictions.size(); ++j) {
-					const double d = predictions[i].first.distance(candidate);
+					candidate = TPoint3D(point_cloud[i].x, point_cloud[i].y, point_cloud[i].z);
+					const double d = predictions[j].first.distance(candidate);
 					if (d < threshold && d < d_min) {
 						d_min = d;
 						d_min_segment_idx = j;
@@ -155,21 +160,28 @@ namespace math {
 			for (int i = 0; i < kalman_filters_.size(); ++i) {
 				if (predictions[i].second.size() >= min_inliers_for_valid_segment) {
 					measured_segment = LeastSquareFit(predictions[i].second, point_cloud);
-					measurements = cv::Mat_<float>(6, 1) << 
-						(measured_segment.a().x, measured_segment.a().y, measured_segment.a().z, 
+					measurements = (cv::Mat_<float>(6, 1) << 
+						measured_segment.a().x, measured_segment.a().y, measured_segment.a().z, 
 						measured_segment.b().x, measured_segment.b().y, measured_segment.b().z);
 					prediction_mat = kalman_filters_[i].correct(measurements);
 
 					float * p_prediction_mat = prediction_mat.ptr<float>(0);
 					segments_[i].first = Of3dsegment(p_prediction_mat[0], p_prediction_mat[1], p_prediction_mat[2],
 						p_prediction_mat[3], p_prediction_mat[4], p_prediction_mat[5]);
-					segments_[i].second = true; // Updated with measurements
+					segments_[i].second = segments_life_time_; // Renew the life time
 				}
 				else {
 					segments_[i].first = Of3dsegment(predictions[i].first.point1.x, predictions[i].first.point1.y, predictions[i].first.point1.z,
 						predictions[i].first.point2.x, predictions[i].first.point2.y, predictions[i].first.point2.z);
-					segments_[i].second = false; // Only estimated
+					segments_[i].second -= last_frame_time;
 				}
+			}
+		}
+
+		// Suppress the eventual segments whose life time is expired
+		for (int i = segments_.size() - 1; i >= 0; --i) {
+			if (0 >= segments_[i].second) {
+				SuppressSegment(i);
 			}
 		}
 
@@ -219,9 +231,9 @@ namespace math {
 			{
 				Of3dsegment fitted = LeastSquareFit(this_best_inliers, remaining_points);
 
-				segments_.push_back(std::pair<Of3dsegment, bool>(fitted, true));
+				segments_.push_back(std::pair<Of3dsegment, float>(fitted, segments_life_time_));
 				kalman_filters_.push_back(cv::KalmanFilter(12, 6));
-				InitKalmanFilter(*(kalman_filters_.end()-1));
+				InitKalmanFilter(*(kalman_filters_.end()-1), fitted.a(), fitted.b());
 
 				// Discard the selected points so they are not used again for finding subsequent planes:
 				remaining_points.removeColumns(this_best_inliers);
@@ -231,6 +243,8 @@ namespace math {
 				break; // Do not search for more lines
 			}
 		}
+
+		out_segments = segments_;
 	}
 
 	Of3dsegment RansacKalman3dSegmentTracker::LeastSquareFit(const vector_size_t &best_inliers, const CMatrixDouble &point_cloud) {
@@ -319,8 +333,8 @@ namespace math {
 		return res;
 	}
 
-	const cv::Mat RansacKalman3dSegmentTracker::kalman_transition_matrix_init_ = cv::Mat_<float>(12, 12) <<
-		(1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, // (0,6)  -> dt
+	const cv::Mat RansacKalman3dSegmentTracker::k_kalman_transition_matrix_init_ = (cv::Mat_<float>(12, 12) <<
+		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, // (0,6)  -> dt
 		0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, // (1,7)  -> dt
 		0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, // (2,8)  -> dt
 		0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, // (3,9)  -> dt

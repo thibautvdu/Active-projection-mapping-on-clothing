@@ -8,7 +8,6 @@
 #include "flying_lights.h"
 #include "contour_vector_field.h"
 #include "fold_video_texture.h"
-#include "ransac_lines.h"
 #include "gl_shader.h"
 
 /* CONSTANTS	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
@@ -93,6 +92,7 @@ void ofApp::setup() {
 	blobFinder_.setScale(ofVec3f(toWorldUnits_)); // mm to meters
 
 	// Fold processing
+	ransac_kalman_tracker_.set_segments_life_time(0.2); // life time of the folds
 	askFoldComputation_ = false;
 	numFolds_ = 1;
 
@@ -403,7 +403,7 @@ void ofApp::detectFolds() {
 	int patch_size_range = 2;
 	int max_half_fold_width = (fold_width_ + patch_size_range - 1) / 2;
 
-	for (int y = max_half_fold_width; y < height - max_half_fold_width; y += 1) {
+	for (int y = height/1.5; y < height - max_half_fold_width; y += 1) {
 		int previous_center_x = -1;
 		int previous_patch_size = -1;
 		int previous_center_idx = -1;
@@ -441,13 +441,14 @@ void ofApp::detectFolds() {
 
 	// Compute folds from deformaed areas
 	if (askFoldComputation_) {
-		std::vector<std::pair<size_t, garment_augmentation::math::Of3dsegment> > lines;
-		garment_augmentation::math::RansacDetect3Dsegments(points, fold_distance_thresh_, fold_points_num_thresh_, lines); // threshold : 5cm, minimum points : 10
+		// Run the tracker and retrieve the updated or new segments with their lifetime
+		std::vector<std::pair<garment_augmentation::math::Of3dsegment, float> > tracked_segments;
+		ransac_kalman_tracker_.Track3Dsegments(points, fold_distance_thresh_, fold_points_num_thresh_, tracked_segments); // threshold : 5cm, minimum points : 10
 
-		std::vector<garment_augmentation::garment::Fold> new_folds(lines.size());
-		for (int i = 0; i < lines.size(); ++i) {
+		std::vector<garment_augmentation::garment::Fold> new_folds(tracked_segments.size());
+		for (int i = 0; i < tracked_segments.size(); ++i) {
 			// Update the garment folds
-			new_folds[i] = garment_augmentation::garment::Fold(lines[i].second.a(), lines[i].second.b());
+			new_folds[i] = garment_augmentation::garment::Fold(tracked_segments[i].first.a(), tracked_segments[i].first.b(), ofColor(20*i%255,50*i%255,10*i%255));
 		}
 
 		garment_.UpdateFolds(new_folds);
