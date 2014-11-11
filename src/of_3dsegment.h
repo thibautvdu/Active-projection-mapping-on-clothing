@@ -25,11 +25,11 @@ namespace math {
 				b_ = ofVec3f(b_x, b_y, b_z);
 			}
 
-			inline ofVec3f a() {
+			inline ofVec3f a() const {
 				return a_;
 			}
 
-			inline ofVec3f b() {
+			inline ofVec3f b() const {
 				return b_;
 			}
 

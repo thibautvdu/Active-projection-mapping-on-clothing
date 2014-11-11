@@ -445,13 +445,7 @@ void ofApp::detectFolds() {
 		std::vector<std::pair<garment_augmentation::math::Of3dsegment, float> > tracked_segments;
 		ransac_kalman_tracker_.Track3Dsegments(points, fold_distance_thresh_, fold_points_num_thresh_, tracked_segments); // threshold : 5cm, minimum points : 10
 
-		std::vector<garment_augmentation::garment::Fold> new_folds(tracked_segments.size());
-		for (int i = 0; i < tracked_segments.size(); ++i) {
-			// Update the garment folds
-			new_folds[i] = garment_augmentation::garment::Fold(tracked_segments[i].first.a(), tracked_segments[i].first.b(), ofColor(20*i%255,50*i%255,10*i%255));
-		}
-
-		garment_.UpdateFolds(new_folds);
+		garment_.UpdateFolds(tracked_segments);
 	}
 }
 

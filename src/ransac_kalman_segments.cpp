@@ -110,6 +110,13 @@ namespace math {
 		if (point_cloud.empty())
 			return;
 
+		// Suppress the eventual segments whose life time is expired
+		for (int i = segments_.size() - 1; i >= 0; --i) {
+			if (0 >= segments_[i].second) {
+				SuppressSegment(i);
+			}
+		}
+
 		// Update the current segments with kalman filter
 		std::vector<int> point_cloud_index_remaining;
 		point_cloud_index_remaining.reserve(point_cloud.size());
@@ -175,13 +182,6 @@ namespace math {
 						predictions[i].first.point2.x, predictions[i].first.point2.y, predictions[i].first.point2.z);
 					segments_[i].second -= last_frame_time;
 				}
-			}
-		}
-
-		// Suppress the eventual segments whose life time is expired
-		for (int i = segments_.size() - 1; i >= 0; --i) {
-			if (0 >= segments_[i].second) {
-				SuppressSegment(i);
 			}
 		}
 

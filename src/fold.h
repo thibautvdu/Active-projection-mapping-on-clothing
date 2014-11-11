@@ -3,52 +3,44 @@
 
 #include "ofMain.h"
 
+#include "of_3dsegment.h"
+
 namespace garment_augmentation {
 namespace garment {
 
 	class Fold {
 		public:
-			enum foldState { IDLE = 0, NEW = 1, UPDATED = 2, TO_SUPPRESS = 3};
+			enum foldState { IDLE = 0, NEW = 1, UPDATED = 2, TO_SUPPRESS = 3 };
 
 			inline Fold() {
 				flag_ = NEW;
-				life_time_ = k_default_life_time_; // 1 second
 				random_col_ = ofColor(ofRandomf() * 255, ofRandomf() * 255, ofRandomf() * 255);
 			}
 
 			inline Fold(const ofVec3f a, const ofVec3f b) : a_pt_(a), b_pt_(b) {
 				flag_ = NEW;
-				life_time_ = k_default_life_time_; // 1 second
+				random_col_ = ofColor(ofRandomf() * 255, ofRandomf() * 255, ofRandomf() * 255);
+			}
+
+			inline Fold(const math::Of3dsegment &segment) : a_pt_(segment.a()), b_pt_(segment.b()) {
+				flag_ = NEW;
 				random_col_ = ofColor(ofRandomf() * 255, ofRandomf() * 255, ofRandomf() * 255);
 			}
 
 			inline Fold(const ofVec3f a, const ofVec3f b, ofColor color) : a_pt_(a), b_pt_(b) {
 				flag_ = NEW;
-				life_time_ = k_default_life_time_; // 1 second
 				random_col_ = color;
 			}
 
-			inline void Update() {
-				if (IDLE == flag_) {
-					life_time_ -= static_cast<int>(ofGetLastFrameTime() * 1000);
-				}
-				else if (UPDATED == flag_) {
-					life_time_ = k_default_life_time_;
-				}
-
-				if (life_time_ <= 0)
-					flag_ = TO_SUPPRESS;
-				else
-					flag_ = IDLE;
+			inline void UpdatePosition(const Fold &new_measure) {
+				a_pt_ = new_measure.a_pt_;
+				b_pt_ = new_measure.b_pt_;
+				flag_ = UPDATED;
 			}
 
-			inline void UpdatePosition(const Fold &new_measure) {
-				int elapsed_time = static_cast<int>(ofGetLastFrameTime() * 1000);
-				if (elapsed_time > k_update_time_)
-					elapsed_time = k_update_time_;
-
-				a_pt_ = a_pt_ * (k_update_time_ - elapsed_time) / k_update_time_ + elapsed_time * new_measure.a_pt_ / k_update_time_;
-				b_pt_ = b_pt_ * (k_update_time_ - elapsed_time) / k_update_time_ + elapsed_time * new_measure.b_pt_ / k_update_time_;
+			inline void UpdatePosition(const math::Of3dsegment &new_measure) {
+				a_pt_ = new_measure.a();
+				b_pt_ = new_measure.b();
 				flag_ = UPDATED;
 			}
 
@@ -86,6 +78,10 @@ namespace garment {
 				return flag_;
 			}
 
+			inline void set_flag(enum foldState state) {
+				flag_ = state;
+			}
+
 			std::vector<std::pair<int, float>> closests_;
 
 		private:
@@ -95,7 +91,6 @@ namespace garment {
 			ofVec3f a_pt_;
 			ofVec3f b_pt_;
 			enum foldState flag_;
-			int life_time_;
 			ofColor random_col_;
 	};
 

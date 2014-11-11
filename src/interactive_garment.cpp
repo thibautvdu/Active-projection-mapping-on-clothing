@@ -45,8 +45,6 @@ namespace garment {
 	}
 
 	void InteractiveGarment::UpdateFolds(std::vector<Fold> &new_folds) {
-		folds_ = new_folds;
-		/*
 		float threshold = 0.3;
 		float orientation_weight = 0.7, proximity_weight = 0.3;
 
@@ -88,14 +86,38 @@ namespace garment {
 				}
 			}
 			for (int i = 0; i < folds_.size(); ++i) {
-				folds_[i].Update();
+				//folds_[i].Update();
 				if (folds_[i].flag() == Fold::TO_SUPPRESS) {
 					folds_.erase(folds_.begin() + i);
 					--i;
 				}
 			}
 		}
-		*/
+	}
+
+	void InteractiveGarment::UpdateFolds(const std::vector<std::pair<math::Of3dsegment, float>> &folds_update) {
+		// Update existing folds
+		for (int i = folds_.size() - 1; i >= 0; --i) {
+			if (0 >= folds_update[i].second) {
+				folds_[i].set_flag(Fold::foldState::TO_SUPPRESS);
+			}
+			else {
+				folds_[i].UpdatePosition(folds_update[i].first);
+			}
+		}
+
+		// Create new folds
+		int first_new_fold_idx = folds_.size();
+		for (int i = first_new_fold_idx; i < folds_update.size(); ++i) {
+			folds_.push_back(Fold(folds_update[i].first));
+		}
+
+		// Suppress the flaged folds
+		for (int i = folds_.size() - 1; i >= 0; --i) {
+			if (folds_[i].flag() == Fold::foldState::TO_SUPPRESS) {
+				folds_.erase(folds_.begin() + i);
+			}
+		}
 	}
 
 	void InteractiveGarment::FoldsPermutation(const std::vector<Fold> &new_folds, std::pair<std::vector<int>,float> &current_configuration,  const float threshold, int new_fold_idx) {
