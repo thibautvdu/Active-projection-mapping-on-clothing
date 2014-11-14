@@ -22,7 +22,7 @@ const int ofApp::kinectWidth_ = 640, ofApp::kinectHeight_ = 480;
 
 // KINECT WORLD SPACE	/	/	/	/	/	/	/	/	/	/	/	/
 
-const float ofApp::toWorldUnits_ = 0.001; // mm to meters
+const float ofApp::k_to_world_units_ = 0.001; // mm to meters
 
 // KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -89,7 +89,7 @@ void ofApp::setup() {
 	// Blob finder and tracker
 	blobFinder_.init(&ofxKinect_, kinectWidth_, kinectHeight_); // standarized coordinate system: z in the direction of gravity
 	//blobFinder_.setResolution(garment_augmentation::blob_detection::BF_HIGH_RES);
-	blobFinder_.setScale(ofVec3f(toWorldUnits_)); // mm to meters
+	blobFinder_.setScale(ofVec3f(k_to_world_units_)); // mm to meters
 
 	// Fold processing
 	threaded_deformation_detector_.SetTargetGarment(&garment_);
@@ -128,7 +128,7 @@ void ofApp::setup() {
 	gui_.add(fold_deformation_thresh_2_.setup("deformation thresh 2", 50, 0.00, 100));
 	gui_.add(fold_distance_thresh_.setup("distance thresh", 0.03, 0.01, 0.08));
 	gui_.add(fold_points_num_thresh_.setup("nb points thresh", 7, 5, 20));
-	gui_.add(fold_width_.setup("fold's width",5,3,21));
+	gui_.add(fold_width_.setup("fold's width",0.03,0.0,0.1));
 	gui_.add(deformation_detector_num_threads_.setup("num of threads", 6, 1, 12));
 
 	// Mesh
@@ -305,7 +305,7 @@ void ofApp::draw() {
 
 			ofPushMatrix();
 				ofTranslate(kinectWidth_, kinectHeight_);
-				ofScale(1 / toWorldUnits_, 1 / toWorldUnits_, 1 / toWorldUnits_);
+				ofScale(1 / k_to_world_units_, 1 / k_to_world_units_, 1 / k_to_world_units_);
 				ofTranslate(0, 0, -garment_.blob().maxZ.z - 1);
 				garment_.DrawMesh();
 				garment_.DrawFolds();
@@ -324,7 +324,7 @@ void ofApp::draw() {
 		if (blobFound_) {
 			projectorWindow_.Begin();
 				ofMultMatrix(ofMatrix4x4::getTransposedOf(kinectProjectorToolkit_.getTransformMatrix()));
-				ofScale(1 / toWorldUnits_, 1 / toWorldUnits_, 1 / toWorldUnits_);
+				ofScale(1 / k_to_world_units_, 1 / k_to_world_units_, 1 / k_to_world_units_);
 				//garment_.DrawMesh();
 				garment_.DrawAnimations();
 			projectorWindow_.End();
@@ -390,8 +390,15 @@ void ofApp::meshParameterizationLSCM(const int textureSize, ofMesh& mesh) {
 }
 
 void ofApp::detectFolds() {
+	// Convert the seeked fold width from meters to pixels
+	float meters_per_pixel_horizontal = garment_.blob().massCenter.z * ofxKinect_.HORIZONTAL_FOCAL_LENGTH_INV;
+	int fold_pixels_width = fold_width_ / meters_per_pixel_horizontal;
+	fold_pixels_width /= blobFinder_.getResolution();
+
+	ofLog() << fold_pixels_width;
+
 	threaded_deformation_detector_.SetNumThreads(deformation_detector_num_threads_);
-	std::vector<ofVec3f> points = threaded_deformation_detector_.DetectDeformations(fold_width_, 2, fold_deformation_thresh_);
+	std::vector<ofVec3f> points = threaded_deformation_detector_.DetectDeformations(fold_pixels_width, 2, fold_deformation_thresh_);
 
 	// Compute folds from deformaed areas
 	if (askFoldComputation_) {

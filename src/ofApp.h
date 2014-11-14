@@ -65,7 +65,7 @@ class ofApp : public ofBaseApp {
 		// KINECT WORLD SPACE	/	/	/	/	/	/	/	/	/	/	/	/
 
 		// Scaling
-		static const float toWorldUnits_;
+		static const float k_to_world_units_;
 
 		// Blob finder and tracker
 		garment_augmentation::blob_detection::kinect3dBlobDetector blobFinder_;
@@ -84,7 +84,7 @@ class ofApp : public ofBaseApp {
 		uchar numFolds_;
 		ofxFloatSlider fold_distance_thresh_;
 		ofxIntSlider fold_points_num_thresh_;
-		ofxIntSlider fold_width_;
+		ofxFloatSlider fold_width_;
 		ofxIntSlider deformation_detector_num_threads_;
 
 		// Tracking mesh

@@ -127,8 +127,10 @@ namespace garment {
 		ofVec3f point;
 		delta_depth_ = 0;
 		int nb_points = 0;
-		for (int row = roi_.getTopLeft().y; row < roi_.getBottomRight().y; row++) {
-			for (int col = roi_.getTopLeft().x; col < roi_.getBottomRight().x; col++) {
+		int roi_y_max = roi_.getBottomRight().y;
+		int roi_x_max = roi_.getBottomRight().x;
+		for (int row = roi_.getTopLeft().y; row < roi_y_max; row++) {
+			for (int col = roi_.getTopLeft().x; col < roi_x_max; col++) {
 				if (mesh_2dview[col][row] != -1) {
 
 					// Transform to local coordinate and get the relative depth
