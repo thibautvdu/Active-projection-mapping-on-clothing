@@ -1,11 +1,11 @@
-#include "fold_tracker.h"
+#include "deformation_tracker.h"
 
 #include "of_utilities.h"
 
 namespace garment_augmentation {
 namespace garment {
 
-	std::vector<ofVec3f> FoldTracker::GetPoints() {
+	std::vector<ofVec3f> DeformationTracker::GetPoints() {
 		std::vector<ofVec3f> res;
 
 		const std::vector< std::vector<int> > &mesh2dView = p_garment_->mesh2d_view();
@@ -25,7 +25,7 @@ namespace garment {
 		return res;
 	}
 
-	ofVec3f FoldTracker::GetCenter() {
+	ofVec3f DeformationTracker::GetCenter() {
 		const std::vector< std::vector<int> > &mesh2dView = p_garment_->mesh2d_view();
 		int col = roi_.getTopLeft().x + ((roi_.width - 1) / 2);
 		int row = roi_.getTopLeft().y + ((roi_.height - 1) / 2);
@@ -36,7 +36,7 @@ namespace garment {
 		return ofVec3f(std::numeric_limits<float>::infinity());
 	}
 
-	void FoldTracker::ShapeOn(const int x, const int y) {
+	void DeformationTracker::ShapeOn(const int x, const int y) {
 		roi_.setPosition(x, y);
 		const std::vector< std::vector<int> > &mesh_2dview = p_garment_->mesh2d_view();
 		ofFastMesh &mesh = p_garment_->mesh_ref();
@@ -71,7 +71,7 @@ namespace garment {
 		}
 	}
 
-	void FoldTracker::HalfTubeShaping(float depth) {
+	void DeformationTracker::HalfTubeShaping(float depth) {
 		const int width = roi_.width;
 		const int height = roi_.height;
 		const int half_width = (width-1) / 2;
@@ -84,7 +84,7 @@ namespace garment {
 		}
 	}
 
-	void FoldTracker::ColorFill(ofColor color) {
+	void DeformationTracker::ColorFill(ofColor color) {
 		const std::vector< std::vector<int> > &mesh2dView = p_garment_->mesh2d_view();
 
 		for (int row = roi_.getTopLeft().y; row < roi_.getBottomRight().y; row++) {
@@ -96,7 +96,7 @@ namespace garment {
 		}
 	}
 
-	void FoldTracker::ComputeDeltaDepth() {
+	void DeformationTracker::ComputeDeltaDepth() {
 		const std::vector< std::vector<int> > &mesh_2dview = p_garment_->mesh2d_view();
 		ofFastMesh &mesh = p_garment_->mesh_ref();
 
@@ -141,7 +141,7 @@ namespace garment {
 		delta_depth_ /= nb_points;
 	}
 
-	void FoldTracker::ComputeDissimilarity() {
+	void DeformationTracker::ComputeDissimilarity() {
 		const std::vector< std::vector<int> > &mesh_2dview = p_garment_->mesh2d_view();
 		ofFastMesh &mesh = p_garment_->mesh_ref();
 
@@ -179,7 +179,7 @@ namespace garment {
 		dissimilarity_ /= nb_points;
 	}
 
-	void FoldTracker::ComputeDeltaDepthGaussian() {
+	void DeformationTracker::ComputeDeltaDepthGaussian() {
 		float m_area = 0;
 		float m_unfoldedArea = 0;
 
@@ -239,7 +239,7 @@ namespace garment {
 		delta_depth_gaussian_ = (m_area - m_unfoldedArea) * 100 / m_unfoldedArea;
 	}
 
-	bool FoldTracker::IsInsideMesh() {
+	bool DeformationTracker::IsInsideMesh() {
 		const std::vector< std::vector<int> > &mesh2dView = p_garment_->mesh2d_view();
 
 		return mesh2dView[roi_.getTopLeft().x][roi_.getTopLeft().y] != -1 &&
@@ -248,8 +248,8 @@ namespace garment {
 			mesh2dView[roi_.getBottomRight().x][roi_.getBottomRight().y] != -1;
 	}
 
-	std::vector<float> FoldTracker::gaussian_values_;
-	void FoldTracker::ComputeGaussianDist(float sigma) {
+	std::vector<float> DeformationTracker::gaussian_values_;
+	void DeformationTracker::ComputeGaussianDist(float sigma) {
 		if (gaussian_values_.size() == 0) {
 			gaussian_values_.resize(100);
 

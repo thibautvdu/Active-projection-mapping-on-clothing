@@ -135,11 +135,21 @@ namespace blob_detection {
 				if ((blobVol >= minVol) && (blobVol <= maxVol)) {
 					ofVec3f newMassCenter = ofVec3f(0.0f, 0.0f, 0.0f);
 					Simple3dblob* newBlob = new Simple3dblob();
+					newBlob->bounding_box_2d.x = width;
+					newBlob->bounding_box_2d.y = height;
+					newBlob->bounding_box_2d.width = 0;
+					newBlob->bounding_box_2d.height = 0;
 
 					for (int i = 0; i < lastQueued; i++) {
 						m_pointCloud[queue[i]].flag_ = numBlobs;
 						newMassCenter += m_pointCloud[queue[i]].pos_;//*pointWeight;
+						newBlob->bounding_box_2d.x = std::min(static_cast<int>(newBlob->bounding_box_2d.x), queue[i] % width);
+						newBlob->bounding_box_2d.y = std::min(static_cast<int>(newBlob->bounding_box_2d.y), queue[i] / width);
+						newBlob->bounding_box_2d.width = std::max(static_cast<int>(newBlob->bounding_box_2d.width), queue[i] % width);
+						newBlob->bounding_box_2d.height = std::max(static_cast<int>(newBlob->bounding_box_2d.height), queue[i] / width);
 					}
+					newBlob->bounding_box_2d.width -= newBlob->bounding_box_2d.x;
+					newBlob->bounding_box_2d.height -= newBlob->bounding_box_2d.y;
 
 					newBlob->boundingBoxMin = ofPoint(minX, minY, minZ);
 					newBlob->boundingBoxMax = ofPoint(maxX, maxY, maxZ);

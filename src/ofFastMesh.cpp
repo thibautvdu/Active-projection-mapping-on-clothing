@@ -13,7 +13,7 @@ void ofFastMesh::resize(const int size) {
 	this->colors.resize(size);
 	bVertsChanged = true;
 	bColorsChanged = true;
-	bFacesDirty = true;
+	//bFacesDirty = true;
 }
 
 void ofFastMesh::computeNormals(const bool bNormalize){

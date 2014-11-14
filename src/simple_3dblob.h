@@ -12,6 +12,7 @@ namespace garment_augmentation {
 		ofVec3f minX, minY, minZ; // points with minimum x / y / z
 		ofVec3f maxX, maxY, maxZ; // points with maximum x / y / z
 		ofVec3f boundingBoxMax, boundingBoxMin; // min bounding xyz
+		ofRectangle bounding_box_2d;
 		ofVec3f dimensions; //dimensions
 		ofVec3f massCenter;
 		float volume; // volume

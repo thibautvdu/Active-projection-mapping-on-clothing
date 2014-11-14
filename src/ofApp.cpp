@@ -4,10 +4,10 @@
 
 #include "cv_helper.h"
 #include "lscm.h"
-#include "fold_tracker.h"
+#include "deformation_tracker.h"
 #include "flying_lights.h"
 #include "contour_vector_field.h"
-#include "fold_video_texture.h"
+//#include "fold_video_texture.h"
 #include "gl_shader.h"
 
 /* CONSTANTS	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
@@ -62,7 +62,7 @@ void ofApp::setup() {
 	// OPEN GL	/	/	/	/	/	/	/	/	/	/	/	/	/	/
 
 	ofDisableAlphaBlending();
-	ofSetFrameRate(30);
+	ofSetFrameRate(50);
 
 	// OPEN GL	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -92,6 +92,7 @@ void ofApp::setup() {
 	blobFinder_.setScale(ofVec3f(toWorldUnits_)); // mm to meters
 
 	// Fold processing
+	threaded_deformation_detector_.SetTargetGarment(&garment_);
 	ransac_kalman_tracker_.set_segments_life_time(0.2); // life time of the folds
 	askFoldComputation_ = false;
 	numFolds_ = 1;
@@ -101,7 +102,7 @@ void ofApp::setup() {
 	//garment_.AddAnimation(std::move(lightsEffect));
 	std::unique_ptr<garment_augmentation::garment::Animation> contourEffect(new garment_augmentation::garment::ContourVectorField());
 	//garment_.AddAnimation(std::move(contourEffect));
-	std::unique_ptr<garment_augmentation::garment::Animation> videoEffect(new garment_augmentation::garment::FoldVideoTexture("videos/halluc_edit.mp4"));
+	//std::unique_ptr<garment_augmentation::garment::Animation> videoEffect(new garment_augmentation::garment::FoldVideoTexture("videos/halluc_edit.mp4"));
 	//garment_.AddAnimation(std::move(videoEffect));
 
 	// Mesh
@@ -128,6 +129,7 @@ void ofApp::setup() {
 	gui_.add(fold_distance_thresh_.setup("distance thresh", 0.03, 0.01, 0.08));
 	gui_.add(fold_points_num_thresh_.setup("nb points thresh", 7, 5, 20));
 	gui_.add(fold_width_.setup("fold's width",5,3,21));
+	gui_.add(deformation_detector_num_threads_.setup("num of threads", 6, 1, 12));
 
 	// Mesh
 	//m_gui.add(m_adaptationRate.setup("adaptation rate", 2, 0, 10));
@@ -314,10 +316,6 @@ void ofApp::draw() {
 				easyCam_.end();
 		}
 
-		// GUI
-		fpsGui_.setup(std::string("fps : ") + std::to_string(ofGetFrameRate()));
-		gui_.draw();
-
 		// COMPUTER SCREEN	-	-	-	-	-	-	-	-	-	-	-	-	-
 
 		 
@@ -334,6 +332,10 @@ void ofApp::draw() {
 
 		// PROJECTOR SCREEN	-	-	-	-	-	-	-	-	-	-	-	-	-
 	}
+
+	// GUI
+	fpsGui_.setup(std::string("fps : ") + std::to_string(ofGetFrameRate()));
+	gui_.draw();
 }
 
 /* OF ROUTINES	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
@@ -388,56 +390,8 @@ void ofApp::meshParameterizationLSCM(const int textureSize, ofMesh& mesh) {
 }
 
 void ofApp::detectFolds() {
-
-	// Detect deformed areas
-	int width = kinectWidth_ / blobFinder_.getResolution();
-	int height = kinectHeight_ / blobFinder_.getResolution();
-
-	garment_augmentation::garment::FoldTracker tracker(&garment_, ofRectangle(0, 0, 0, 0));
-	std::vector<ofVec3f> points;
-	std::vector<std::pair<int, int>> points_coords;
-
-	if (fold_width_ % 2 == 0)
-		fold_width_ =  fold_width_ + 1;
-
-	int patch_size_range = 2;
-	int max_half_fold_width = (fold_width_ + patch_size_range - 1) / 2;
-
-	for (int y = height/1.5; y < height - max_half_fold_width; y += 1) {
-		int previous_center_x = -1;
-		int previous_patch_size = -1;
-		int previous_center_idx = -1;
-		for (int x = max_half_fold_width; x < width - max_half_fold_width; x += 1) {
-			tracker.MoveCenterTo(x, y);
-
-			// Test the location for various patch size
-			bool got_positive_result = false;
-			for (int patch_size = fold_width_ + patch_size_range; patch_size >= fold_width_ && ! got_positive_result; patch_size -= 2) {
-				tracker.Resize(fold_width_, fold_width_);
-
-				if (tracker.IsInsideMesh()) {
-					float foldness = tracker.GetFoldness();
-					if (foldness  > fold_deformation_thresh_) {
-						// Test if the center is not contained in a previous valid patch horizontaly aligned
-						if (previous_center_x != -1 && x - previous_center_x < previous_patch_size ) {
-							// average a new center, incorrect but there is not often more than two patches in the merging
-							points[previous_center_idx] += tracker.GetCenter();
-							points[previous_center_idx] /= 2;
-						}
-						else {
-							previous_center_idx = points.size();
-							points.push_back(tracker.GetCenter());
-						}
-
-						previous_patch_size = patch_size;
-						previous_center_x = x;
-						tracker.ColorFill(ofColor::red);
-						got_positive_result = true;
-					}
-				}
-			}
-		}
-	}
+	threaded_deformation_detector_.SetNumThreads(deformation_detector_num_threads_);
+	std::vector<ofVec3f> points = threaded_deformation_detector_.DetectDeformations(fold_width_, 2, fold_deformation_thresh_);
 
 	// Compute folds from deformaed areas
 	if (askFoldComputation_) {

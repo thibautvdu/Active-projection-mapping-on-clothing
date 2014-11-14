@@ -112,9 +112,6 @@
     <ClCompile Include="src\flying_lights.cpp">
       <Filter>src\garment</Filter>
     </ClCompile>
-    <ClCompile Include="src\fold_tracker.cpp">
-      <Filter>src\garment</Filter>
-    </ClCompile>
     <ClCompile Include="src\interactive_garment.cpp">
       <Filter>src\garment</Filter>
     </ClCompile>
@@ -147,6 +144,12 @@
     </ClCompile>
     <ClCompile Include="src\ransac_kalman_segments.cpp">
       <Filter>src\math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\deformation_tracker.cpp">
+      <Filter>src\garment</Filter>
+    </ClCompile>
+    <ClCompile Include="src\threaded_deformation_detector.cpp">
+      <Filter>src\garment</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1104,9 +1107,6 @@
       <Filter>src\surfaceTracking</Filter>
     </ClInclude>
     <ClInclude Include="src\flying_lights.h">
-      <Filter>src\garment</Filter>
-    </ClInclude>
-    <ClInclude Include="src\fold_tracker.h">
       <Filter>src\garment</Filter>
     </ClInclude>
     <ClInclude Include="src\interactive_garment.h">
@@ -2665,6 +2665,12 @@
     </ClInclude>
     <ClInclude Include="src\ransac_kalman_segments.h">
       <Filter>src\math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\deformation_tracker.h">
+      <Filter>src\garment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\threaded_deformation_detector.h">
+      <Filter>src\garment</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

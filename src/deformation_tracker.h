@@ -6,9 +6,9 @@
 namespace garment_augmentation {
 namespace garment {
 
-	class FoldTracker {
+	class DeformationTracker {
 		public:
-			FoldTracker(InteractiveGarment *garment, const ofRectangle roi) : p_garment_(garment), roi_(roi) {
+			DeformationTracker(InteractiveGarment *garment, const ofRectangle roi) : p_garment_(garment), roi_(roi) {
 				need_computation_ = true;
 				//patch_depth_map_.resize(static_cast<int>(roi_.width), std::vector<float>(static_cast<int>(roi_.height),std::numeric_limits<float>::infinity()));
 			}

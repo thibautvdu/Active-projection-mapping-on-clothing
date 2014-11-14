@@ -11,7 +11,7 @@ namespace garment {
 
 		if (mesh_.getCapacity() != pcW*pcH) {
 			mesh_.reserveCapacity(pcW*pcH);
-			contour_.reserve(pcW*pcH / 10);
+			contour_.reserve(pcW*pcH);
 			mesh2d_view_.resize(pcW, vector<int>(pcH));
 		}
 
