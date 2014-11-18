@@ -4,6 +4,7 @@
 #include "ofMesh.h"
 #include "ofImage.h"
 #include "ofPolyline.h"
+#include "interactive_garment.h"
 #include <Eigen/Sparse>
 #include <Eigen/SparseLU>
 
@@ -23,7 +24,7 @@ namespace surface_tracking {
 			inline ofSemiImplicitActiveMesh() : ofMesh() {
 				mNeedComputation = false;
 
-				mMeshXResolution = mMeshYResolution = 10;
+				mMeshXResolution = mMeshYResolution = 30;
 
 				mGenerated = false;
 				mGenerationAreaThresh = 20;
@@ -114,15 +115,15 @@ namespace surface_tracking {
 			}
 
 			// INITIALIZATION
-			void generateMesh(const blob_detection::kinect3dBlobDetector &detector, const Simple3dblob &blob);
+			void generateMesh(const garment::InteractiveGarment &garment);
 
 			// COMPUTATION
-			void updateMesh(const blob_detection::kinect3dBlobDetector &detector, const Simple3dblob &blob);
+			void updateMesh(const ofxKinectCommonBridge &kinect, garment::InteractiveGarment &garment, int mesh_resolution);
 
 		private :
 			// COMPUTATION METHODS
 			void computeSolver();
-			int intersectionArea(const ofPolyline& contour1, const ofPolyline& contour2);
+			float intersectionArea(const ofPolyline& contour1, const ofPolyline& contour2);
 
 			// GENERATION PARAMETERS
 			int mMeshXResolution;

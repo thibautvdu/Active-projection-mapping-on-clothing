@@ -84,7 +84,7 @@ namespace math {
 			int max_group_begin = 0, max_group_size = 1;
 			int temp_group_begin = 0;
 			for (int i = 1; i < inliers.size(); ++i) {
-				if (inliers[i].second - inliers[i - 1].second > 0.2) { // 20cm
+				if (inliers[i].second - inliers[i - 1].second > 0.1) { // 10cm
 					if ((i - 1) - temp_group_begin > max_group_size) {
 						max_group_begin = temp_group_begin;
 						max_group_size = (i - 1) - temp_group_begin;

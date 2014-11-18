@@ -7,25 +7,24 @@ namespace garment_augmentation {
 namespace surface_tracking {
 
 	// INITIALIZATION
-	void ofSemiImplicitActiveMesh::generateMesh(const blob_detection::kinect3dBlobDetector &detector, const Simple3dblob &blob) {
+	void ofSemiImplicitActiveMesh::generateMesh(const garment::InteractiveGarment &garment) {
 		this->clear();
 		this->setMode(OF_PRIMITIVE_TRIANGLES);
 		this->enableIndices();
 
-		int pointCloudWidth = detector.getWidth();
-		int pointCloudHeight = detector.getHeight();
+		float blob_width = garment.blob().boundingBoxMax.x - garment.blob().boundingBoxMin.x;
+		float blob_height = garment.blob().boundingBoxMax.y - garment.blob().boundingBoxMin.y;
 
 		ofFastPolyline blobContour;
-		for (int i = 0; i < blob.contour2d_indices.size(); ++i) {
-			blobContour.addVertex(blob.contour2d_indices[i] % pointCloudWidth, blob.contour2d_indices[i] / pointCloudWidth);
+		const std::vector<ofVec3f> &garment_3d_contour = garment.contour();
+		for (int i = 0; i < garment_3d_contour.size(); ++i) {
+			blobContour.addVertex(garment_3d_contour[i]);
 		}
-
-		const ofRectangle roi = blobContour.getBoundingBox();
 
 		int rows = mMeshYResolution;
 		int columns = mMeshXResolution;
-		float stepY = roi.height / (float)(rows-1);
-		float stepX = roi.width / (float)(columns-1);
+		float stepY = blob_height / (float)(rows-1);
+		float stepX = blob_width / (float)(columns-1);
 
 		int* indicesUsed = new int[rows*columns];
 		int* kHelperMap = new int[rows*columns];
@@ -34,7 +33,7 @@ namespace surface_tracking {
 			for (int col = 0; col < columns; col++) {
 				int index = row*rows + col;
 
-				this->addVertex(ofVec3f(col * stepX + roi.getTopLeft().x, row * stepY + roi.getTopLeft().y, 0));
+				this->addVertex(ofVec3f(col * stepX + garment.blob().boundingBoxMin.x, row * stepY + garment.blob().boundingBoxMin.y, 0));
 				this->addColor(ofColor::blue);
 				indicesUsed[index] = 0;
 				kHelperMap[index] = index;
@@ -145,7 +144,7 @@ namespace surface_tracking {
 		computeSolver();
 
 		// Initialize the depths to an average value
-		m_meshAvgDepth = blob.centroid.z/detector.getScale().z;
+		m_meshAvgDepth = garment.blob().centroid.z;
 
 		for (int i = 0; i < this->getNumVertices(); ++i) {
 			this->setVertex(i, ofVec3f(this->getVertex(i).x, this->getVertex(i).y, m_meshAvgDepth));
@@ -155,8 +154,8 @@ namespace surface_tracking {
 	}
 
 	// Optimize the process with the more little bounding rect
-	int ofSemiImplicitActiveMesh::intersectionArea(const ofPolyline& contour1, const ofPolyline& contour2) {
-		int area = 0;
+	float ofSemiImplicitActiveMesh::intersectionArea(const ofPolyline& contour1, const ofPolyline& contour2) {
+		float area = 0;
 
 		ofRectangle boundingBox1 = contour1.getBoundingBox();
 		ofRectangle boundingBox2 = contour2.getBoundingBox();
@@ -167,10 +166,10 @@ namespace surface_tracking {
 		else
 			roi = boundingBox2;
 
-		for (int y = roi.getTopLeft().y; y < roi.height + roi.getTopLeft().y; ++y){
-			for (int x = roi.getTopLeft().x; x < roi.width + roi.getTopLeft().x; ++x){
+		for (float y = roi.getTopLeft().y; y < roi.height + roi.getTopLeft().y; y += roi.height/10){
+			for (float x = roi.getTopLeft().x; x < roi.width + roi.getTopLeft().x; x += roi.width/10){
 				if (contour1.inside(x, y) && contour2.inside(x, y))
-					area++;
+					area += roi.getArea() / 10;
 			}
 		}
 
@@ -192,42 +191,40 @@ namespace surface_tracking {
 	}
 
 	// COMPUTATION
-	void ofSemiImplicitActiveMesh::updateMesh(const blob_detection::kinect3dBlobDetector &detector, const Simple3dblob &blob) {
+	void ofSemiImplicitActiveMesh::updateMesh(const ofxKinectCommonBridge &kinect, garment::InteractiveGarment &garment, int mesh_resolution) {
 		if (mNeedComputation) {
 			computeSolver();
 		}
 
-		int pointCloudWidth = detector.getWidth();
-		int pointCloudHeight = detector.getHeight();
+		int pointCloudWidth = garment.mesh2d_view().size();
+		int pointCloudHeight = garment.mesh2d_view()[0].size();
 
-		ofFastPolyline blobContour2dDepth;
-		for (int i = 0; i < blob.contour2d_indices.size(); ++i) {
-			blobContour2dDepth.addVertex(blob.contour2d_indices[i] % pointCloudWidth, blob.contour2d_indices[i] / pointCloudWidth, detector.getCloudPoint(blob.contour2d_indices[i]).pos_.z / detector.getScale().z);
+		ofFastPolyline blobContour;
+		const std::vector<ofVec3f> &garment_3d_contour = garment.contour();
+		for (int i = 0; i < garment_3d_contour.size(); ++i) {
+			blobContour.addVertex(garment_3d_contour[i]);
 		}
 
 		// Get closest points for each boundary vertex and construct the mesh contour
-		ofFastPolyline meshDepthContour;
+		ofFastPolyline meshContour;
 		ofVec3f* closestImgPtForce = new ofVec3f[this->getNumVertices()]; // 0 for non boundary vertices
 		unsigned int nearestIdx;
 		for (int i = 0; i < this->getNumVertices(); ++i) { closestImgPtForce[i] = ofVec3f::zero(); }
 		for (int i = 0; i < mMeshBoundaryIndices.size(); ++i) {
-			blobContour2dDepth.getClosestPoint(this->getVertex(mMeshBoundaryIndices[i]), &nearestIdx);
-			if (detector.getCloudPoint(blob.contour2d_indices[nearestIdx]).flag_ == blob.idx)
-				closestImgPtForce[mMeshBoundaryIndices[i]] = blobContour2dDepth[nearestIdx] - this->getVertex(mMeshBoundaryIndices[i]);
-			meshDepthContour.addVertex(this->getVertex(mMeshBoundaryIndices[i]));
+			blobContour.getClosestPoint(this->getVertex(mMeshBoundaryIndices[i]), &nearestIdx);
+			closestImgPtForce[mMeshBoundaryIndices[i]] = blobContour[nearestIdx] - this->getVertex(mMeshBoundaryIndices[i]);
+			meshContour.addVertex(this->getVertex(mMeshBoundaryIndices[i]));
 		}
-		meshDepthContour.close();
+		meshContour.close();
 
 		// Closests vertices for every image boundary point
 		ofVec3f nearestPoint;
 		ofVec3f* imgPtToMeshContourForce = new ofVec3f[this->getNumVertices()]; // 0 for non boundary vertices
 		for (int i = 0; i < this->getNumVertices(); ++i) { imgPtToMeshContourForce[i] = ofVec3f::zero(); }
-		for (int i = 0; i < blobContour2dDepth.size(); ++i) {
-			if (detector.getCloudPoint(blob.contour2d_indices[i]).flag_ == blob.idx) {
-				nearestPoint = meshDepthContour.getClosestPoint(blobContour2dDepth[i], &nearestIdx);
-				nearestIdx = mMeshBoundaryIndices[nearestIdx];
-				imgPtToMeshContourForce[nearestIdx] += blobContour2dDepth[i] - nearestPoint;
-			}
+		for (int i = 0; i < blobContour.size(); ++i) {
+			nearestPoint = meshContour.getClosestPoint(blobContour[i], &nearestIdx);
+			nearestIdx = mMeshBoundaryIndices[nearestIdx];
+			imgPtToMeshContourForce[nearestIdx] += blobContour[i] - nearestPoint;
 		}
 
 
@@ -273,8 +270,12 @@ namespace surface_tracking {
 				bZ[i] += mBoundaryWeight*(closestImgPtForce[i].z + imgPtToMeshContourForce[i].z);
 			}
 
-			if (detector.getCloudPoint(static_cast<int>(Y[i]) * pointCloudWidth + X[i]).flag_ == blob.idx) {
-				bZ[i] += mDepthWeight*(static_cast<float>(detector.getCloudPoint(static_cast<int>(Y[i]) * pointCloudWidth + X[i]).pos_.z / detector.getScale().z - this->getVertex(i).z));
+			projectedPoint = kinect.project(ofVec3f(X[i], Y[i], this->getVertex(i).z));
+			projectedPoint /= mesh_resolution; // TO CHANGE
+			if (static_cast<int>(projectedPoint.x) < garment.mesh2d_view().size() && 
+				static_cast<int>(projectedPoint.y) < garment.mesh2d_view()[0].size() &&
+				garment.mesh2d_view()[projectedPoint.x][projectedPoint.y] != -1) {
+				bZ[i] += mDepthWeight*garment.mesh_ref().getVertex(garment.mesh2d_view()[projectedPoint.x][projectedPoint.y]).z;
 			}
 		}
 

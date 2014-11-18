@@ -14,6 +14,7 @@
 #include "interactive_garment.h"
 #include "ransac_kalman_segments.h"
 #include "threaded_deformation_detector.h"
+#include "ofSemiImplicitActiveMesh.h"
 
 class ofApp : public ofBaseApp {
 
@@ -87,9 +88,13 @@ class ofApp : public ofBaseApp {
 		ofxFloatSlider fold_width_;
 		ofxIntSlider deformation_detector_num_threads_;
 
+		ofxFloatSlider kalman_process_noise_;
+		ofxFloatSlider kalman_measurement_noise_;
+		ofxFloatSlider kalman_post_error_;
+
 		// Tracking mesh
-		//garment_augmentation::ofSemiImplicitActiveMesh m_blobMesh;
-		//ofxFloatSlider m_adaptationRate, m_boundaryWeight, m_depthWeight;
+		garment_augmentation::surface_tracking::ofSemiImplicitActiveMesh active_mesh_;
+		ofxFloatSlider active_mesh_adaptation_rate_, active_mesh_boundary_weight_, active_mesh_depth_weight_;
 
 		// KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -111,6 +116,7 @@ class ofApp : public ofBaseApp {
 		bool askSaveAssets_;
 		bool askBgLearning_;
 		bool askBgExport_;
+		bool askedGeneration_;
 
 		// FPS
 		ofxLabel fpsGui_;

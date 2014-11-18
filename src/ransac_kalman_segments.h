@@ -39,6 +39,14 @@ namespace math {
 				segments_life_time_ = lifetime;
 			}
 
+			void TuneKalmanCovariances(float process_noise, float measurement_noise, float post_error) {
+				for (int i = 0; i < kalman_filters_.size(); ++i) {
+					cv::setIdentity(kalman_filters_[i].processNoiseCov, cv::Scalar::all(process_noise));
+					cv::setIdentity(kalman_filters_[i].measurementNoiseCov, cv::Scalar::all(measurement_noise));
+					cv::setIdentity(kalman_filters_[i].errorCovPost, cv::Scalar::all(post_error));
+				}
+			}
+
 		private :
 			// Segment model function
 			static void SegmentModel(const CMatrixDouble  &all_data, const vector_size_t  &use_indices, std::vector< CMatrixDouble > &fit_models);
@@ -73,9 +81,9 @@ namespace math {
 				p_post_state[9] = 0; p_post_state[10] = 0; p_post_state[11] = 0;
 
 				cv::setIdentity(kalman_filter.measurementMatrix);
-				cv::setIdentity(kalman_filter.processNoiseCov, cv::Scalar::all(0.001));
-				cv::setIdentity(kalman_filter.measurementNoiseCov, cv::Scalar::all(0.01));
-				cv::setIdentity(kalman_filter.errorCovPost, cv::Scalar::all(0.1));
+				cv::setIdentity(kalman_filter.processNoiseCov, cv::Scalar::all(0.0004));
+				cv::setIdentity(kalman_filter.measurementNoiseCov, cv::Scalar::all(0.0009));
+				cv::setIdentity(kalman_filter.errorCovPost, cv::Scalar::all(0.025));
 			}
 
 			inline static void UpdateKalmanDeltaTime(cv::KalmanFilter &kalman_filter, float delta_time) {

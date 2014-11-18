@@ -129,17 +129,21 @@ void ofApp::setup() {
 	gui_.add(fold_distance_thresh_.setup("distance thresh", 0.03, 0.01, 0.08));
 	gui_.add(fold_points_num_thresh_.setup("nb points thresh", 7, 5, 20));
 	gui_.add(fold_width_.setup("fold's width",0.03,0.0,0.1));
+	gui_.add(kalman_process_noise_.setup("process noise cov", 0.0004, 0.0, 0.01));
+	gui_.add(kalman_measurement_noise_.setup("measurement noise cov", 0.0004, 0.0, 0.01));
+	gui_.add(kalman_post_error_.setup("post error cov", 0.0025, 0.0, 0.1));
 	gui_.add(deformation_detector_num_threads_.setup("num of threads", 6, 1, 12));
 
 	// Mesh
-	//m_gui.add(m_adaptationRate.setup("adaptation rate", 2, 0, 10));
-	//m_gui.add(m_boundaryWeight.setup("boundary weight", 0, 0, 4));
-	//m_gui.add(m_depthWeight.setup("depth weight", 2, 0, 4));
+	gui_.add(active_mesh_adaptation_rate_.setup("adaptation rate", 2, 0, 10));
+	gui_.add(active_mesh_boundary_weight_.setup("boundary weight", 0, 0, 4));
+	gui_.add(active_mesh_depth_weight_.setup("depth weight", 2, 0, 4));
 
 	// Keys
 	askPause_ = false;
 	askSaveAssets_ = false;
 	askBgExport_ = false;
+	askedGeneration_ = false;
 
 	// FPS
 	gui_.add(fpsGui_.setup(std::string("fps :")));
@@ -171,9 +175,9 @@ void ofApp::update() {
 	if (askPause_)
 		return;
 
-	//m_blobMesh.setAdaptationRate(m_adaptationRate);
-	//m_blobMesh.setBoundaryWeight(m_boundaryWeight);
-	//m_blobMesh.setDepthWeight(m_depthWeight);
+	active_mesh_.setAdaptationRate(active_mesh_adaptation_rate_);
+	active_mesh_.setBoundaryWeight(active_mesh_boundary_weight_);
+	active_mesh_.setDepthWeight(active_mesh_depth_weight_);
 
 	// EVENTS	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -269,13 +273,13 @@ void ofApp::update() {
 				garment_.Update(blobFinder_, *blobFinder_.blobs[0]);
 				detectFolds();
 				garment_.UpdateAnimations();
-				/*
-				if (!m_blobMesh.isGenerated()) {
-					m_blobMesh.generateMesh(m_blobFinder, *m_modelBlob);
+
+				if (!active_mesh_.isGenerated() && askedGeneration_) {
+					active_mesh_.generateMesh(garment_);
 				}
-				else {
-					m_blobMesh.updateMesh(m_blobFinder, *m_modelBlob);
-				}*/
+				else if (askedGeneration_){
+					active_mesh_.updateMesh(ofxKinect_, garment_, blobFinder_.getResolution());
+				}
 			}
 		}
 	}
@@ -307,9 +311,10 @@ void ofApp::draw() {
 				ofTranslate(kinectWidth_, kinectHeight_);
 				ofScale(1 / k_to_world_units_, 1 / k_to_world_units_, 1 / k_to_world_units_);
 				ofTranslate(0, 0, -garment_.blob().maxZ.z - 1);
-				garment_.DrawMesh();
-				garment_.DrawFolds();
-				garment_.DrawAnimations();
+				//garment_.DrawMesh();
+				//garment_.DrawFolds();
+				//garment_.DrawAnimations();
+				active_mesh_.drawWireframe();
 			ofPopMatrix();
 
 			if (askPause_)
@@ -364,6 +369,9 @@ void ofApp::keyPressed(int key) {
 	else if (key == 'c') {
 		askFoldComputation_ = true;
 	}
+	else if (key == 'g') {
+		askedGeneration_ = true;
+	}
 }
 
 /* OF ROUTINES	-	-	-	-	-	-	-	-	-	-	-	-	-	*/
@@ -395,13 +403,14 @@ void ofApp::detectFolds() {
 	int fold_pixels_width = fold_width_ / meters_per_pixel_horizontal;
 	fold_pixels_width /= blobFinder_.getResolution();
 
-	ofLog() << fold_pixels_width;
-
 	threaded_deformation_detector_.SetNumThreads(deformation_detector_num_threads_);
 	std::vector<ofVec3f> points = threaded_deformation_detector_.DetectDeformations(fold_pixels_width, 2, fold_deformation_thresh_);
 
 	// Compute folds from deformaed areas
 	if (askFoldComputation_) {
+		// Tune the kalman parameters
+		ransac_kalman_tracker_.TuneKalmanCovariances(kalman_process_noise_, kalman_measurement_noise_,kalman_post_error_);
+
 		// Run the tracker and retrieve the updated or new segments with their lifetime
 		std::vector<std::pair<garment_augmentation::math::Of3dsegment, float> > tracked_segments;
 		ransac_kalman_tracker_.Track3Dsegments(points, fold_distance_thresh_, fold_points_num_thresh_, tracked_segments); // threshold : 5cm, minimum points : 10

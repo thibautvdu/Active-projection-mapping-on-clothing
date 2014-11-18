@@ -179,8 +179,10 @@ namespace blob_detection {
 					cv::findContours(test_mat, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 					for (int c = 0; c < contours.size(); ++c) {
 						for (int cc = 0; cc < contours[c].size(); ++cc) {
-							if (m_pointCloud[contours[c][cc].y * width + contours[c][cc].x].flag_ == numBlobs)
+							if (m_pointCloud[contours[c][cc].y * width + contours[c][cc].x].flag_ == numBlobs) {
 								m_pointCloud[contours[c][cc].y * width + contours[c][cc].x].boundary_ = true;
+								//newBlob->contour2d_indices.push_back(contours[c][cc].y * width + contours[c][cc].x);
+							}
 						}
 					}
 

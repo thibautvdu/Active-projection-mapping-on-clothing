@@ -69,6 +69,10 @@ namespace garment {
 					}
 			}
 
+			const std::vector<ofVec3f> &contour() const {
+				return contour_;
+			}
+
 		private :
 			template <typename P_TYPE_A, typename P_TYPE_B>
 			static bool ComparePairSecond(const std::pair<P_TYPE_A, P_TYPE_B> a, const std::pair<P_TYPE_A, P_TYPE_B> b);
