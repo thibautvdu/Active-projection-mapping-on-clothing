@@ -275,7 +275,7 @@ namespace surface_tracking {
 			if (static_cast<int>(projectedPoint.x) < garment.mesh2d_view().size() && 
 				static_cast<int>(projectedPoint.y) < garment.mesh2d_view()[0].size() &&
 				garment.mesh2d_view()[projectedPoint.x][projectedPoint.y] != -1) {
-				bZ[i] += mDepthWeight*garment.mesh_ref().getVertex(garment.mesh2d_view()[projectedPoint.x][projectedPoint.y]).z;
+				bZ[i] += mDepthWeight*(garment.mesh_ref().getVertex(garment.mesh2d_view()[projectedPoint.x][projectedPoint.y]).z + garment.blob().massCenter.z - this->getVertex(i).z);
 			}
 		}
 
