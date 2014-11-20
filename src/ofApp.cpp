@@ -135,9 +135,9 @@ void ofApp::setup() {
 	gui_.add(deformation_detector_num_threads_.setup("num of threads", 6, 1, 12));
 
 	// Mesh
-	gui_.add(active_mesh_adaptation_rate_.setup("adaptation rate", 2, 0, 10));
-	gui_.add(active_mesh_boundary_weight_.setup("boundary weight", 0, 0, 4));
-	gui_.add(active_mesh_depth_weight_.setup("depth weight", 2, 0, 4));
+	//gui_.add(active_mesh_adaptation_rate_.setup("adaptation rate", 2, 0, 10));
+	//gui_.add(active_mesh_boundary_weight_.setup("boundary weight", 0, 0, 4));
+	//gui_.add(active_mesh_depth_weight_.setup("depth weight", 2, 0, 4));
 
 	// Keys
 	askPause_ = false;
@@ -175,9 +175,9 @@ void ofApp::update() {
 	if (askPause_)
 		return;
 
-	active_mesh_.setAdaptationRate(active_mesh_adaptation_rate_);
-	active_mesh_.setBoundaryWeight(active_mesh_boundary_weight_);
-	active_mesh_.setDepthWeight(active_mesh_depth_weight_);
+	//active_mesh_.setAdaptationRate(active_mesh_adaptation_rate_);
+	//active_mesh_.setBoundaryWeight(active_mesh_boundary_weight_);
+	//active_mesh_.setDepthWeight(active_mesh_depth_weight_);
 
 	// EVENTS	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -274,12 +274,12 @@ void ofApp::update() {
 				detectFolds();
 				garment_.UpdateAnimations();
 
-				if (!active_mesh_.isGenerated() && askedGeneration_) {
+				/*if (!active_mesh_.isGenerated() && askedGeneration_) {
 					active_mesh_.generateMesh(garment_);
 				}
 				else if (askedGeneration_){
 					active_mesh_.updateMesh(ofxKinect_, garment_, blobFinder_.getResolution());
-				}
+				}*/
 			}
 		}
 	}
@@ -311,10 +311,10 @@ void ofApp::draw() {
 				ofTranslate(kinectWidth_, kinectHeight_);
 				ofScale(1 / k_to_world_units_, 1 / k_to_world_units_, 1 / k_to_world_units_);
 				ofTranslate(0, 0, -garment_.blob().maxZ.z - 1);
-				//garment_.DrawMesh();
-				//garment_.DrawFolds();
-				//garment_.DrawAnimations();
-				active_mesh_.drawWireframe();
+				garment_.DrawMesh();
+				garment_.DrawFolds();
+				garment_.DrawAnimations();
+				//active_mesh_.drawWireframe();
 			ofPopMatrix();
 
 			if (askPause_)
