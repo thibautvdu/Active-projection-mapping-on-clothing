@@ -2672,6 +2672,9 @@
     <ClInclude Include="src\threaded_deformation_detector.h">
       <Filter>src\garment</Filter>
     </ClInclude>
+    <ClInclude Include="src\of_3dsegment_orientation.h">
+      <Filter>src\math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

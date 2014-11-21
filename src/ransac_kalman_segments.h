@@ -9,7 +9,7 @@
 #include <Eigen/SVD>
 #include "ofxCv.h"
 
-#include "of_3dsegment.h"
+#include "of_3dsegment_orientation.h"
 
 using mrpt::vector_size_t;
 using mrpt::math::CMatrixDouble;
@@ -23,7 +23,7 @@ namespace math {
 			RansacKalman3dSegmentTracker() : segments_life_time_(1) {}
 			RansacKalman3dSegmentTracker(const float segments_life_time) : segments_life_time_(segments_life_time) {}
 
-			void Track3Dsegments(const std::vector<ofVec3f> &point_cloud, const double threshold, const size_t min_inliers_for_valid_line, std::vector<std::pair<Of3dsegment, float>> &out_segments);
+			void Track3Dsegments(const std::vector<ofVec3f> &point_cloud, const double threshold, const size_t min_inliers_for_valid_line, std::vector<std::pair<Of3dsegmentOrientation, float>> &out_segments);
 
 			inline void SuppressSegment(int idx) {
 				if (segments_.size() <= idx) {
@@ -66,19 +66,23 @@ namespace math {
 				return a.second < b.second;
 			}
 
-			static Of3dsegment LeastSquareFit(const vector_size_t &best_inliers, const CMatrixDouble &point_cloud);
-			static Of3dsegment LeastSquareFit(const std::vector<int> &best_inliers, const std::vector<ofVec3f> &point_cloud);
+			static Of3dsegmentOrientation LeastSquareFit(const vector_size_t &best_inliers, const CMatrixDouble &point_cloud);
+			static Of3dsegmentOrientation LeastSquareFit(const std::vector<int> &best_inliers, const std::vector<ofVec3f> &point_cloud);
 
-			inline static void InitKalmanFilter(cv::KalmanFilter &kalman_filter, ofVec3f point_a, ofVec3f point_b) {
+			inline static void InitKalmanFilter(cv::KalmanFilter &kalman_filter, Of3dsegmentOrientation segment) {
 				kalman_filter.transitionMatrix = k_kalman_transition_matrix_init_;
 
 				float *p_post_state = kalman_filter.statePost.ptr<float>(0);
-				// Two segments points
-				p_post_state[0] = point_a.x; p_post_state[1] = point_a.y; p_post_state[2] = point_a.z;
-				p_post_state[3] = point_b.x; p_post_state[4] = point_b.y; p_post_state[5] = point_b.z;
-				// Velocity to 0
-				p_post_state[6] = 0; p_post_state[7] = 0; p_post_state[8] = 0;
-				p_post_state[9] = 0; p_post_state[10] = 0; p_post_state[11] = 0;
+				// Orientation
+				p_post_state[0] = segment.orientation().x; p_post_state[1] = segment.orientation().y; p_post_state[2] = segment.orientation().z;
+				// Center
+				p_post_state[3] = segment.center().x; p_post_state[4] = segment.center().y; p_post_state[5] = segment.center().z;
+				// Orientation
+				p_post_state[6] = segment.length();
+				// Orientation velocity
+				p_post_state[7] = 0; p_post_state[8] = 0; p_post_state[9] = 0;
+				// Center velocity
+				p_post_state[10] = 0; p_post_state[11] = 0; p_post_state[12] = 0;
 
 				cv::setIdentity(kalman_filter.measurementMatrix);
 				cv::setIdentity(kalman_filter.processNoiseCov, cv::Scalar::all(0.0004));
@@ -87,15 +91,15 @@ namespace math {
 			}
 
 			inline static void UpdateKalmanDeltaTime(cv::KalmanFilter &kalman_filter, float delta_time) {
-				kalman_filter.transitionMatrix.ptr<float>(0)[6] = delta_time;
-				kalman_filter.transitionMatrix.ptr<float>(1)[7] = delta_time;
-				kalman_filter.transitionMatrix.ptr<float>(2)[8] = delta_time;
-				kalman_filter.transitionMatrix.ptr<float>(3)[9] = delta_time;
-				kalman_filter.transitionMatrix.ptr<float>(4)[10] = delta_time;
-				kalman_filter.transitionMatrix.ptr<float>(5)[11] = delta_time;
+				kalman_filter.transitionMatrix.ptr<float>(0)[7] = delta_time;
+				kalman_filter.transitionMatrix.ptr<float>(1)[8] = delta_time;
+				kalman_filter.transitionMatrix.ptr<float>(2)[9] = delta_time;
+				kalman_filter.transitionMatrix.ptr<float>(3)[10] = delta_time;
+				kalman_filter.transitionMatrix.ptr<float>(4)[11] = delta_time;
+				kalman_filter.transitionMatrix.ptr<float>(5)[12] = delta_time;
 			}
 
-			std::vector<std::pair<Of3dsegment,float>> segments_; // float => lifetime
+			std::vector<std::pair<Of3dsegmentOrientation,float>> segments_; // float => lifetime
 			std::vector<cv::KalmanFilter> kalman_filters_;
 			float segments_life_time_;
 

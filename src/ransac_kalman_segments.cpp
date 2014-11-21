@@ -5,6 +5,7 @@ namespace math {
 
 	using mrpt::math::TPoint3D;
 	using mrpt::math::TLine3D;
+	using mrpt::math::TSegment3D;
 	using mrpt::math::CMatrixTemplateNumeric;
 
 	void RansacKalman3dSegmentTracker::SegmentModel(const CMatrixDouble  &all_data, const vector_size_t  &use_indices, std::vector< CMatrixDouble > &fit_models) {
@@ -105,7 +106,7 @@ namespace math {
 		}
 	}
 
-	void RansacKalman3dSegmentTracker::Track3Dsegments(const std::vector<ofVec3f> &point_cloud, const double threshold, const size_t min_inliers_for_valid_segment, std::vector<std::pair<Of3dsegment,float>> &out_segments) {
+	void RansacKalman3dSegmentTracker::Track3Dsegments(const std::vector<ofVec3f> &point_cloud, const double threshold, const size_t min_inliers_for_valid_segment, std::vector<std::pair<Of3dsegmentOrientation,float>> &out_segments) {
 
 		if (point_cloud.empty())
 			return;
@@ -132,10 +133,9 @@ namespace math {
 
 				prediction_mat = kalman_filters_[i].predict();
 				float * p_prediction_mat = prediction_mat.ptr<float>(0);
-				predictions[i].first = TSegment3D(
-					TPoint3D(p_prediction_mat[0], p_prediction_mat[1], p_prediction_mat[2]),
-					TPoint3D(p_prediction_mat[3], p_prediction_mat[4], p_prediction_mat[5])
-					);
+				Of3dsegmentOrientation of_segment(ofVec3f(p_prediction_mat[0], p_prediction_mat[1], p_prediction_mat[2]),
+					ofVec3f(p_prediction_mat[3], p_prediction_mat[4], p_prediction_mat[5]), p_prediction_mat[6]);
+				predictions[i].first = of_segment.ToMrpt3dSegment();
 				predictions[i].second.reserve(20);
 			}
 
@@ -162,24 +162,23 @@ namespace math {
 			}
 
 			// Compute the mesured segments and get their corrected estimate if there are enough points
-			Of3dsegment measured_segment;
+			Of3dsegmentOrientation measured_segment;
 			cv::Mat measurements;
 			for (int i = 0; i < kalman_filters_.size(); ++i) {
 				if (predictions[i].second.size() >= min_inliers_for_valid_segment) {
 					measured_segment = LeastSquareFit(predictions[i].second, point_cloud);
-					measurements = (cv::Mat_<float>(6, 1) << 
-						measured_segment.a().x, measured_segment.a().y, measured_segment.a().z, 
-						measured_segment.b().x, measured_segment.b().y, measured_segment.b().z);
+					measurements = (cv::Mat_<float>(7, 1) << 
+						measured_segment.orientation().x, measured_segment.orientation().y, measured_segment.orientation().z, 
+						measured_segment.center().x, measured_segment.center().y, measured_segment.center().z, measured_segment.length());
 					prediction_mat = kalman_filters_[i].correct(measurements);
 
 					float * p_prediction_mat = prediction_mat.ptr<float>(0);
-					segments_[i].first = Of3dsegment(p_prediction_mat[0], p_prediction_mat[1], p_prediction_mat[2],
-						p_prediction_mat[3], p_prediction_mat[4], p_prediction_mat[5]);
+					segments_[i].first = Of3dsegmentOrientation(ofVec3f(p_prediction_mat[0], p_prediction_mat[1], p_prediction_mat[2]),
+						ofVec3f(p_prediction_mat[3], p_prediction_mat[4], p_prediction_mat[5]), p_prediction_mat[6]);
 					segments_[i].second = segments_life_time_; // Renew the life time
 				}
 				else {
-					segments_[i].first = Of3dsegment(predictions[i].first.point1.x, predictions[i].first.point1.y, predictions[i].first.point1.z,
-						predictions[i].first.point2.x, predictions[i].first.point2.y, predictions[i].first.point2.z);
+					segments_[i].first = Of3dsegmentOrientation(predictions[i].first);
 					segments_[i].second -= last_frame_time;
 				}
 			}
@@ -229,11 +228,11 @@ namespace math {
 			// Is this line good enough?
 			if (this_best_inliers.size() >= min_inliers_for_valid_segment)
 			{
-				Of3dsegment fitted = LeastSquareFit(this_best_inliers, remaining_points);
+				Of3dsegmentOrientation fitted = LeastSquareFit(this_best_inliers, remaining_points);
 
-				segments_.push_back(std::pair<Of3dsegment, float>(fitted, segments_life_time_));
-				kalman_filters_.push_back(cv::KalmanFilter(12, 6));
-				InitKalmanFilter(*(kalman_filters_.end()-1), fitted.a(), fitted.b());
+				segments_.push_back(std::pair<Of3dsegmentOrientation, float>(fitted, segments_life_time_));
+				kalman_filters_.push_back(cv::KalmanFilter(13, 7));
+				InitKalmanFilter(*(kalman_filters_.end()-1), fitted);
 
 				// Discard the selected points so they are not used again for finding subsequent planes:
 				remaining_points.removeColumns(this_best_inliers);
@@ -247,8 +246,8 @@ namespace math {
 		out_segments = segments_;
 	}
 
-	Of3dsegment RansacKalman3dSegmentTracker::LeastSquareFit(const vector_size_t &best_inliers, const CMatrixDouble &point_cloud) {
-		Of3dsegment res;
+	Of3dsegmentOrientation RansacKalman3dSegmentTracker::LeastSquareFit(const vector_size_t &best_inliers, const CMatrixDouble &point_cloud) {
+		Of3dsegmentOrientation res;
 
 		// Fit a line to the inliers
 		Eigen::MatrixX3d matrix_a(best_inliers.size(), 3);
@@ -278,20 +277,18 @@ namespace math {
 		double a_min = a_projection[0];
 
 		Eigen::Vector3d mean = matrix_a.colwise().mean().transpose();
-		Eigen::Vector3d a = mean + a_max * director;
-		Eigen::Vector3d b = mean + a_min * director;
 
-		// Discriminate the points on their y coordinate to get consistant results over time
-		if (a.y() < b.y())
-			res = Of3dsegment(a.x(), a.y(), a.z(), b.x(), b.y(), b.z());
+		// Discriminate direction on y to get consistent results over time
+		if (director.y() < 0)
+			res = Of3dsegmentOrientation(director, mean, (a_max-a_min));
 		else
-			res = Of3dsegment(b.x(), b.y(), b.z(), a.x(), a.y(), a.z());
+			res = Of3dsegmentOrientation(-director, mean, (a_max - a_min));
 
 		return res;
 	}
 
-	Of3dsegment RansacKalman3dSegmentTracker::LeastSquareFit(const std::vector<int> &best_inliers, const std::vector<ofVec3f> &point_cloud) {
-		Of3dsegment res;
+	Of3dsegmentOrientation RansacKalman3dSegmentTracker::LeastSquareFit(const std::vector<int> &best_inliers, const std::vector<ofVec3f> &point_cloud) {
+		Of3dsegmentOrientation res;
 
 		// Fit a line to the inliers
 		Eigen::MatrixX3d matrix_a(best_inliers.size(), 3);
@@ -321,31 +318,31 @@ namespace math {
 		double a_min = a_projection[0];
 
 		Eigen::Vector3d mean = matrix_a.colwise().mean().transpose();
-		Eigen::Vector3d a = mean + a_max * director;
-		Eigen::Vector3d b = mean + a_min * director;
 
 		// Discriminate the points on their y coordinate to get consistant results over time
-		if (a.y() < b.y())
-			res = Of3dsegment(a.x(), a.y(), a.z(), b.x(), b.y(), b.z());
+		// Discriminate direction on y to get consistent results over time
+		if (director.y() < 0)
+			res = Of3dsegmentOrientation(director, mean, (a_max - a_min));
 		else
-			res = Of3dsegment(b.x(), b.y(), b.z(), a.x(), a.y(), a.z());
+			res = Of3dsegmentOrientation(-director, mean, (a_max - a_min));
 
 		return res;
 	}
 
-	const cv::Mat RansacKalman3dSegmentTracker::k_kalman_transition_matrix_init_ = (cv::Mat_<float>(12, 12) <<
-		1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, // (0,6)  -> dt
-		0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, // (1,7)  -> dt
-		0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, // (2,8)  -> dt
-		0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, // (3,9)  -> dt
-		0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, // (4,10) -> dt
-		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, // (5,11) -> dt
-		0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+	const cv::Mat RansacKalman3dSegmentTracker::k_kalman_transition_matrix_init_ = (cv::Mat_<float>(13, 13) <<
+		1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, // (0,7)  -> dt
+		0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, // (1,8)  -> dt
+		0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, // (2,9)  -> dt
+		0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, // (3,10)  -> dt
+		0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, // (4,11) -> dt
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, // (5,12) -> dt
+		0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
 
 } // namespace math
 } // namespace garment_augmentation

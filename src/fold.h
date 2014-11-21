@@ -3,7 +3,7 @@
 
 #include "ofMain.h"
 
-#include "of_3dsegment.h"
+#include "of_3dsegment_orientation.h"
 
 namespace garment_augmentation {
 namespace garment {
@@ -22,7 +22,7 @@ namespace garment {
 				random_col_ = ofColor(ofRandomf() * 255, ofRandomf() * 255, ofRandomf() * 255);
 			}
 
-			inline Fold(const math::Of3dsegment &segment) : a_pt_(segment.a()), b_pt_(segment.b()) {
+			inline Fold(const math::Of3dsegmentOrientation &segment) : a_pt_(segment.a()), b_pt_(segment.b()) {
 				flag_ = NEW;
 				random_col_ = ofColor(ofRandomf() * 255, ofRandomf() * 255, ofRandomf() * 255);
 			}
@@ -38,7 +38,7 @@ namespace garment {
 				flag_ = UPDATED;
 			}
 
-			inline void UpdatePosition(const math::Of3dsegment &new_measure) {
+			inline void UpdatePosition(const math::Of3dsegmentOrientation &new_measure) {
 				a_pt_ = new_measure.a();
 				b_pt_ = new_measure.b();
 				flag_ = UPDATED;

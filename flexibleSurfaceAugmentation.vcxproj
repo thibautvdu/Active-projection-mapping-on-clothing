@@ -753,6 +753,7 @@ xcopy /e /i /y "$(ProjectDir)libs\MRPT_base\libs\*.dll" "$(ProjectDir)bin"</Comm
     <ClInclude Include="src\fold_video_texture.h" />
     <ClInclude Include="src\gl_shader.h" />
     <ClInclude Include="src\of_3dsegment.h" />
+    <ClInclude Include="src\of_3dsegment_orientation.h" />
     <ClInclude Include="src\ransac_kalman_segments.h" />
     <ClInclude Include="src\ransac_lines.h" />
     <ClInclude Include="src\simple_3dblob.h" />

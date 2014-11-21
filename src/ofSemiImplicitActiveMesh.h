@@ -24,7 +24,7 @@ namespace surface_tracking {
 			inline ofSemiImplicitActiveMesh() : ofMesh() {
 				mNeedComputation = false;
 
-				mMeshXResolution = mMeshYResolution = 30;
+				mMeshXResolution = mMeshYResolution = 150;
 
 				mGenerated = false;
 				mGenerationAreaThresh = 20;

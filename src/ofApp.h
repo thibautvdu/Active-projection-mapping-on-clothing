@@ -60,6 +60,10 @@ class ofApp : public ofBaseApp {
 		ofImage bgMask_;
 		cv::Mat cvBgMask_;
 
+		// Smoothing
+		ofxIntSlider gaussian_size_;
+		ofxFloatSlider gaussian_sigma_;
+
 		// KINECT SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
 

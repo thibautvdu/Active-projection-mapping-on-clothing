@@ -26,7 +26,7 @@ namespace garment {
 			void Update(const blob_detection::kinect3dBlobDetector &detector, const Simple3dblob blob);
 
 			void UpdateFolds(std::vector<Fold> &folds);
-			void UpdateFolds(const std::vector<std::pair<math::Of3dsegment,float>> &folds);
+			void UpdateFolds(const std::vector<std::pair<math::Of3dsegmentOrientation,float>> &folds);
 
 			inline void DrawMesh() { 
 				ofPushMatrix();

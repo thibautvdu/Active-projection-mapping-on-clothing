@@ -88,12 +88,12 @@ void ofApp::setup() {
 
 	// Blob finder and tracker
 	blobFinder_.init(&ofxKinect_, kinectWidth_, kinectHeight_); // standarized coordinate system: z in the direction of gravity
-	//blobFinder_.setResolution(garment_augmentation::blob_detection::BF_HIGH_RES);
+	blobFinder_.setResolution(garment_augmentation::blob_detection::BF_HIGH_RES);
 	blobFinder_.setScale(ofVec3f(k_to_world_units_)); // mm to meters
 
 	// Fold processing
 	threaded_deformation_detector_.SetTargetGarment(&garment_);
-	ransac_kalman_tracker_.set_segments_life_time(0.2); // life time of the folds
+	ransac_kalman_tracker_.set_segments_life_time(0.5); // life time of the folds
 	askFoldComputation_ = false;
 	numFolds_ = 1;
 
@@ -104,9 +104,6 @@ void ofApp::setup() {
 	//garment_.AddAnimation(std::move(contourEffect));
 	//std::unique_ptr<garment_augmentation::garment::Animation> videoEffect(new garment_augmentation::garment::FoldVideoTexture("videos/halluc_edit.mp4"));
 	//garment_.AddAnimation(std::move(videoEffect));
-
-	// Mesh
-	//m_blobMesh = garment_augmentation::ofSemiImplicitActiveMesh(20, 20);
 
 	// KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-
 
@@ -123,15 +120,18 @@ void ofApp::setup() {
 	gui_.setup();
 	gui_.add(new ofxLabel(std::string("BACKGROUND LEARNING")));
 	gui_.add(bgLearningCycleGui_.setup("nb iterations", 10, 1, 50));
+	gui_.add(new ofxLabel(std::string("GAUSSIAN SMOOTHING")));
+	gui_.add(gaussian_size_.setup("size", 0, 3, 9));
+	gui_.add(gaussian_sigma_.setup("sigma", 0, 0, 3));
 	gui_.add(new ofxLabel(std::string("FOLD DETECTION")));
-	gui_.add(fold_deformation_thresh_.setup("deformation thresh", 0.01, 0.00, 0.03));
+	gui_.add(fold_deformation_thresh_.setup("deformation thresh", 0.015, 0.00, 0.03));
 	gui_.add(fold_deformation_thresh_2_.setup("deformation thresh 2", 50, 0.00, 100));
-	gui_.add(fold_distance_thresh_.setup("distance thresh", 0.03, 0.01, 0.08));
+	gui_.add(fold_distance_thresh_.setup("distance thresh", 0.05, 0.01, 0.08));
 	gui_.add(fold_points_num_thresh_.setup("nb points thresh", 7, 5, 20));
-	gui_.add(fold_width_.setup("fold's width",0.03,0.0,0.1));
+	gui_.add(fold_width_.setup("fold's width",0.045,0.0,0.1));
 	gui_.add(kalman_process_noise_.setup("process noise cov", 0.0004, 0.0, 0.01));
-	gui_.add(kalman_measurement_noise_.setup("measurement noise cov", 0.0004, 0.0, 0.01));
-	gui_.add(kalman_post_error_.setup("post error cov", 0.0025, 0.0, 0.1));
+	gui_.add(kalman_measurement_noise_.setup("measurement noise cov", 0.007, 0.0, 0.01));
+	gui_.add(kalman_post_error_.setup("post error cov", 0.025, 0.0, 0.1));
 	gui_.add(deformation_detector_num_threads_.setup("num of threads", 6, 1, 12));
 
 	// Mesh
@@ -257,6 +257,13 @@ void ofApp::update() {
 			cv::dilate(cvBgMask_, cvBgMask_, kernel);
 			cv::threshold(cvBgMask_, cvBgMask_, 20, 255, CV_THRESH_BINARY);
 			bgMask_.update();
+
+			// Eventual smoothing
+			if (gaussian_size_ >= 3 && gaussian_sigma_ > 0) {
+				if (gaussian_size_ % 2 == 0)
+					gaussian_size_ = gaussian_size_ + 1;
+				ofxKinect_.setSelectiveSmoothing(cvBgMask_, gaussian_size_, gaussian_sigma_);
+			}
 
 			// Blob detection
 			float finderRes = blobFinder_.getResolution();
@@ -412,7 +419,7 @@ void ofApp::detectFolds() {
 		ransac_kalman_tracker_.TuneKalmanCovariances(kalman_process_noise_, kalman_measurement_noise_,kalman_post_error_);
 
 		// Run the tracker and retrieve the updated or new segments with their lifetime
-		std::vector<std::pair<garment_augmentation::math::Of3dsegment, float> > tracked_segments;
+		std::vector<std::pair<garment_augmentation::math::Of3dsegmentOrientation, float> > tracked_segments;
 		ransac_kalman_tracker_.Track3Dsegments(points, fold_distance_thresh_, fold_points_num_thresh_, tracked_segments); // threshold : 5cm, minimum points : 10
 
 		garment_.UpdateFolds(tracked_segments);
