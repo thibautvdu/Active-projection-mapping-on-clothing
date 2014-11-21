@@ -129,7 +129,10 @@ namespace math {
 			float last_frame_time = ofGetLastFrameTime();
 			for (int i = 0; i < kalman_filters_.size(); ++i) {
 
-				UpdateKalmanDeltaTime(kalman_filters_[i], last_frame_time);
+				if (use_velocity_)
+					UpdateKalmanDeltaTime(kalman_filters_[i], last_frame_time);
+				else
+					UpdateKalmanDeltaTime(kalman_filters_[i], 0);
 
 				prediction_mat = kalman_filters_[i].predict();
 				float * p_prediction_mat = prediction_mat.ptr<float>(0);

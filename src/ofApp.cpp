@@ -123,16 +123,18 @@ void ofApp::setup() {
 	gui_.add(new ofxLabel(std::string("GAUSSIAN SMOOTHING")));
 	gui_.add(gaussian_size_.setup("size", 0, 3, 9));
 	gui_.add(gaussian_sigma_.setup("sigma", 0, 0, 3));
-	gui_.add(new ofxLabel(std::string("FOLD DETECTION")));
+	gui_.add(new ofxLabel(std::string("DEFORMATION DETECTION")));
+	gui_.add(deformation_detector_num_threads_.setup("num of threads", 6, 1, 12));
 	gui_.add(fold_deformation_thresh_.setup("deformation thresh", 0.015, 0.00, 0.03));
 	gui_.add(fold_deformation_thresh_2_.setup("deformation thresh 2", 50, 0.00, 100));
+	gui_.add(new ofxLabel(std::string("FOLD TRACKING")));
 	gui_.add(fold_distance_thresh_.setup("distance thresh", 0.05, 0.01, 0.08));
 	gui_.add(fold_points_num_thresh_.setup("nb points thresh", 7, 5, 20));
 	gui_.add(fold_width_.setup("fold's width",0.045,0.0,0.1));
 	gui_.add(kalman_process_noise_.setup("process noise cov", 0.0004, 0.0, 0.01));
 	gui_.add(kalman_measurement_noise_.setup("measurement noise cov", 0.007, 0.0, 0.01));
 	gui_.add(kalman_post_error_.setup("post error cov", 0.025, 0.0, 0.1));
-	gui_.add(deformation_detector_num_threads_.setup("num of threads", 6, 1, 12));
+	gui_.add(using_velocity_.setup("use velocity", true));
 
 	// Mesh
 	//gui_.add(active_mesh_adaptation_rate_.setup("adaptation rate", 2, 0, 10));
@@ -417,6 +419,7 @@ void ofApp::detectFolds() {
 	if (askFoldComputation_) {
 		// Tune the kalman parameters
 		ransac_kalman_tracker_.TuneKalmanCovariances(kalman_process_noise_, kalman_measurement_noise_,kalman_post_error_);
+		ransac_kalman_tracker_.SetVelocityUse(using_velocity_);
 
 		// Run the tracker and retrieve the updated or new segments with their lifetime
 		std::vector<std::pair<garment_augmentation::math::Of3dsegmentOrientation, float> > tracked_segments;

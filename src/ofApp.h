@@ -95,6 +95,7 @@ class ofApp : public ofBaseApp {
 		ofxFloatSlider kalman_process_noise_;
 		ofxFloatSlider kalman_measurement_noise_;
 		ofxFloatSlider kalman_post_error_;
+		ofxToggle using_velocity_;
 
 		// Tracking mesh
 		garment_augmentation::surface_tracking::ofSemiImplicitActiveMesh active_mesh_;

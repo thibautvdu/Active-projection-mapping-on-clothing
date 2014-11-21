@@ -47,6 +47,10 @@ namespace math {
 				}
 			}
 
+			void SetVelocityUse(bool use) {
+				use_velocity_ = use;
+			}
+
 		private :
 			// Segment model function
 			static void SegmentModel(const CMatrixDouble  &all_data, const vector_size_t  &use_indices, std::vector< CMatrixDouble > &fit_models);
@@ -91,17 +95,18 @@ namespace math {
 			}
 
 			inline static void UpdateKalmanDeltaTime(cv::KalmanFilter &kalman_filter, float delta_time) {
-				kalman_filter.transitionMatrix.ptr<float>(0)[7] = delta_time;
-				kalman_filter.transitionMatrix.ptr<float>(1)[8] = delta_time;
-				kalman_filter.transitionMatrix.ptr<float>(2)[9] = delta_time;
-				kalman_filter.transitionMatrix.ptr<float>(3)[10] = delta_time;
-				kalman_filter.transitionMatrix.ptr<float>(4)[11] = delta_time;
-				kalman_filter.transitionMatrix.ptr<float>(5)[12] = delta_time;
+					kalman_filter.transitionMatrix.ptr<float>(0)[7] = delta_time;
+					kalman_filter.transitionMatrix.ptr<float>(1)[8] = delta_time;
+					kalman_filter.transitionMatrix.ptr<float>(2)[9] = delta_time;
+					kalman_filter.transitionMatrix.ptr<float>(3)[10] = delta_time;
+					kalman_filter.transitionMatrix.ptr<float>(4)[11] = delta_time;
+					kalman_filter.transitionMatrix.ptr<float>(5)[12] = delta_time;
 			}
 
 			std::vector<std::pair<Of3dsegmentOrientation,float>> segments_; // float => lifetime
 			std::vector<cv::KalmanFilter> kalman_filters_;
 			float segments_life_time_;
+			bool use_velocity_;
 
 			const static cv::Mat k_kalman_transition_matrix_init_;
 	};
