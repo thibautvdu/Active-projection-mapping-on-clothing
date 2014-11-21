@@ -88,7 +88,7 @@ void ofApp::setup() {
 
 	// Blob finder and tracker
 	blobFinder_.init(&ofxKinect_, kinectWidth_, kinectHeight_); // standarized coordinate system: z in the direction of gravity
-	blobFinder_.setResolution(garment_augmentation::blob_detection::BF_HIGH_RES);
+	//blobFinder_.setResolution(garment_augmentation::blob_detection::BF_HIGH_RES);
 	blobFinder_.setScale(ofVec3f(k_to_world_units_)); // mm to meters
 
 	// Fold processing
@@ -262,7 +262,7 @@ void ofApp::update() {
 			if (gaussian_size_ >= 3 && gaussian_sigma_ > 0) {
 				if (gaussian_size_ % 2 == 0)
 					gaussian_size_ = gaussian_size_ + 1;
-				ofxKinect_.setSelectiveSmoothing(cvBgMask_, gaussian_size_, gaussian_sigma_);
+				ofxKinect_.SelectiveSmoothing(cvBgMask_, gaussian_size_, gaussian_sigma_);
 			}
 
 			// Blob detection
