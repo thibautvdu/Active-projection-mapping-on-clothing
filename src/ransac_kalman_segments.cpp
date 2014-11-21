@@ -347,5 +347,46 @@ namespace math {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
 
+	// the higher, the less impact have the measurements
+	const cv::Mat RansacKalman3dSegmentTracker::k_measurement_noise_cov_ = (cv::Mat_<float>(7, 7) <<
+		50, 0, 0, 0, 0, 0, 0, // orientation (not supposed to change a lot for a fold)
+		0, 50, 0, 0, 0, 0, 0,
+		0, 0, 50, 0, 0, 0, 0,
+		0, 0, 0, 0.1, 0, 0, 0, // center (should be updated fast enough, but for a vertical fold y shouldn't evolve that much)
+		0, 0, 0, 0, 10, 0, 0,
+		0, 0, 0, 0, 0, 0.1, 0,
+		0, 0, 0, 0, 0, 0, 10000); // length (the length of a fold is not supposed to vary a lot)
+
+	const cv::Mat RansacKalman3dSegmentTracker::k_process_noise_cov_ = (cv::Mat_<float>(13, 13) <<
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+
+	// the higher, the smoother the update
+	const cv::Mat RansacKalman3dSegmentTracker::k_error_cov_post_ = (cv::Mat_<float>(13, 13) <<
+		10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // orientation (not supposed to change a lot for a fold)
+		0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, // center (should be updated fast enough, but for a vertical fold y shouldn't evolve that much)
+		0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, // length (the length of a fold is not supposed to vary a lot)
+		0, 0, 0, 0, 0, 0, 0, 0.01, 0, 0, 0, 0, 0, // speeds (the trajectories beeing most of the time very short, velocity should get a fast update)
+		0, 0, 0, 0, 0, 0, 0, 0, 0.01, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0.01, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.01, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.01, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.01);
+
 } // namespace math
 } // namespace garment_augmentation

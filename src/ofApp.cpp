@@ -121,8 +121,8 @@ void ofApp::setup() {
 	gui_.add(new ofxLabel(std::string("BACKGROUND LEARNING")));
 	gui_.add(bgLearningCycleGui_.setup("nb iterations", 10, 1, 50));
 	gui_.add(new ofxLabel(std::string("GAUSSIAN SMOOTHING")));
-	gui_.add(gaussian_size_.setup("size", 0, 3, 9));
-	gui_.add(gaussian_sigma_.setup("sigma", 0, 0, 3));
+	gui_.add(gaussian_size_.setup("size", 5, 3, 9));
+	gui_.add(gaussian_sigma_.setup("sigma", 2.5, 0, 3));
 	gui_.add(new ofxLabel(std::string("DEFORMATION DETECTION")));
 	gui_.add(deformation_detector_num_threads_.setup("num of threads", 6, 1, 12));
 	gui_.add(fold_deformation_thresh_.setup("deformation thresh", 0.015, 0.00, 0.03));

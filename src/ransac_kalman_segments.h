@@ -41,9 +41,9 @@ namespace math {
 
 			void TuneKalmanCovariances(float process_noise, float measurement_noise, float post_error) {
 				for (int i = 0; i < kalman_filters_.size(); ++i) {
-					cv::setIdentity(kalman_filters_[i].processNoiseCov, cv::Scalar::all(process_noise));
-					cv::setIdentity(kalman_filters_[i].measurementNoiseCov, cv::Scalar::all(measurement_noise));
-					cv::setIdentity(kalman_filters_[i].errorCovPost, cv::Scalar::all(post_error));
+					kalman_filters_[0].processNoiseCov = k_process_noise_cov_ * process_noise;
+					kalman_filters_[0].measurementNoiseCov = k_measurement_noise_cov_ * measurement_noise;
+					kalman_filters_[0].errorCovPost = k_error_cov_post_ * post_error;
 				}
 			}
 
@@ -89,9 +89,9 @@ namespace math {
 				p_post_state[10] = 0; p_post_state[11] = 0; p_post_state[12] = 0;
 
 				cv::setIdentity(kalman_filter.measurementMatrix);
-				cv::setIdentity(kalman_filter.processNoiseCov, cv::Scalar::all(0.0004));
-				cv::setIdentity(kalman_filter.measurementNoiseCov, cv::Scalar::all(0.0009));
-				cv::setIdentity(kalman_filter.errorCovPost, cv::Scalar::all(0.025));
+				kalman_filter.processNoiseCov =  k_process_noise_cov_ * 0.0004;
+				kalman_filter.measurementNoiseCov = k_measurement_noise_cov_ * 0.0009;
+				kalman_filter.errorCovPost = k_error_cov_post_ * 0.025;
 			}
 
 			inline static void UpdateKalmanDeltaTime(cv::KalmanFilter &kalman_filter, float delta_time) {
@@ -109,6 +109,9 @@ namespace math {
 			bool use_velocity_;
 
 			const static cv::Mat k_kalman_transition_matrix_init_;
+			const static cv::Mat k_process_noise_cov_;
+			const static cv::Mat k_measurement_noise_cov_;
+			const static cv::Mat k_error_cov_post_;
 	};
 
 } // namespace math
