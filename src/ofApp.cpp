@@ -1,6 +1,9 @@
 #include "ofApp.h"
 
 #include <stdlib.h>
+#include "opencv2/cuda.hpp"
+#include "opencv2/cudafilters.hpp"
+#include "opencv2/cudaarithm.hpp"
 
 #include "cv_helper.h"
 #include "lscm.h"
@@ -192,7 +195,7 @@ void ofApp::update() {
 
 
 	// PROCESS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
-	if (ofxKinect_.isFrameNew()) {
+	if (ofxKinect_.isFrameNewDepth()) {
 		// Background learning
 		
 		if (askBgLearning_) {
@@ -206,6 +209,7 @@ void ofApp::update() {
 			--bgLearningCycleCount_;
 
 			if (bgLearningCycleCount_ == 0) {
+				cv_depth_bg_gpu_.upload(cvDepthBg_);
 				learntBg_ = true;
 				ofLogNotice("ofApp::update()") << "Background learning complete";
 			}
@@ -219,6 +223,7 @@ void ofApp::update() {
 
 			--bgLearningCycleCount_;
 			if (bgLearningCycleCount_ == 0) {
+				cv_depth_bg_gpu_.upload(cvDepthBg_);
 				learntBg_ = true;
 				ofLogNotice("ofApp::update()") << "Background learning complete";
 			}
@@ -229,6 +234,7 @@ void ofApp::update() {
 			if (importedPixels) {
 				depthBg_.setNumChannels(1);
 				cvDepthBg_ = ofxCv::toCv(depthBg_);
+				cv_depth_bg_gpu_.upload(cvDepthBg_);
 				learntBg_ = true;
 				ofLogNotice("ofApp::update()") << "Imported background";
 			}
@@ -237,34 +243,49 @@ void ofApp::update() {
 		// Point cloud processing
 		if (learntBg_) {
 			// Background removal
-			cv::Mat diff;
-			cv::Mat currentDepth = ofxCv::toCv(ofxKinect_.getDepthPixelsRef());
-			cv::absdiff(cvDepthBg_, currentDepth, diff);
+			cv::cuda::GpuMat diff_gpu;
+			cv::cuda::GpuMat &current_depth_gpu = ofxKinect_.getDepthPixelsGpuRef();
+
+			cv::cuda::absdiff(cv_depth_bg_gpu_, current_depth_gpu, diff_gpu);
+
+			// Put every non zero value to one
+			cv::cuda::threshold(current_depth_gpu, cv_bg_mask_gpu_, 0, 1, CV_THRESH_BINARY);
+			// Multiply it to the diff to get the mask and switch to cm
+			cv::cuda::GpuMat temp;
+			cv::cuda::multiply(diff_gpu, cv_bg_mask_gpu_, temp,0.1);
+			temp.convertTo(cv_bg_mask_gpu_, CV_8UC1);
+
+			/*
 			UCHAR *p_maskRow;
 			USHORT *p_diffRow;
 			USHORT *p_depth;
 			for (int row = 0; row < kinectHeight_; ++row) {
 				p_maskRow = cvBgMask_.ptr<UCHAR>(row);
 				p_diffRow = diff.ptr<USHORT>(row);
-				p_depth = currentDepth.ptr<USHORT>(row);
+				p_depth = current_depth.ptr<USHORT>(row);
 				for (int col = 0; col < kinectWidth_; ++col) {
 					if (*(p_depth + col) != 0)
 						*(p_maskRow + col) = *(p_diffRow + col) / 10; // to cm
 					else
 						*(p_maskRow + col) = 0;
 				}
-			}
+			}*/
+
 			cv::Mat kernel = cv::getStructuringElement(CV_SHAPE_RECT, cv::Size(11, 11));
-			cv::erode(cvBgMask_, cvBgMask_, kernel);
-			cv::dilate(cvBgMask_, cvBgMask_, kernel);
-			cv::threshold(cvBgMask_, cvBgMask_, 20, 255, CV_THRESH_BINARY);
+			cv::Ptr<cv::cuda::Filter> erode = cv::cuda::createMorphologyFilter(cv::MORPH_ERODE, CV_8UC1, kernel);
+			cv::Ptr<cv::cuda::Filter> dilate = cv::cuda::createMorphologyFilter(cv::MORPH_DILATE, CV_8UC1, kernel);
+			erode->apply(cv_bg_mask_gpu_, cv_bg_mask_gpu_);
+			dilate->apply(cv_bg_mask_gpu_, cv_bg_mask_gpu_);
+
+			cv::cuda::threshold(cv_bg_mask_gpu_, cv_bg_mask_gpu_, 20, 255, CV_THRESH_BINARY);
+			cv_bg_mask_gpu_.download(cvBgMask_);
 			bgMask_.update();
 
 			// Eventual smoothing
 			if (gaussian_size_ >= 3 && gaussian_sigma_ > 0) {
 				if (gaussian_size_ % 2 == 0)
 					gaussian_size_ = gaussian_size_ + 1;
-				ofxKinect_.SelectiveSmoothing(cvBgMask_, gaussian_size_, gaussian_sigma_);
+				ofxKinect_.SelectiveSmoothing(cv_bg_mask_gpu_, gaussian_size_, gaussian_sigma_);
 			}
 
 			// Blob detection

@@ -6,6 +6,7 @@
 #include "ofMain.h"
 #include "ofxCv.h"
 #include "ofxGui.h"
+#include "opencv2/cuda.hpp"
 
 #include "ofxKinectCommonBridge.h"
 #include "ofxKinectProjectorToolkit.h"
@@ -55,10 +56,12 @@ class ofApp : public ofBaseApp {
 		ofxIntSlider bgLearningCycleGui_; int bgLearningCycleCount_; bool learntBg_;
 		ofShortPixels depthBg_;
 		cv::Mat cvDepthBg_;
+		cv::cuda::GpuMat cv_depth_bg_gpu_;
 
 		// Background segmentation
 		ofImage bgMask_;
 		cv::Mat cvBgMask_;
+		cv::cuda::GpuMat cv_bg_mask_gpu_;
 
 		// Smoothing
 		ofxIntSlider gaussian_size_;
