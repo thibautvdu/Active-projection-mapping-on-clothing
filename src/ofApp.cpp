@@ -13,6 +13,8 @@
 //#include "fold_video_texture.h"
 #include "gl_shader.h"
 
+#include "cuda_test.h"
+
 /* CONSTANTS	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 
 // HARDWARE HANDLERS	/	/	/	/	/	/	/	/	/	/	/	/
@@ -114,6 +116,15 @@ void ofApp::setup() {
 	// PROJECTOR SCREEN SPACE	/	/	/	/	/	/	/	/	/	/	/
 
 	chessboardImage_.loadImage("chessboard.png");
+
+	// CUDA TEST //
+	first_test.loadImage("first_test.jpg");
+	cv::Mat first_test_cv = ofxCv::toCv(first_test);
+	ofLog() << cv_helper::GetImageType(first_test_cv);
+	cv::cuda::GpuMat first_test_cv_gpu;
+	first_test_cv_gpu.upload(first_test_cv);
+	garment_augmentation::garment::cuda_test(first_test_cv_gpu);
+	first_test_cv_gpu.download(first_test_cv);
 
 	// PROJECTOR SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-
 
@@ -324,7 +335,9 @@ void ofApp::draw() {
 		projectorWindow_.background(ofColor::black);
 
 		// Top Left
-		ofxKinect_.draw(0, 0);
+		//ofxKinect_.draw(0, 0);
+		first_test.update();
+		first_test.draw(0, 0);
 
 		// Top Right
 		ofxKinect_.drawDepth(kinectWidth_, 0);

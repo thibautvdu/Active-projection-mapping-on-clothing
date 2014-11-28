@@ -110,6 +110,7 @@ class ofApp : public ofBaseApp {
 		// PROJECTOR SCREEN SPACE	/	/	/	/	/	/	/	/	/	/	/
 
 		ofImage chessboardImage_;
+		ofImage first_test;
 
 		// PROJECTOR SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-
 

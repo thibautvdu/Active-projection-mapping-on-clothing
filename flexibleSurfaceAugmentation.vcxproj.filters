@@ -130,6 +130,9 @@
     <ClCompile Include="src\threaded_deformation_detector.cpp">
       <Filter>src\garment</Filter>
     </ClCompile>
+    <ClCompile Include="src\cuda_test.cpp">
+      <Filter>src\garment\cuda deformation detection</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -548,6 +551,15 @@
     </Filter>
     <Filter Include="libs\opencv\include\opencv2\stitching\detail">
       <UniqueIdentifier>{cb913ff1-6830-4ba3-9fb0-e1ac6af7b326}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\garment\cuda deformation detection">
+      <UniqueIdentifier>{056ce509-37e2-4811-8202-d2c38e4e4965}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\cuda">
+      <UniqueIdentifier>{5b470c3e-5e80-4445-888c-653a78c81843}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\cuda\include">
+      <UniqueIdentifier>{3bb1a48c-57a2-4830-bd3f-dca68bdf2b4b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -3296,6 +3308,12 @@
     <ClInclude Include="libs\opencv\include\opencv2\objdetect\objdetect_c.h">
       <Filter>libs\opencv\include\opencv2\objdetect</Filter>
     </ClInclude>
+    <ClInclude Include="src\cuda_test.h">
+      <Filter>src\garment\cuda deformation detection</Filter>
+    </ClInclude>
+    <ClInclude Include="src\deformation_detection.h">
+      <Filter>src\garment\cuda deformation detection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />
@@ -3415,5 +3433,10 @@
     <None Include="bin\data\shaders\contour_vector_field.geom">
       <Filter>src\shaders</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="src\deformation_detection.cu">
+      <Filter>src\garment\cuda deformation detection</Filter>
+    </CudaCompile>
   </ItemGroup>
 </Project>
