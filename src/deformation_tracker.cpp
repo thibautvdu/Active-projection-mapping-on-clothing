@@ -43,9 +43,9 @@ namespace garment {
 
 		// Unfolded ideal plane
 		ofVec3f top_left = mesh.getVertex(mesh_2dview[roi_.getTopLeft().x][roi_.getTopLeft().y]);
-		ofVec3f bottom_left = mesh.getVertex(mesh_2dview[roi_.getBottomLeft().x][roi_.getBottomLeft().y]);
-		ofVec3f top_right = mesh.getVertex(mesh_2dview[roi_.getTopRight().x][roi_.getTopRight().y]);
-		ofVec3f bottom_right = mesh.getVertex(mesh_2dview[roi_.getBottomRight().x][roi_.getBottomRight().y]);
+		ofVec3f bottom_left = mesh.getVertex(mesh_2dview[roi_.getBottomLeft().x][roi_.getBottomLeft().y-1]);
+		ofVec3f top_right = mesh.getVertex(mesh_2dview[roi_.getTopRight().x-1][roi_.getTopRight().y]);
+		ofVec3f bottom_right = mesh.getVertex(mesh_2dview[roi_.getBottomRight().x-1][roi_.getBottomRight().y-1]);
 		ofVec3f middle = (top_left + bottom_left + top_right + bottom_right) / 4;
 
 		// Compute the local z-axis
@@ -102,9 +102,9 @@ namespace garment {
 
 		// Unfolded ideal plane
 		ofVec3f top_left = mesh.getVertex(mesh_2dview[roi_.getTopLeft().x][roi_.getTopLeft().y]);
-		ofVec3f bottom_left = mesh.getVertex(mesh_2dview[roi_.getBottomLeft().x][roi_.getBottomLeft().y]);
-		ofVec3f top_right = mesh.getVertex(mesh_2dview[roi_.getTopRight().x][roi_.getTopRight().y]);
-		ofVec3f bottom_right = mesh.getVertex(mesh_2dview[roi_.getBottomRight().x][roi_.getBottomRight().y]);
+		ofVec3f bottom_left = mesh.getVertex(mesh_2dview[roi_.getBottomLeft().x][roi_.getBottomLeft().y-1]);
+		ofVec3f top_right = mesh.getVertex(mesh_2dview[roi_.getTopRight().x-1][roi_.getTopRight().y]);
+		ofVec3f bottom_right = mesh.getVertex(mesh_2dview[roi_.getBottomRight().x-1][roi_.getBottomRight().y-1]);
 		ofVec3f middle = (top_left + bottom_left + top_right + bottom_right) / 4;
 		/*ofVec3f top_left = ofVec3f(0,5,2);
 		ofVec3f bottom_left = ofVec3f(0, 0, 2);
@@ -113,7 +113,8 @@ namespace garment {
 
 		// Compute the local z-axis
 		ofVec3f local_z = (top_right - top_left).getCrossed(top_left - bottom_left).normalize() * -1; // -1 : compensate for the right and left inversion of the kinect
-		//ofLog() << "local z :" << local_z;
+		int col = roi_.getTopLeft().x + ((roi_.width - 1) / 2);
+		int row = roi_.getTopLeft().y + ((roi_.height - 1) / 2);
 		
 		// Compute the rotation from the world z-axis to the local z-axis
 		ofMatrix3x3 to_local_coords = of_utilities::VectorRotationMatrix(local_z,ofVec3f(0, 0, 1));
@@ -149,9 +150,9 @@ namespace garment {
 
 		// Unfolded ideal plane
 		ofVec3f top_left = mesh.getVertex(mesh_2dview[roi_.getTopLeft().x][roi_.getTopLeft().y]);
-		ofVec3f bottom_left = mesh.getVertex(mesh_2dview[roi_.getBottomLeft().x][roi_.getBottomLeft().y]);
-		ofVec3f top_right = mesh.getVertex(mesh_2dview[roi_.getTopRight().x][roi_.getTopRight().y]);
-		ofVec3f bottom_right = mesh.getVertex(mesh_2dview[roi_.getBottomRight().x][roi_.getBottomRight().y]);
+		ofVec3f bottom_left = mesh.getVertex(mesh_2dview[roi_.getBottomLeft().x ][roi_.getBottomLeft().y - 1]);
+		ofVec3f top_right = mesh.getVertex(mesh_2dview[roi_.getTopRight().x-1][roi_.getTopRight().y]);
+		ofVec3f bottom_right = mesh.getVertex(mesh_2dview[roi_.getBottomRight().x - 1][roi_.getBottomRight().y - 1]);
 		ofVec3f middle = (top_left + bottom_left + top_right + bottom_right) / 4;
 
 		// Compute the local z-axis
@@ -190,9 +191,9 @@ namespace garment {
 
 		// Unfolded ideal plane
 		ofVec3f top_left = mesh.getVertex(mesh_2dview[roi_.getTopLeft().x][roi_.getTopLeft().y]);
-		ofVec3f bottom_left = mesh.getVertex(mesh_2dview[roi_.getBottomLeft().x][roi_.getBottomLeft().y]);
-		ofVec3f top_right = mesh.getVertex(mesh_2dview[roi_.getTopRight().x][roi_.getTopRight().y]);
-		ofVec3f bottom_right = mesh.getVertex(mesh_2dview[roi_.getBottomRight().x][roi_.getBottomRight().y]);
+		ofVec3f bottom_left = mesh.getVertex(mesh_2dview[roi_.getBottomLeft().x][roi_.getBottomLeft().y - 1]);
+		ofVec3f top_right = mesh.getVertex(mesh_2dview[roi_.getTopRight().x-1][roi_.getTopRight().y]);
+		ofVec3f bottom_right = mesh.getVertex(mesh_2dview[roi_.getBottomRight().x - 1][roi_.getBottomRight().y - 1]);
 		float unfoldedTriangleArea = ((top_left - bottom_left).getCrossed(top_right - bottom_left).length() + (bottom_left - top_right).getCrossed(bottom_right - top_right).length()) / (2 * 2 * (roi_.width - 1)*(roi_.height - 1));
 
 		// Attribute a gaussian weigth along the horizontal of the unfolded patch
@@ -245,9 +246,9 @@ namespace garment {
 		const std::vector< std::vector<int> > &mesh2dView = p_garment_->mesh2d_view();
 
 		return mesh2dView[roi_.getTopLeft().x][roi_.getTopLeft().y] != -1 &&
-			mesh2dView[roi_.getBottomLeft().x][roi_.getBottomLeft().y] != -1 &&
-			mesh2dView[roi_.getTopRight().x][roi_.getTopRight().y] != -1 &&
-			mesh2dView[roi_.getBottomRight().x][roi_.getBottomRight().y] != -1;
+			mesh2dView[roi_.getBottomLeft().x][roi_.getBottomLeft().y-1] != -1 &&
+			mesh2dView[roi_.getTopRight().x-1][roi_.getTopRight().y] != -1 &&
+			mesh2dView[roi_.getBottomRight().x-1][roi_.getBottomRight().y-1] != -1;
 	}
 
 	std::vector<float> DeformationTracker::gaussian_values_;

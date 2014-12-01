@@ -72,19 +72,19 @@ namespace garment {
 						float foldness = tracker_.GetFoldness();
 						if (foldness  > deformation_thresh_) {
 							// Test if the center is not contained in a previous valid patch horizontaly aligned
-							if (previous_center_x != -1 && x - previous_center_x < previous_patch_size) {
+							/*if (previous_center_x != -1 && x - previous_center_x < previous_patch_size) {
 								// average a new center, incorrect but there is not often more than two patches in the merging
 								detected_points_lock_->lock();
 								detected_points_[previous_center_idx] += tracker_.GetCenter();
 								detected_points_[previous_center_idx] /= 2;
 								detected_points_lock_->unlock();
 							}
-							else {
+							else {*/
 								detected_points_lock_->lock();
 								previous_center_idx = detected_points_.size();
 								detected_points_.push_back(tracker_.GetCenter());
 								detected_points_lock_->unlock();
-							}
+							//}
 
 							previous_patch_size = patch_size;
 							previous_center_x = x;

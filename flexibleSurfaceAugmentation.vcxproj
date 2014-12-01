@@ -128,7 +128,6 @@ xcopy /e /i /y "$(ProjectDir)libs\opencv\bin\*300.dll" "$(ProjectDir)bin"</Comma
     <ClCompile Include="..\..\..\addons\ofxUbo\src\ofxUbo.cpp" />
     <ClCompile Include="src\animation.cpp" />
     <ClCompile Include="src\contour_vector_field.cpp" />
-    <ClCompile Include="src\cuda_test.cpp" />
     <ClCompile Include="src\deformation_tracker.cpp" />
     <ClCompile Include="src\fold_video_texture.cpp" />
     <ClCompile Include="src\gl_shader.cpp" />
@@ -1037,8 +1036,8 @@ xcopy /e /i /y "$(ProjectDir)libs\opencv\bin\*300.dll" "$(ProjectDir)bin"</Comma
     <ClInclude Include="libs\OpenNL\src\NL\nl_superlu.h" />
     <ClInclude Include="src\animation.h" />
     <ClInclude Include="src\contour_vector_field.h" />
-    <ClInclude Include="src\cuda_test.h" />
-    <ClInclude Include="src\deformation_detection.h" />
+    <ClInclude Include="src\cuda_accelerated_deformation_detection.h" />
+    <ClInclude Include="src\cuda_math_vectors_helper.cuh" />
     <ClInclude Include="src\fold.h" />
     <ClInclude Include="src\flying_lights.h" />
     <ClInclude Include="src\fold_video_texture.h" />
@@ -1128,7 +1127,7 @@ xcopy /e /i /y "$(ProjectDir)libs\opencv\bin\*300.dll" "$(ProjectDir)bin"</Comma
     <None Include="libs\Eigen\SVD" />
     <None Include="libs\Eigen\UmfPackSupport" />
     <None Include="libs\MRPT_base\includes\mrpt\otherlibs\stlplus\smart_ptr.tpp" />
-    <CudaCompile Include="src\deformation_detection.cu">
+    <CudaCompile Include="src\cuda_accelerated_deformation_detection.cu">
       <FileType>Document</FileType>
     </CudaCompile>
   </ItemGroup>

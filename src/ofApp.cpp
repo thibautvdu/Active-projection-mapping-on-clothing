@@ -4,6 +4,7 @@
 #include "opencv2/cuda.hpp"
 #include "opencv2/cudafilters.hpp"
 #include "opencv2/cudaarithm.hpp"
+#include <opencv2/core/cuda_stream_accessor.hpp>
 
 #include "cv_helper.h"
 #include "lscm.h"
@@ -12,8 +13,7 @@
 #include "contour_vector_field.h"
 //#include "fold_video_texture.h"
 #include "gl_shader.h"
-
-#include "cuda_test.h"
+#include "cuda_accelerated_deformation_detection.h"
 
 /* CONSTANTS	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 
@@ -117,15 +117,6 @@ void ofApp::setup() {
 
 	chessboardImage_.loadImage("chessboard.png");
 
-	// CUDA TEST //
-	first_test.loadImage("first_test.jpg");
-	cv::Mat first_test_cv = ofxCv::toCv(first_test);
-	ofLog() << cv_helper::GetImageType(first_test_cv);
-	cv::cuda::GpuMat first_test_cv_gpu;
-	first_test_cv_gpu.upload(first_test_cv);
-	garment_augmentation::garment::cuda_test(first_test_cv_gpu);
-	first_test_cv_gpu.download(first_test_cv);
-
 	// PROJECTOR SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-
 
 
@@ -140,11 +131,11 @@ void ofApp::setup() {
 	gui_.add(new ofxLabel(std::string("DEFORMATION DETECTION")));
 	gui_.add(deformation_detector_num_threads_.setup("num of threads", 6, 1, 12));
 	gui_.add(fold_deformation_thresh_.setup("deformation thresh", 0.015, 0.00, 0.03));
-	gui_.add(fold_deformation_thresh_2_.setup("deformation thresh 2", 50, 0.00, 100));
+	//gui_.add(fold_deformation_thresh_2_.setup("deformation thresh 2", 50, 0.00, 100));
 	gui_.add(new ofxLabel(std::string("FOLD TRACKING")));
 	gui_.add(fold_distance_thresh_.setup("distance thresh", 0.05, 0.01, 0.08));
 	gui_.add(fold_points_num_thresh_.setup("nb points thresh", 7, 5, 20));
-	gui_.add(fold_width_.setup("fold's width",0.045,0.0,0.1));
+	gui_.add(fold_width_.setup("fold's width",0.055,0.0,0.1));
 	gui_.add(kalman_process_noise_.setup("process noise cov", 0.0004, 0.0, 0.01));
 	gui_.add(kalman_measurement_noise_.setup("measurement noise cov", 0.007, 0.0, 0.01));
 	gui_.add(kalman_post_error_.setup("post error cov", 0.025, 0.0, 0.1));
@@ -335,9 +326,7 @@ void ofApp::draw() {
 		projectorWindow_.background(ofColor::black);
 
 		// Top Left
-		//ofxKinect_.draw(0, 0);
-		first_test.update();
-		first_test.draw(0, 0);
+		ofxKinect_.draw(0, 0);
 
 		// Top Right
 		ofxKinect_.drawDepth(kinectWidth_, 0);
@@ -440,6 +429,7 @@ void ofApp::meshParameterizationLSCM(const int textureSize, ofMesh& mesh) {
 	}
 }
 
+/*
 void ofApp::detectFolds() {
 	// Convert the seeked fold width from meters to pixels
 	float meters_per_pixel_horizontal = garment_.blob().massCenter.z * ofxKinect_.HORIZONTAL_FOCAL_LENGTH_INV;
@@ -453,6 +443,85 @@ void ofApp::detectFolds() {
 	if (askFoldComputation_) {
 		// Tune the kalman parameters
 		ransac_kalman_tracker_.TuneKalmanCovariances(kalman_process_noise_, kalman_measurement_noise_,kalman_post_error_);
+		ransac_kalman_tracker_.SetVelocityUse(using_velocity_);
+
+		// Run the tracker and retrieve the updated or new segments with their lifetime
+		std::vector<std::pair<garment_augmentation::math::Of3dsegmentOrientation, float> > tracked_segments;
+		ransac_kalman_tracker_.Track3Dsegments(points, fold_distance_thresh_, fold_points_num_thresh_, tracked_segments); // threshold : 5cm, minimum points : 10
+
+		garment_.UpdateFolds(tracked_segments);
+	}
+}*/
+
+void ofApp::detectFolds() {
+	const vector<vector<int>> &garment_mesh_2dview = garment_.mesh2d_view();
+	ofFastMesh &garment_mesh = garment_.mesh_ref();
+
+	// Convert the seeked fold width from meters to pixels
+	float meters_per_pixel_horizontal = garment_.blob().massCenter.z * ofxKinect_.HORIZONTAL_FOCAL_LENGTH_INV;
+	int fold_pixels_width = fold_width_ / meters_per_pixel_horizontal;
+	fold_pixels_width /= blobFinder_.getResolution();
+
+	// Construct the GPU 3D coordinates map
+	cv::cuda::GpuMat world_coordinates_gpu;
+	cv::Mat world_coordinates;
+	//ofRectangle model_2d_roi = garment_.blob().bounding_box_2d;
+	//int top_left_x = model_2d_roi.getTopLeft().x; int top_left_y = model_2d_roi.getTopLeft().y;
+	world_coordinates.create(garment_mesh_2dview[0].size(), garment_mesh_2dview.size(), CV_32FC3); // 4 channel is indicating whether there is a valid value
+	float *p_world_coord_row;
+	ofVec3f *vertex;
+	for (int y = 0; y < world_coordinates.rows; ++y) {
+		p_world_coord_row = world_coordinates.ptr<float>(y);
+		for (int x = 0; x < world_coordinates.cols; ++x) {
+			if (garment_mesh_2dview[x][y] != -1) {
+				vertex = &garment_mesh.getVertex(garment_mesh_2dview[x][y]);
+				p_world_coord_row[x * 3] = vertex->x;
+				p_world_coord_row[x * 3 + 1] = vertex->y;
+				p_world_coord_row[x * 3 + 2] = vertex->z;
+			}
+			else {
+				p_world_coord_row[x * 3 + 2] = std::numeric_limits<float>::infinity();
+			}
+		}
+	}
+	world_coordinates_gpu.upload(world_coordinates);
+
+	// GPU accelerated detection
+	LARGE_INTEGER timer_start, timer_stop, elapsed, frequency;
+	QueryPerformanceFrequency(&frequency);
+	QueryPerformanceCounter(&timer_start);
+	cv::cuda::GpuMat detected_deformations_gpu;
+	detected_deformations_gpu.create(world_coordinates_gpu.size(), CV_8UC1);
+	garment_augmentation::cuda_optimization::AcceleratedDeformationsDetection(world_coordinates_gpu, fold_pixels_width, fold_deformation_thresh_, detected_deformations_gpu);
+	QueryPerformanceCounter(&timer_stop);
+	elapsed.QuadPart = timer_stop.QuadPart - timer_start.QuadPart;
+	elapsed.QuadPart *= 1000000;
+	elapsed.QuadPart /= frequency.QuadPart;
+	ofLog() << "gpu timing : " << elapsed.QuadPart << " micro seconds";
+
+	// Retrieve the values
+	cv::Mat output_points;
+	detected_deformations_gpu.download(output_points);
+	std::vector<ofVec3f> points;
+	points.reserve(50);
+
+	uchar *output_points_row_ptr;
+	for (int y = 0; y < output_points.rows; ++y) {
+		output_points_row_ptr = output_points.ptr<uchar>(y);
+		for (int x = 0; x < output_points.cols; ++x) {
+			if (output_points_row_ptr[x] != 0) {
+				points.push_back(garment_mesh.getVertex(garment_mesh_2dview[x][y]));
+			}
+		}
+	}
+	
+	threaded_deformation_detector_.SetNumThreads(deformation_detector_num_threads_);
+	points = threaded_deformation_detector_.DetectDeformations(fold_pixels_width, 0, fold_deformation_thresh_);
+
+	// Compute folds from deformaed areas
+	if (askFoldComputation_) {
+		// Tune the kalman parameters
+		ransac_kalman_tracker_.TuneKalmanCovariances(kalman_process_noise_, kalman_measurement_noise_, kalman_post_error_);
 		ransac_kalman_tracker_.SetVelocityUse(using_velocity_);
 
 		// Run the tracker and retrieve the updated or new segments with their lifetime

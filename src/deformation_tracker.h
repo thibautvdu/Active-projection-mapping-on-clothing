@@ -25,7 +25,7 @@ namespace garment {
 			}
 
 			inline void MoveCenterTo(const int x, const int y) {
-				roi_.setFromCenter(x, y, roi_.width, roi_.height);
+				roi_.set(x - (roi_.width - 1) / 2, y - (roi_.height - 1) / 2, roi_.width, roi_.height);
 			}
 
 			inline void Resize(const int w, const int h) {

@@ -130,9 +130,6 @@
     <ClCompile Include="src\threaded_deformation_detector.cpp">
       <Filter>src\garment</Filter>
     </ClCompile>
-    <ClCompile Include="src\cuda_test.cpp">
-      <Filter>src\garment\cuda deformation detection</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -3308,10 +3305,13 @@
     <ClInclude Include="libs\opencv\include\opencv2\objdetect\objdetect_c.h">
       <Filter>libs\opencv\include\opencv2\objdetect</Filter>
     </ClInclude>
-    <ClInclude Include="src\cuda_test.h">
+    <ClInclude Include="src\cuda_accelerated_deformation_detection.h">
       <Filter>src\garment\cuda deformation detection</Filter>
     </ClInclude>
-    <ClInclude Include="src\deformation_detection.h">
+    <ClInclude Include="src\cuda_math_vectors_helper.cu">
+      <Filter>src\garment\cuda deformation detection</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cuda_math_vectors_helper.cuh">
       <Filter>src\garment\cuda deformation detection</Filter>
     </ClInclude>
   </ItemGroup>
@@ -3435,7 +3435,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="src\deformation_detection.cu">
+    <CudaCompile Include="src\cuda_accelerated_deformation_detection.cu">
       <Filter>src\garment\cuda deformation detection</Filter>
     </CudaCompile>
   </ItemGroup>
