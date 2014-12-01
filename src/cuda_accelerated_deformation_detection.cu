@@ -100,7 +100,7 @@ namespace cuda_optimization {
 
 		if (x < world_coordinates.cols - half_window_width && y < world_coordinates.rows - half_window_width && x >= half_window_width && y >= half_window_width)
 		{
-			if (isinf(world_coordinates(x,y).z)) {
+			if (isinf(world_coordinates(y, x).z)) {
 				detected_deformations(y, x) = 0;
 				return;
 			}

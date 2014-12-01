@@ -124,11 +124,11 @@
     <ClCompile Include="src\ransac_kalman_segments.cpp">
       <Filter>src\math</Filter>
     </ClCompile>
-    <ClCompile Include="src\deformation_tracker.cpp">
-      <Filter>src\garment</Filter>
-    </ClCompile>
     <ClCompile Include="src\threaded_deformation_detector.cpp">
-      <Filter>src\garment</Filter>
+      <Filter>src\garment\cpu threaded deformation detection</Filter>
+    </ClCompile>
+    <ClCompile Include="src\deformation_tracker.cpp">
+      <Filter>src\garment\cpu threaded deformation detection</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -557,6 +557,9 @@
     </Filter>
     <Filter Include="libs\cuda\include">
       <UniqueIdentifier>{3bb1a48c-57a2-4830-bd3f-dca68bdf2b4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\garment\cpu threaded deformation detection">
+      <UniqueIdentifier>{267c460b-6057-48ec-bd10-df68333da4a1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2435,12 +2438,6 @@
     <ClInclude Include="src\ransac_kalman_segments.h">
       <Filter>src\math</Filter>
     </ClInclude>
-    <ClInclude Include="src\deformation_tracker.h">
-      <Filter>src\garment</Filter>
-    </ClInclude>
-    <ClInclude Include="src\threaded_deformation_detector.h">
-      <Filter>src\garment</Filter>
-    </ClInclude>
     <ClInclude Include="src\of_3dsegment_orientation.h">
       <Filter>src\math</Filter>
     </ClInclude>
@@ -3313,6 +3310,12 @@
     </ClInclude>
     <ClInclude Include="src\cuda_math_vectors_helper.cuh">
       <Filter>src\garment\cuda deformation detection</Filter>
+    </ClInclude>
+    <ClInclude Include="src\threaded_deformation_detector.h">
+      <Filter>src\garment\cpu threaded deformation detection</Filter>
+    </ClInclude>
+    <ClInclude Include="src\deformation_tracker.h">
+      <Filter>src\garment\cpu threaded deformation detection</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

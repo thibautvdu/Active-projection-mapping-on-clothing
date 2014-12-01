@@ -429,30 +429,6 @@ void ofApp::meshParameterizationLSCM(const int textureSize, ofMesh& mesh) {
 	}
 }
 
-/*
-void ofApp::detectFolds() {
-	// Convert the seeked fold width from meters to pixels
-	float meters_per_pixel_horizontal = garment_.blob().massCenter.z * ofxKinect_.HORIZONTAL_FOCAL_LENGTH_INV;
-	int fold_pixels_width = fold_width_ / meters_per_pixel_horizontal;
-	fold_pixels_width /= blobFinder_.getResolution();
-
-	threaded_deformation_detector_.SetNumThreads(deformation_detector_num_threads_);
-	std::vector<ofVec3f> points = threaded_deformation_detector_.DetectDeformations(fold_pixels_width, 2, fold_deformation_thresh_);
-
-	// Compute folds from deformaed areas
-	if (askFoldComputation_) {
-		// Tune the kalman parameters
-		ransac_kalman_tracker_.TuneKalmanCovariances(kalman_process_noise_, kalman_measurement_noise_,kalman_post_error_);
-		ransac_kalman_tracker_.SetVelocityUse(using_velocity_);
-
-		// Run the tracker and retrieve the updated or new segments with their lifetime
-		std::vector<std::pair<garment_augmentation::math::Of3dsegmentOrientation, float> > tracked_segments;
-		ransac_kalman_tracker_.Track3Dsegments(points, fold_distance_thresh_, fold_points_num_thresh_, tracked_segments); // threshold : 5cm, minimum points : 10
-
-		garment_.UpdateFolds(tracked_segments);
-	}
-}*/
-
 void ofApp::detectFolds() {
 	const vector<vector<int>> &garment_mesh_2dview = garment_.mesh2d_view();
 	ofFastMesh &garment_mesh = garment_.mesh_ref();
@@ -465,16 +441,17 @@ void ofApp::detectFolds() {
 	// Construct the GPU 3D coordinates map
 	cv::cuda::GpuMat world_coordinates_gpu;
 	cv::Mat world_coordinates;
-	//ofRectangle model_2d_roi = garment_.blob().bounding_box_2d;
-	//int top_left_x = model_2d_roi.getTopLeft().x; int top_left_y = model_2d_roi.getTopLeft().y;
-	world_coordinates.create(garment_mesh_2dview[0].size(), garment_mesh_2dview.size(), CV_32FC3); // 4 channel is indicating whether there is a valid value
+	ofRectangle model_2d_roi = garment_.blob().bounding_box_2d;
+	int top_left_x = model_2d_roi.getTopLeft().x;
+	int top_left_y = model_2d_roi.getTopLeft().y;
+	world_coordinates.create(model_2d_roi.height, model_2d_roi.width, CV_32FC3); // 4 channel is indicating whether there is a valid value
 	float *p_world_coord_row;
 	ofVec3f *vertex;
 	for (int y = 0; y < world_coordinates.rows; ++y) {
 		p_world_coord_row = world_coordinates.ptr<float>(y);
 		for (int x = 0; x < world_coordinates.cols; ++x) {
-			if (garment_mesh_2dview[x][y] != -1) {
-				vertex = &garment_mesh.getVertex(garment_mesh_2dview[x][y]);
+			if (garment_mesh_2dview[top_left_x + x][top_left_y + y] != -1) {
+				vertex = &garment_mesh.getVertex(garment_mesh_2dview[top_left_x + x][top_left_y + y]);
 				p_world_coord_row[x * 3] = vertex->x;
 				p_world_coord_row[x * 3 + 1] = vertex->y;
 				p_world_coord_row[x * 3 + 2] = vertex->z;
@@ -487,36 +464,35 @@ void ofApp::detectFolds() {
 	world_coordinates_gpu.upload(world_coordinates);
 
 	// GPU accelerated detection
-	LARGE_INTEGER timer_start, timer_stop, elapsed, frequency;
-	QueryPerformanceFrequency(&frequency);
-	QueryPerformanceCounter(&timer_start);
 	cv::cuda::GpuMat detected_deformations_gpu;
 	detected_deformations_gpu.create(world_coordinates_gpu.size(), CV_8UC1);
-	garment_augmentation::cuda_optimization::AcceleratedDeformationsDetection(world_coordinates_gpu, fold_pixels_width, fold_deformation_thresh_, detected_deformations_gpu);
-	QueryPerformanceCounter(&timer_stop);
-	elapsed.QuadPart = timer_stop.QuadPart - timer_start.QuadPart;
-	elapsed.QuadPart *= 1000000;
-	elapsed.QuadPart /= frequency.QuadPart;
-	ofLog() << "gpu timing : " << elapsed.QuadPart << " micro seconds";
+	garment_augmentation::cuda_optimization::AcceleratedDeformationsDetection(world_coordinates_gpu, fold_deformation_thresh_, fold_pixels_width, detected_deformations_gpu);
 
 	// Retrieve the values
 	cv::Mat output_points;
 	detected_deformations_gpu.download(output_points);
 	std::vector<ofVec3f> points;
-	points.reserve(50);
+	points.reserve(100);
 
 	uchar *output_points_row_ptr;
 	for (int y = 0; y < output_points.rows; ++y) {
 		output_points_row_ptr = output_points.ptr<uchar>(y);
 		for (int x = 0; x < output_points.cols; ++x) {
 			if (output_points_row_ptr[x] != 0) {
-				points.push_back(garment_mesh.getVertex(garment_mesh_2dview[x][y]));
+				points.push_back(garment_mesh.getVertex(garment_mesh_2dview[top_left_x + x][top_left_y + y]));
+
+				// color back the mesh
+				for (int yy = top_left_y + y - (fold_pixels_width - 1) / 2; yy <= top_left_y + y + (fold_pixels_width - 1) / 2; ++yy) {
+					for (int xx = top_left_x + x - (fold_pixels_width - 1) / 2; xx <= top_left_x + x + (fold_pixels_width - 1) / 2; ++xx) {
+						if (garment_mesh_2dview[xx][yy] != -1)
+							garment_mesh.setColor(garment_mesh_2dview[xx][yy], ofColor::red);
+					}
+				}
 			}
 		}
 	}
-	
-	threaded_deformation_detector_.SetNumThreads(deformation_detector_num_threads_);
-	points = threaded_deformation_detector_.DetectDeformations(fold_pixels_width, 0, fold_deformation_thresh_);
+
+	ofLog() << "gpu output : " << points.size();
 
 	// Compute folds from deformaed areas
 	if (askFoldComputation_) {
