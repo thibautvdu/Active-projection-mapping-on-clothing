@@ -257,22 +257,6 @@ void ofApp::update() {
 			cv::cuda::multiply(diff_gpu, cv_bg_mask_gpu_, temp,0.1);
 			temp.convertTo(cv_bg_mask_gpu_, CV_8UC1);
 
-			/*
-			UCHAR *p_maskRow;
-			USHORT *p_diffRow;
-			USHORT *p_depth;
-			for (int row = 0; row < kinectHeight_; ++row) {
-				p_maskRow = cvBgMask_.ptr<UCHAR>(row);
-				p_diffRow = diff.ptr<USHORT>(row);
-				p_depth = current_depth.ptr<USHORT>(row);
-				for (int col = 0; col < kinectWidth_; ++col) {
-					if (*(p_depth + col) != 0)
-						*(p_maskRow + col) = *(p_diffRow + col) / 10; // to cm
-					else
-						*(p_maskRow + col) = 0;
-				}
-			}*/
-
 			cv::Mat kernel = cv::getStructuringElement(CV_SHAPE_RECT, cv::Size(11, 11));
 			cv::Ptr<cv::cuda::Filter> erode = cv::cuda::createMorphologyFilter(cv::MORPH_ERODE, CV_8UC1, kernel);
 			cv::Ptr<cv::cuda::Filter> dilate = cv::cuda::createMorphologyFilter(cv::MORPH_DILATE, CV_8UC1, kernel);
@@ -282,13 +266,6 @@ void ofApp::update() {
 			cv::cuda::threshold(cv_bg_mask_gpu_, cv_bg_mask_gpu_, 20, 255, CV_THRESH_BINARY);
 			cv_bg_mask_gpu_.download(cvBgMask_);
 			bgMask_.update();
-
-			// Eventual smoothing
-			if (gaussian_size_ >= 3 && gaussian_sigma_ > 0) {
-				if (gaussian_size_ % 2 == 0)
-					gaussian_size_ = gaussian_size_ + 1;
-				ofxKinect_.SelectiveSmoothing(cv_bg_mask_gpu_, gaussian_size_, gaussian_sigma_);
-			}
 
 			// Blob detection
 			float finderRes = blobFinder_.getResolution();
@@ -302,7 +279,31 @@ void ofApp::update() {
 				blobFound_ = true;
 
 			if (blobFound_) {
-				garment_.Update(blobFinder_, *blobFinder_.blobs[0]);
+				garment_augmentation::Simple3dblob *blob = blobFinder_.blobs[0];
+
+				// Update the bg mask according to the blob
+				int pcW = blobFinder_.getWidth();
+				int pcH = blobFinder_.getHeight();
+				uchar *p_cv_bg_mask;
+				for (int y = 0; y < pcH; y++){
+					p_cv_bg_mask = cvBgMask_.ptr<uchar>(y);
+					for (int x = 0; x < pcW; ++x) {
+						if (blobFinder_.getCloudPoint(y*pcW + x).flag_ != blob->idx)
+							p_cv_bg_mask[x] = 0;
+					}
+				}
+
+				// Eventual smoothing and cropping on the depth map
+				if (gaussian_size_ >= 3 && gaussian_sigma_ > 0) {
+					if (gaussian_size_ % 2 == 0)
+						gaussian_size_ = gaussian_size_ + 1;
+					ofxKinect_.CropAndSmooth(cv_bg_mask_gpu_, gaussian_size_, gaussian_sigma_);
+				}
+
+				// Update the garment object
+				garment_.Update(blobFinder_, *blob);
+
+				// Detect folds
 				detectFolds();
 				garment_.UpdateAnimations();
 
@@ -491,8 +492,6 @@ void ofApp::detectFolds() {
 			}
 		}
 	}
-
-	ofLog() << "gpu output : " << points.size();
 
 	// Compute folds from deformaed areas
 	if (askFoldComputation_) {

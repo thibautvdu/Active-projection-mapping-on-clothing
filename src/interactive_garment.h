@@ -1,8 +1,10 @@
 #ifndef FLEXIBLE_SURFACE_AUGMENTATION_INTERACTIVE_GARMENT_H_
 #define FLEXIBLE_SURFACE_AUGMENTATION_INTERACTIVE_GARMENT_H_
 
-#include "ofFastMesh.h"
 #include "kinect3dBlobDetector.h"
+#include "ofxKinectCommonBridge.h"
+
+#include "ofFastMesh.h"
 #include "fold.h"
 #include "animation.h"
 
