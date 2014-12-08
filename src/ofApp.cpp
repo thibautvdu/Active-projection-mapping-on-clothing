@@ -104,7 +104,7 @@ void ofApp::setup() {
 
 	// Physic animations
 	std::unique_ptr<garment_augmentation::garment::Animation> lightsEffect(new garment_augmentation::garment::FlyingLights());
-	//garment_.AddAnimation(std::move(lightsEffect));
+	garment_.AddAnimation(std::move(lightsEffect));
 	std::unique_ptr<garment_augmentation::garment::Animation> contourEffect(new garment_augmentation::garment::ContourVectorField());
 	//garment_.AddAnimation(std::move(contourEffect));
 	//std::unique_ptr<garment_augmentation::garment::Animation> videoEffect(new garment_augmentation::garment::FoldVideoTexture("videos/halluc_edit.mp4"));
@@ -346,7 +346,7 @@ void ofApp::draw() {
 				ofTranslate(0, 0, -garment_.blob().maxZ.z - 1);
 				garment_.DrawMesh();
 				garment_.DrawFolds();
-				garment_.DrawAnimations();
+				//garment_.DrawAnimations();
 				//active_mesh_.drawWireframe();
 			ofPopMatrix();
 

@@ -98,7 +98,7 @@ namespace garment {
 	void InteractiveGarment::UpdateFolds(const std::vector<std::pair<math::Of3dsegmentOrientation, float>> &folds_update) {
 		// Update existing folds
 		for (int i = folds_.size() - 1; i >= 0; --i) {
-			if (0 >= folds_update[i].second) {
+			if (i >= folds_update.size() || 0 >= folds_update[i].second) {
 				folds_[i].set_flag(Fold::foldState::TO_SUPPRESS);
 			}
 			else {
