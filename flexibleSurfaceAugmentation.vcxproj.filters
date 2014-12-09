@@ -130,6 +130,15 @@
     <ClCompile Include="src\deformation_tracker.cpp">
       <Filter>src\garment\cpu threaded deformation detection</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxGifDecoder\src\ofxGifDecoder.cpp">
+      <Filter>addons\ofxGifDecoder\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxGifDecoder\src\ofxGifFile.cpp">
+      <Filter>addons\ofxGifDecoder\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\addons\ofxGifDecoder\src\ofxGifFrame.cpp">
+      <Filter>addons\ofxGifDecoder\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -560,6 +569,12 @@
     </Filter>
     <Filter Include="src\garment\cpu threaded deformation detection">
       <UniqueIdentifier>{267c460b-6057-48ec-bd10-df68333da4a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxGifDecoder">
+      <UniqueIdentifier>{901a8da3-ab64-498a-b8a0-ad52774090a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="addons\ofxGifDecoder\src">
+      <UniqueIdentifier>{fc4c4c2a-d0a6-45de-bab3-294740aad0ba}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -3305,9 +3320,6 @@
     <ClInclude Include="src\cuda_accelerated_deformation_detection.h">
       <Filter>src\garment\cuda deformation detection</Filter>
     </ClInclude>
-    <ClInclude Include="src\cuda_math_vectors_helper.cu">
-      <Filter>src\garment\cuda deformation detection</Filter>
-    </ClInclude>
     <ClInclude Include="src\cuda_math_vectors_helper.cuh">
       <Filter>src\garment\cuda deformation detection</Filter>
     </ClInclude>
@@ -3316,6 +3328,15 @@
     </ClInclude>
     <ClInclude Include="src\deformation_tracker.h">
       <Filter>src\garment\cpu threaded deformation detection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxGifDecoder\src\ofxGifDecoder.h">
+      <Filter>addons\ofxGifDecoder\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxGifDecoder\src\ofxGifFile.h">
+      <Filter>addons\ofxGifDecoder\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\addons\ofxGifDecoder\src\ofxGifFrame.h">
+      <Filter>addons\ofxGifDecoder\src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

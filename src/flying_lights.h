@@ -1,6 +1,8 @@
 #ifndef FLEXIBLE_SURFACE_AUGMENTATION_FLYING_LIGHTS_H_
 #define FLEXIBLE_SURFACE_AUGMENTATION_FLYING_LIGHTS_H_
 
+#include "ofxGifDecoder.h"
+
 #include "animation.h"
 #include "fold.h"
 
@@ -28,35 +30,46 @@ namespace garment {
 			}
 
 		private:
-			class Particle : public ofSpherePrimitive {
+			class Particle : public ofPlanePrimitive {
 				public:
 
 					Particle() {
-						this->setRadius(1);
+						this->set(1, 1);
 						vel_ = ofVec3f(0, 0, 0);
 						life_time_ = 1;
+						frame_index_ = 0;
 					}
 
 					Particle(ofVec3f init_pos) {
 						this->setPosition(init_pos);
-						this->setRadius(1);
+						this->set(1, 1);
 						vel_ = ofVec3f(0, 0, 0);
 						life_time_ = 1;
+						frame_index_ = 0;
 					}
 
 					Particle(ofVec3f init_pos, float radius) {
 						this->setPosition(init_pos);
-						this->setRadius(radius);
+						this->set(radius*2, radius*2);
 						vel_ = ofVec3f(0, 0, 0);
 						life_time_ = 1;
+						frame_index_ = 0;
+					}
+
+					inline void InitUVTex(float radius, ofTexture &sample) {
+						this->resizeToTexture(sample, radius * 2 / max(sample.getWidth(), sample.getHeight()));
 					}
 
 					inline void set_life_time(float life_time) {
 						life_time_ = life_time;
 					}
 
-					inline float life_time() {
+					inline float life_time() const {
 						return life_time_;
+					}
+
+					inline int frame_index() const {
+						return frame_index_;
 					}
 
 					inline void ResetForce() {
@@ -110,12 +123,25 @@ namespace garment {
 					inline void Update(float delta_time) {
 						life_time_ -= delta_time;
 						vel_ += force_;
-						this->setPosition(this->getPosition() + delta_time*force_);
+						this->setPosition(this->getPosition() + delta_time*vel_);
+
+					}
+
+					inline void Draw(std::vector<ofTexture> &textures, float animation_increment) {
+						frame_index_ += animation_increment;
+
+						if (frame_index_ >= textures.size())
+							frame_index_ = 0; 
+
+						textures[frame_index_].bind();
+						this->draw();
+						textures[frame_index_].unbind();
 					}
 
 				private : 
 					ofVec3f vel_, force_;
 					float life_time_;
+					float frame_index_;
 			};
 
 			std::vector<Particle> lights_;
@@ -124,6 +150,8 @@ namespace garment {
 			float light_repulsion_radius_;
 			float light_repulsion_strength_;
 			float light_life_time_;
+			std::vector<ofTexture> gif_frames_textures_;
+			float gif_fps_;
 	};
 
 } // namespace garment

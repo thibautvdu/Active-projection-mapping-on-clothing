@@ -346,7 +346,7 @@ void ofApp::draw() {
 				ofTranslate(0, 0, -garment_.blob().maxZ.z - 1);
 				garment_.DrawMesh();
 				garment_.DrawFolds();
-				//garment_.DrawAnimations();
+				garment_.DrawAnimations();
 				//active_mesh_.drawWireframe();
 			ofPopMatrix();
 
