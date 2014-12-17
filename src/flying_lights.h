@@ -1,7 +1,7 @@
 #ifndef FLEXIBLE_SURFACE_AUGMENTATION_FLYING_LIGHTS_H_
 #define FLEXIBLE_SURFACE_AUGMENTATION_FLYING_LIGHTS_H_
 
-#include "ofxGifDecoder.h"
+#include "ofxGif.h"
 
 #include "animation.h"
 #include "fold.h"
@@ -127,15 +127,19 @@ namespace garment {
 
 					}
 
-					inline void Draw(std::vector<ofTexture> &textures, float animation_increment) {
+					inline void Draw(std::vector<ofImage> &textures, float animation_increment) {
 						frame_index_ += animation_increment;
 
 						if (frame_index_ >= textures.size())
 							frame_index_ = 0; 
 
+						if (life_time_ < 1)
+							ofSetColor(255, 255, 255, life_time_ * 255);
 						textures[frame_index_].bind();
 						this->draw();
 						textures[frame_index_].unbind();
+						if (life_time_ < 1)
+							ofSetColor(255, 255, 255, 255);
 					}
 
 				private : 
@@ -150,7 +154,7 @@ namespace garment {
 			float light_repulsion_radius_;
 			float light_repulsion_strength_;
 			float light_life_time_;
-			std::vector<ofTexture> gif_frames_textures_;
+			std::vector<ofImage> gif_frames_images_;
 			float gif_fps_;
 	};
 
