@@ -1,3 +1,8 @@
+// A fire animation managing 25 animated fire flames. Please refer to the poster
+// and paper for the animation details
+// The video used as a texture on each particle is a collection PNG images that are
+// read and stored as GPU textures when the animation is created
+
 #ifndef FLEXIBLE_SURFACE_AUGMENTATION_FLYING_LIGHTS_H_
 #define FLEXIBLE_SURFACE_AUGMENTATION_FLYING_LIGHTS_H_
 
@@ -12,6 +17,8 @@ namespace garment {
 	class FlyingLights : public Animation {
 		public:
 
+			// Init the particle system and store the video texture's frame on
+			// the GPU. Refer to this function to change the speed, etc.
 			FlyingLights();
 
 			void Update() {};
@@ -30,6 +37,8 @@ namespace garment {
 			}
 
 		private:
+			// A class physic particle simulation, with added possibility
+			// of drawing each particle with a video texture
 			class Particle : public ofPlanePrimitive {
 				public:
 
@@ -127,14 +136,18 @@ namespace garment {
 
 					}
 
+					// Draw the particle with the corresponding PNG frame of the video texture (according
+					// to animation_increment)
 					inline void Draw(std::vector<ofImage> &textures, float animation_increment) {
 						frame_index_ += animation_increment;
 
 						if (frame_index_ >= textures.size())
 							frame_index_ = 0; 
 
+						// Fade out the flame on the last second
 						if (life_time_ < 1)
 							ofSetColor(255, 255, 255, life_time_ * 255);
+
 						textures[frame_index_].bind();
 						this->draw();
 						textures[frame_index_].unbind();
@@ -149,13 +162,14 @@ namespace garment {
 			};
 
 			std::vector<Particle> lights_;
+			const int k_num_of_lights_;
 			float light_radius_;
 			float light_speed_;
 			float light_repulsion_radius_;
 			float light_repulsion_strength_;
 			float light_life_time_;
-			std::vector<ofImage> gif_frames_images_;
-			float gif_fps_;
+			std::vector<ofImage> video_frames_images_;
+			float video_fps_;
 	};
 
 } // namespace garment

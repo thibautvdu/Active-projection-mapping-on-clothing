@@ -1,3 +1,5 @@
+// A few utilities to fill the gaps (missing features) of openframeworks
+
 #ifndef FLEXIBLE_SURFACE_AUGMENTATION_OF_UTILITIES_H_
 #define FLEXIBLE_SURFACE_AUGMENTATION_OF_UTILITIES_H_
 
@@ -5,9 +7,9 @@
 
 namespace of_utilities {
 
-	/*
-	A window simulation when using a fullscreen window covering both screens
-	*/
+	// Simulate a two-windows behavior when using a large window which cover both monitor and projector
+	// this is necessary as openframeworks doesn't handle multiple windows with the programmable renderer
+	// yet
 	class VirtualWindow {
 		public:
 			inline VirtualWindow() : x_position_(0), y_position_(0), width_(0), height_(0) {}
@@ -28,8 +30,13 @@ namespace of_utilities {
 			int width_, height_;
 	};
 
+	// Return the rotation matrix from the vector 'from' to the vector 'to'
 	ofMatrix3x3 VectorRotationMatrix(ofVec3f from, ofVec3f to);
-	ofVec2f MapVec2f(const ofVec2f value, const ofVec2f input_min, const ofVec2f input_max, const ofVec2f output_min, const ofVec2f output_max, const bool clamp = false);	// Map function for ofVec2f
+
+	// Equivalent of the float mapping function of openframeworks but with 2D vectors
+	ofVec2f MapVec2f(const ofVec2f value, const ofVec2f input_min, const ofVec2f input_max, const ofVec2f output_min, const ofVec2f output_max, const bool clamp = false);
+
+	// Convert a polyline object to a path object
 	ofPath PolylineToPath(const ofPolyline polyline);
 
 } // namespace ofUtilities

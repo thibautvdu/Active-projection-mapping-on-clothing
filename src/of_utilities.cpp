@@ -38,7 +38,6 @@ namespace of_utilities {
 		return to_local_space * local_rotation * to_world_space;
 	}
 
-	// Map function for ofVec2f
 	ofVec2f MapVec2f(const ofVec2f value, const ofVec2f inputMin, const ofVec2f inputMax, const ofVec2f outputMin, const ofVec2f outputMax, const bool clamp) {
 		float x = ofMap(value.x, inputMin.x, inputMax.x, outputMin.x, outputMax.x, clamp);
 		float y = ofMap(value.y, inputMin.y, inputMax.y, outputMin.y, outputMax.y, clamp);

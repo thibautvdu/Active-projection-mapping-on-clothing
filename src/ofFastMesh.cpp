@@ -17,6 +17,11 @@ void ofFastMesh::resize(const int size) {
 }
 
 void ofFastMesh::computeNormals(const bool bNormalize){
+	if (0 == this->getNumIndices()) {
+		ofLogError("ofFastMesh::computeNormals") << "trying to compute the normals of a mesh without indices";
+		return;
+	}
+
 	for (int i = 0; i < this->getVertices().size(); i++) this->addNormal(ofPoint(0, 0, 0));
 
 	for (int i = 0; i < this->getIndices().size(); i += 3){

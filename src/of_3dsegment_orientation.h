@@ -1,3 +1,6 @@
+// Currently used segment model based on a length, direction and center
+// it acts as a bridge too between the MRPT data structures and openframeworks data structures
+
 #ifndef FLEXIBLE_SURFACE_AUGMENTATION_OF_3DSEGMENT_ORIENTATION_H_
 #define FLEXIBLE_SURFACE_AUGMENTATION_OF_3DSEGMENT_ORIENTATION_H_
 

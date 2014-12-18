@@ -1,3 +1,7 @@
+// An object oriented implementation of "3D Non-Rigid Deformable Surface Estimation Without Feature
+// Correspondence" by Bryan Willimon, Ian Walker, and Stan Birchfield. Directly inherit from ofMesh
+// Please refer to this paper for details on the logic and algorithm
+
 #ifndef FLEXIBLE_SURFACE_AUGMENTATION_SEMI_IMPLICIT_ACTIVE_MESH_H_
 #define FLEXIBLE_SURFACE_AUGMENTATION_SEMI_IMPLICIT_ACTIVE_MESH_H_
 
@@ -14,10 +18,6 @@
 namespace garment_augmentation {
 namespace surface_tracking {
 
-	/*
-	An object oriented implementation of "3D Non-Rigid Deformable Surface Estimation Without Feature
-	Correspondence" by Bryan Willimon, Ian Walker, and Stan Birchfield
-	*/
 	class ofSemiImplicitActiveMesh : public ofMesh {
 
 		public :

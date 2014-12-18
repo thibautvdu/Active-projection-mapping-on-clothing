@@ -1,3 +1,12 @@
+// Experimentation with the geometry shader for higher performances :
+// generate a vector field around the contour of the garment through
+// shaders ONLY. Visual results are unsatisfying but it is a proof of
+// concept that could give some result with a little more work
+// As openframeworks has some struggle managing correctly three shaders,
+// we have to manage ourself the VBO and attributes of the shaders.
+// We use a texture buffer object to the previous contour state directly
+// in the GPU
+
 #ifndef FLEXIBLE_SURFACE_AUGMENTATION_CONTOUR_VECTOR_FIELD_H_
 #define FLEXIBLE_SURFACE_AUGMENTATION_CONTOUR_VECTOR_FIELD_H_
 

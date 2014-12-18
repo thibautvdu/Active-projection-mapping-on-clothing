@@ -8,6 +8,10 @@ namespace math {
 	using mrpt::math::TSegment3D;
 	using mrpt::math::CMatrixTemplateNumeric;
 
+
+
+	/* MRPT RANSAC ROUTINES	/	/	/	/	/	/	/	/	/	/	/	/	*/
+
 	void RansacKalman3dSegmentTracker::SegmentModel(const CMatrixDouble  &all_data, const vector_size_t  &use_indices, std::vector< CMatrixDouble > &fit_models) {
 		ASSERT_(use_indices.size() == 2);
 
@@ -52,7 +56,7 @@ namespace math {
 			return;
 		}
 
-		// Test the verticality of the line first
+		// Test the verticality of the line !!! WE ASSUME THAT WE ARE LOOKING FOR VERTICAL FOLDS NOW !!!
 		double director[3];
 		line.getUnitaryDirectorVector(director);
 		double angle_cos = /*director[0] * 0 +*/ director[1] * 1 /* + director[2] * 0*/; // angle with vector (0,1,0)
@@ -77,7 +81,8 @@ namespace math {
 			}
 		}
 
-		// Sort the inliers according to the Y axis
+		// Sort the inliers according to the Y axis to look for an eventual gap
+		// which means we have two or more aligned folds and not only one
 		if (inliers.size() > k_min_inliers_for_valid_segment_) {
 			std::sort(inliers.begin(), inliers.end(), ComparePoints);
 
@@ -106,26 +111,37 @@ namespace math {
 		}
 	}
 
-	void RansacKalman3dSegmentTracker::Track3Dsegments(const std::vector<ofVec3f> &point_cloud, const double threshold, const size_t min_inliers_for_valid_segment, std::vector<std::pair<Of3dsegmentOrientation,float>> &out_segments) {
+	/* MRPT RANSAC ROUTINES	-	-	-	-	-	-	-	-	-	-	-	-	*/
+
+
+
+	/* MAIN FUNCTION (PUBLIC CALL)/	/	/	/	/	/	/	/	/	/	/	*/
+
+	void RansacKalman3dSegmentTracker::Track3Dsegments(const std::vector<ofVec3f> &point_cloud, const double threshold, const size_t min_inliers_for_valid_segment, std::vector<std::pair<Of3dsegmentOrientation, float>> &out_segments) {
 
 		if (point_cloud.empty())
 			return;
 
-		// Suppress the eventual segments whose life time is expired
+		// SUPPRESS EXPIRED SEGMENTS //
+
 		for (int i = segments_.size() - 1; i >= 0; --i) {
 			if (0 >= segments_[i].second) {
 				SuppressSegment(i);
 			}
 		}
 
-		// Update the current segments with kalman filter
+		// !SUPPRESS EXPIRED SEGMENTS //
+
+
+		// EXISTING SEGMENTS UPDATE //
+
 		std::vector<int> point_cloud_index_remaining;
 		point_cloud_index_remaining.reserve(point_cloud.size());
 		if (!kalman_filters_.empty()) {
 
-			// Compute the estimate of the segments
+			// Compute the estimation of the segments
 			cv::Mat prediction_mat;
-			std::vector<std::pair<TSegment3D, std::vector<int>>> predictions(kalman_filters_.size());
+			std::vector<std::pair<TSegment3D, std::vector<int>>> predictions(kalman_filters_.size()); // second pair : inliers
 			float last_frame_time = ofGetLastFrameTime();
 			for (int i = 0; i < kalman_filters_.size(); ++i) {
 
@@ -138,11 +154,12 @@ namespace math {
 				float * p_prediction_mat = prediction_mat.ptr<float>(0);
 				Of3dsegmentOrientation of_segment(ofVec3f(p_prediction_mat[0], p_prediction_mat[1], p_prediction_mat[2]),
 					ofVec3f(p_prediction_mat[3], p_prediction_mat[4], p_prediction_mat[5]), p_prediction_mat[6]);
+
 				predictions[i].first = of_segment.ToMrpt3dSegment();
 				predictions[i].second.reserve(20);
 			}
 
-			// Affect the point to the best segment if one or more are in reach
+			// Affect each point to the nearest segment under the distance threshold
 			TPoint3D candidate;
 			for (size_t i = 0; i < point_cloud.size(); ++i)
 			{
@@ -168,26 +185,40 @@ namespace math {
 			Of3dsegmentOrientation measured_segment;
 			cv::Mat measurements;
 			for (int i = 0; i < kalman_filters_.size(); ++i) {
+
 				if (predictions[i].second.size() >= min_inliers_for_valid_segment) {
+
+					// Least square fitting on the inliers to get a new segment
 					measured_segment = LeastSquareFit(predictions[i].second, point_cloud);
-					measurements = (cv::Mat_<float>(7, 1) << 
-						measured_segment.orientation().x, measured_segment.orientation().y, measured_segment.orientation().z, 
+					measurements = (cv::Mat_<float>(7, 1) <<
+						measured_segment.orientation().x, measured_segment.orientation().y, measured_segment.orientation().z,
 						measured_segment.center().x, measured_segment.center().y, measured_segment.center().z, measured_segment.length());
+
+					// Correct the prediction with this fitted segment
 					prediction_mat = kalman_filters_[i].correct(measurements);
 
 					float * p_prediction_mat = prediction_mat.ptr<float>(0);
 					segments_[i].first = Of3dsegmentOrientation(ofVec3f(p_prediction_mat[0], p_prediction_mat[1], p_prediction_mat[2]),
 						ofVec3f(p_prediction_mat[3], p_prediction_mat[4], p_prediction_mat[5]), p_prediction_mat[6]);
 					segments_[i].second = segments_life_time_; // Renew the life time
+
 				}
 				else {
+
 					segments_[i].first = Of3dsegmentOrientation(predictions[i].first);
 					segments_[i].second -= last_frame_time;
+
 				}
+
 			}
 		}
 
-		// Remaining points for RANSAC algorithm
+		// !EXISTING SEGMENTS UPDATE //
+
+
+		// LOOK FOR NEW SEGMENTS //
+
+		// Fill the remaining points matrix for RANSAC algorithm
 		CMatrixDouble remaining_points;
 		if (kalman_filters_.empty()) {
 			remaining_points = CMatrixDouble(3, point_cloud.size());
@@ -209,7 +240,8 @@ namespace math {
 		}
 
 		k_min_inliers_for_valid_segment_ = min_inliers_for_valid_segment;
-		// For each line
+
+		// Iterate with RANSAC until there is not enough inliers
 		while (size(remaining_points, 2) >= min_inliers_for_valid_segment)
 		{
 			vector_size_t this_best_inliers;
@@ -228,26 +260,34 @@ namespace math {
 				0.99999  // Prob. of good result
 				);
 
-			// Is this line good enough?
+			// Is this segment good enough?
 			if (this_best_inliers.size() >= min_inliers_for_valid_segment)
 			{
 				Of3dsegmentOrientation fitted = LeastSquareFit(this_best_inliers, remaining_points);
 
 				segments_.push_back(std::pair<Of3dsegmentOrientation, float>(fitted, segments_life_time_));
 				kalman_filters_.push_back(cv::KalmanFilter(13, 7));
-				InitKalmanFilter(*(kalman_filters_.end()-1), fitted);
+				InitKalmanFilter(*(kalman_filters_.end() - 1), fitted);
 
-				// Discard the selected points so they are not used again for finding subsequent planes:
+				// Discard the selected points so they are not used again for finding subsequent segments
 				remaining_points.removeColumns(this_best_inliers);
 			}
 			else
 			{
-				break; // Do not search for more lines
+				break; // Do not search for more segments
 			}
 		}
 
 		out_segments = segments_;
+
+		// !LOOK FOR NEW SEGMENTS //
 	}
+
+	/* MAIN FUNCTION (PUBLIC CALL)-	-	-	-	-	-	-	-	-	-	-	*/
+
+
+
+	/* VARIOUS FUNCTIONS	/	/	/	/	/	/	/	/	/	/	/	/	*/
 
 	Of3dsegmentOrientation RansacKalman3dSegmentTracker::LeastSquareFit(const vector_size_t &best_inliers, const CMatrixDouble &point_cloud) {
 		Of3dsegmentOrientation res;
@@ -332,6 +372,12 @@ namespace math {
 		return res;
 	}
 
+	/* VARIOUS FUNCTIONS	-	-	-	-	-	-	-	-	-	-	-	-	*/
+
+
+
+	/* KALMAN MARTICES	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
+
 	const cv::Mat RansacKalman3dSegmentTracker::k_kalman_transition_matrix_init_ = (cv::Mat_<float>(13, 13) <<
 		1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, // (0,7)  -> dt
 		0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, // (1,8)  -> dt
@@ -387,6 +433,8 @@ namespace math {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.01, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.01, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.01);
+
+	/* KALMAN MARTICES	-	-	-	-	-	-	-	-	-	-	-	-	-	*/
 
 } // namespace math
 } // namespace garment_augmentation

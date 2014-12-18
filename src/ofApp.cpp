@@ -1,51 +1,50 @@
 #include "ofApp.h"
 
-#include <stdlib.h>
-#include "opencv2/cuda.hpp"
 #include "opencv2/cudafilters.hpp"
 #include "opencv2/cudaarithm.hpp"
-#include <opencv2/core/cuda_stream_accessor.hpp>
+#include "opencv2/core/cuda_stream_accessor.hpp"
 
-#include "cv_helper.h"
+#include "cuda_accelerated_deformation_detection.h"
 #include "lscm.h"
-#include "deformation_tracker.h"
 #include "flying_lights.h"
 #include "contour_vector_field.h"
-//#include "fold_video_texture.h"
-#include "gl_shader.h"
-#include "cuda_accelerated_deformation_detection.h"
+#include "fold_video_texture.h"
+
 
 /* CONSTANTS	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 
-// HARDWARE HANDLERS	/	/	/	/	/	/	/	/	/	/	/	/
+// HARDWARE HANDLERS //
 
-const int ofApp::screenWidth_ = 1920, ofApp::screenHeight_ = 1080;
-const int ofApp::projectorWidth_ = 1024, ofApp::projectorHeight_ = 768;
-const int ofApp::kinectWidth_ = 640, ofApp::kinectHeight_ = 480;
+const int ofApp::k_screen_width_ = 1920, ofApp::k_screen_height_ = 1080;
+const int ofApp::k_projector_width_ = 1024, ofApp::k_projector_height_ = 768;
+const int ofApp::k_kinect_width_ = 640, ofApp::k_kinect_height_ = 480;
 
-// HARDWARE HANDLERS	-	-	-	-	-	-	-	-	-	-	-	-
+// !HARDWARE HANDLERS //
 
-// KINECT WORLD SPACE	/	/	/	/	/	/	/	/	/	/	/	/
+
+// KINECT WORLD SPACE //
 
 const float ofApp::k_to_world_units_ = 0.001; // mm to meters
 
-// KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-
+// !KINECT WORLD SPACE //
 
-/* CONSTANTS	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
+/* CONSTANTS	-	-	-	-	-	-	-	-	-	-	-	-	-	*/
+
 
 
 /* OF ROUTINES	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 
 void ofApp::setup() {
-	// HARDWARE INIT	/	/	/	/	/	/	/	/	/	/	/	/
+	// HARDWARE INIT //
 
+	// Kinect
 	bool initSensor = ofxKinect_.initSensor();
 	if (!initSensor) {
 		ofLogFatalError("ofApp::setup") << "Couldn't init the kinect's sensor";
 		exit();
 	}
 
-	bool initStreams = ofxKinect_.initColorStream(kinectWidth_, kinectHeight_) && ofxKinect_.initDepthStream(kinectWidth_, kinectHeight_, false, true);
+	bool initStreams = ofxKinect_.initColorStream(k_kinect_width_, k_kinect_height_) && ofxKinect_.initDepthStream(k_kinect_width_, k_kinect_height_, false, true);
 	if (!initStreams) {
 		ofLogFatalError("ofApp::setup") << "Couldn't init the kinect's color and/or depth streams";
 		exit();
@@ -58,21 +57,21 @@ void ofApp::setup() {
 	}
 
 	// Projector
-	kinectProjectorToolkit_.loadCalibration("cal.xml", projectorWidth_, projectorHeight_);
-	projectorWindow_ = of_utilities::VirtualWindow(screenWidth_, 0, projectorWidth_, projectorHeight_);
+	kinectProjectorToolkit_.loadCalibration("cal.xml", k_projector_width_, k_projector_height_);
+	projectorWindow_ = of_utilities::VirtualWindow(k_screen_width_, 0, k_projector_width_, k_projector_height_);
 
-	// HARDWARE INIT	-	-	-	-	-	-	-	-	-	-	-	-
+	// !HARDWARE INIT //
 
 
-	// OPEN GL	/	/	/	/	/	/	/	/	/	/	/	/	/	/
+	// OPENGL //
 
 	ofDisableAlphaBlending();
 	ofSetFrameRate(50);
 
-	// OPEN GL	-	-	-	-	-	-	-	-	-	-	-	-	-	-
+	// !OPENGL //
 
 
-	// KINECT SCREEN SPACE	/	/	/	/	/	/	/	/	/	/	/	/
+	// KINECT SCREEN SPACE //
 
 	// Background learning
 	bgLearningCycleCount_ = 0;
@@ -80,66 +79,62 @@ void ofApp::setup() {
 	learntBg_ = false;
 
 	// Background segmentation
-	bgMask_.allocate(kinectWidth_,kinectHeight_,OF_IMAGE_GRAYSCALE);
-	cvBgMask_ = ofxCv::toCv(bgMask_);
+	of_fg_mask_.allocate(k_kinect_width_,k_kinect_height_,OF_IMAGE_GRAYSCALE);
+	cv_fg_mask_ = ofxCv::toCv(of_fg_mask_);
 
-	// Blob detection
+	// !KINECT SCREEN SPACE //
+
+
+	// KINECT WORLD SPACE //
+
+	// Euclidian cluster segmentation
 	blobFound_ = false;
-
-	// KINECT SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-	-
-
-
-	// KINECT WORLD SPACE	/	/	/	/	/	/	/	/	/	/	/	/
-
-	// Blob finder and tracker
-	blobFinder_.init(&ofxKinect_, kinectWidth_, kinectHeight_); // standarized coordinate system: z in the direction of gravity
-	//blobFinder_.setResolution(garment_augmentation::blob_detection::BF_HIGH_RES);
-	blobFinder_.setScale(ofVec3f(k_to_world_units_)); // mm to meters
+	euclidian_cluster_segmentation_.init(&ofxKinect_, k_kinect_width_, k_kinect_height_); // standarized coordinate system: z in the direction of gravity
+	//euclidian_cluster_segmentation_.setResolution(garment_augmentation::blob_detection::BF_HIGH_RES); // it is possible to use higher resolution, but too slow
+	euclidian_cluster_segmentation_.setScale(ofVec3f(k_to_world_units_));
 
 	// Fold processing
-	threaded_deformation_detector_.SetTargetGarment(&garment_);
+	//threaded_deformation_detector_.SetTargetGarment(&garment_); // if using the non CUDA algorithm
 	ransac_kalman_tracker_.set_segments_life_time(0.5); // life time of the folds
 	askFoldComputation_ = false;
-	numFolds_ = 1;
 
-	// Physic animations
+	// Animations
 	std::unique_ptr<garment_augmentation::garment::Animation> lightsEffect(new garment_augmentation::garment::FlyingLights());
 	garment_.AddAnimation(std::move(lightsEffect));
-	std::unique_ptr<garment_augmentation::garment::Animation> contourEffect(new garment_augmentation::garment::ContourVectorField());
+	//std::unique_ptr<garment_augmentation::garment::Animation> contourEffect(new garment_augmentation::garment::ContourVectorField());
 	//garment_.AddAnimation(std::move(contourEffect));
 	//std::unique_ptr<garment_augmentation::garment::Animation> videoEffect(new garment_augmentation::garment::FoldVideoTexture("videos/halluc_edit.mp4"));
 	//garment_.AddAnimation(std::move(videoEffect));
 
-	// KINECT WORLD SPACE	-	-	-	-	-	-	-	-	-	-	-	-
+	// !KINECT WORLD SPACE //
 
 
-	// PROJECTOR SCREEN SPACE	/	/	/	/	/	/	/	/	/	/	/
+	// PROJECTOR SCREEN SPACE //
 
 	chessboardImage_.loadImage("chessboard.png");
 
-	// PROJECTOR SCREEN SPACE	-	-	-	-	-	-	-	-	-	-	-
+	// !PROJECTOR SCREEN SPACE //
 
 
-	// GUI	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
+	// GUI/CONTROLS //
 
 	gui_.setup();
 	gui_.add(new ofxLabel(std::string("BACKGROUND LEARNING")));
-	gui_.add(bgLearningCycleGui_.setup("nb iterations", 10, 1, 50));
+	gui_.add(gui_bg_learning_cycle_.setup("nb iterations", 10, 1, 50));
 	gui_.add(new ofxLabel(std::string("GAUSSIAN SMOOTHING")));
-	gui_.add(gaussian_size_.setup("size", 5, 3, 9));
-	gui_.add(gaussian_sigma_.setup("sigma", 2.5, 0, 3));
+	gui_.add(gui_gaussian_size_.setup("size", 5, 3, 9));
+	gui_.add(gui_gaussian_sigma_.setup("sigma", 2.5, 0, 3));
 	gui_.add(new ofxLabel(std::string("DEFORMATION DETECTION")));
-	gui_.add(deformation_detector_num_threads_.setup("num of threads", 6, 1, 12));
-	gui_.add(fold_deformation_thresh_.setup("deformation thresh", 0.015, 0.00, 0.03));
-	//gui_.add(fold_deformation_thresh_2_.setup("deformation thresh 2", 50, 0.00, 100));
+	// gui_.add(gui_detector_num_threads_.setup("num of threads", 6, 1, 12)); // non-cuda multithreads detection
+	gui_.add(gui_crater_deformation_thresh_.setup("crater thresh", 0.015, 0.00, 0.03));
 	gui_.add(new ofxLabel(std::string("FOLD TRACKING")));
-	gui_.add(fold_distance_thresh_.setup("distance thresh", 0.05, 0.01, 0.08));
-	gui_.add(fold_points_num_thresh_.setup("nb points thresh", 7, 5, 20));
-	gui_.add(fold_width_.setup("fold's width",0.055,0.0,0.1));
-	gui_.add(kalman_process_noise_.setup("process noise cov", 0.0004, 0.0, 0.01));
-	gui_.add(kalman_measurement_noise_.setup("measurement noise cov", 0.007, 0.0, 0.01));
-	gui_.add(kalman_post_error_.setup("post error cov", 0.025, 0.0, 0.1));
-	gui_.add(using_velocity_.setup("use velocity", true));
+	gui_.add(gui_ransac_distance_thresh_.setup("distance thresh", 0.05, 0.01, 0.08));
+	gui_.add(gui_ransac_points_num_thresh_.setup("nb points thresh", 7, 5, 20));
+	gui_.add(gui_fold_width_.setup("fold's width",0.055,0.0,0.1));
+	gui_.add(gui_kalman_process_noise_.setup("process noise cov", 0.0004, 0.0, 0.01));
+	gui_.add(gui_kalman_measurement_noise_.setup("measurement noise cov", 0.007, 0.0, 0.01));
+	gui_.add(gui_kalman_post_error_.setup("post error cov", 0.025, 0.0, 0.1));
+	gui_.add(gui_using_velocity_.setup("use velocity", true));
 
 	// Mesh
 	//gui_.add(active_mesh_adaptation_rate_.setup("adaptation rate", 2, 0, 10));
@@ -153,25 +148,26 @@ void ofApp::setup() {
 	askedGeneration_ = false;
 
 	// FPS
-	gui_.add(fpsGui_.setup(std::string("fps :")));
+	gui_.add(gui_fps_.setup(std::string("fps :")));
 
-	// GUI	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
+	// !GUI/CONTROLS //
 }
 
 void ofApp::update() {
-	// EVENTS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
+	// CONTROLS //
 
 	if (askSaveAssets_) {
-		garment_.mesh_ref().save("mesh_export.ply");
-		ofSaveImage(ofxKinect_.getColorPixelsRef(), "color_ir_export.tif");
-		ofSaveImage(ofxKinect_.getDepthPixelsRef(), "depth_export.tif");
-		ofSaveImage(bgMask_, "bg_mask.tif");
-		ofLogNotice("ofApp::update") << "Exported the 3D mesh, IR/color and depth image";
+		garment_.mesh_ref().save("garment_raw_mesh_export.ply");
+		ofSaveImage(ofxKinect_.getColorPixelsRef(), "kinect_color_export.tif");
+		ofSaveImage(ofxKinect_.getDepthPixelsRef(), "kinect_depth_export.tif");
+		ofSaveImage(of_fg_mask_, "kinect_fg_mask.tif");
+		ofLogNotice("ofApp::update") << "Exported the 3D mesh, IR/color image, depth image and foreground mask";
 		askSaveAssets_ = false;
 	}
+
 	if (askBgExport_) {
 		if (learntBg_) {
-			ofSaveImage(depthBg_, "background_export.tif");
+			ofSaveImage(of_depth_bg_, "background_export.tif");
 			ofLogNotice("ofApp::update") << "Exported the learnt background";
 		}
 		else {
@@ -179,169 +175,171 @@ void ofApp::update() {
 		}
 		askBgExport_ = false;
 	}
+
 	if (askPause_)
 		return;
 
-	//active_mesh_.setAdaptationRate(active_mesh_adaptation_rate_);
-	//active_mesh_.setBoundaryWeight(active_mesh_boundary_weight_);
-	//active_mesh_.setDepthWeight(active_mesh_depth_weight_);
-
-	// EVENTS	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
+	// !CONTROLS //
 
 
-	// HARDWARE	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
+	// HARDWARE UPDATE //
 
 	ofxKinect_.update();
 
-	// HARDWARE	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
+	// !HARDWARE UPDATE //
 
 
-	// PROCESS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	/
+	// MAIN PROCESS LOOP //
 	if (ofxKinect_.isFrameNewDepth()) {
+
 		// Background learning
-		
 		if (askBgLearning_) {
-			bgLearningCycleCount_ = bgLearningCycleGui_;
+			bgLearningCycleCount_ = gui_bg_learning_cycle_;
 			learntBg_ = false;
 			askBgLearning_ = false;
 
 			ofLogNotice("ofApp::update()") << "Learning background . . .";
-			depthBg_ = ofxKinect_.getDepthPixels();
-			cvDepthBg_ = ofxCv::toCv(depthBg_);
+			of_depth_bg_ = ofxKinect_.getDepthPixels();
+			cv_depth_bg_ = ofxCv::toCv(of_depth_bg_);
 			--bgLearningCycleCount_;
 
 			if (bgLearningCycleCount_ == 0) {
-				cv_depth_bg_gpu_.upload(cvDepthBg_);
+				cv_depth_bg_gpu_.upload(cv_depth_bg_);
 				learntBg_ = true;
 				ofLogNotice("ofApp::update()") << "Background learning complete";
 			}
 		}
 		else if (bgLearningCycleCount_ != 0) {
-			for (int i = 0; i < depthBg_.getWidth()*depthBg_.getHeight(); ++i) {
-				if (0 == depthBg_[i]) {
-					depthBg_[i] = ofxKinect_.getDepthPixelsRef()[i];
+			for (int i = 0; i < of_depth_bg_.getWidth()*of_depth_bg_.getHeight(); ++i) {
+				if (0 == of_depth_bg_[i]) {
+					of_depth_bg_[i] = ofxKinect_.getDepthPixelsRef()[i];
 				}
 			}
 
 			--bgLearningCycleCount_;
 			if (bgLearningCycleCount_ == 0) {
-				cv_depth_bg_gpu_.upload(cvDepthBg_);
+				cv_depth_bg_gpu_.upload(cv_depth_bg_);
 				learntBg_ = true;
 				ofLogNotice("ofApp::update()") << "Background learning complete";
 			}
 		}
 		
 		if (!learntBg_) {
-			bool importedPixels = ofLoadImage(depthBg_, "background_export.tif");
+			bool importedPixels = ofLoadImage(of_depth_bg_, "background_export.tif");
 			if (importedPixels) {
-				depthBg_.setNumChannels(1);
-				cvDepthBg_ = ofxCv::toCv(depthBg_);
-				cv_depth_bg_gpu_.upload(cvDepthBg_);
+				of_depth_bg_.setNumChannels(1);
+				cv_depth_bg_ = ofxCv::toCv(of_depth_bg_);
+				cv_depth_bg_gpu_.upload(cv_depth_bg_);
 				learntBg_ = true;
 				ofLogNotice("ofApp::update()") << "Imported background";
 			}
 		}
 
-		// Point cloud processing
+		// Once the background is learnt/imported, start the real work
 		if (learntBg_) {
-			// Background removal
+			// CUDA background removal
 			cv::cuda::GpuMat diff_gpu;
 			cv::cuda::GpuMat &current_depth_gpu = ofxKinect_.getDepthPixelsGpuRef();
 
 			cv::cuda::absdiff(cv_depth_bg_gpu_, current_depth_gpu, diff_gpu);
 
-			// Put every non zero value to one
-			cv::cuda::threshold(current_depth_gpu, cv_bg_mask_gpu_, 0, 1, CV_THRESH_BINARY);
-			// Multiply it to the diff to get the mask and switch to cm
+			cv::cuda::threshold(current_depth_gpu, cv_fg_mask_gpu_, 0, 1, CV_THRESH_BINARY); // Put every non zero value to one
+			
 			cv::cuda::GpuMat temp;
-			cv::cuda::multiply(diff_gpu, cv_bg_mask_gpu_, temp,0.1);
-			temp.convertTo(cv_bg_mask_gpu_, CV_8UC1);
+			cv::cuda::multiply(diff_gpu, cv_fg_mask_gpu_, temp, 0.1); // Then multiply to the difference to get the mask and switch to cm with scaling
+			temp.convertTo(cv_fg_mask_gpu_, CV_8UC1);
 
 			cv::Mat kernel = cv::getStructuringElement(CV_SHAPE_RECT, cv::Size(11, 11));
 			cv::Ptr<cv::cuda::Filter> erode = cv::cuda::createMorphologyFilter(cv::MORPH_ERODE, CV_8UC1, kernel);
 			cv::Ptr<cv::cuda::Filter> dilate = cv::cuda::createMorphologyFilter(cv::MORPH_DILATE, CV_8UC1, kernel);
-			erode->apply(cv_bg_mask_gpu_, cv_bg_mask_gpu_);
-			dilate->apply(cv_bg_mask_gpu_, cv_bg_mask_gpu_);
+			erode->apply(cv_fg_mask_gpu_, cv_fg_mask_gpu_);
+			dilate->apply(cv_fg_mask_gpu_, cv_fg_mask_gpu_);
 
-			cv::cuda::threshold(cv_bg_mask_gpu_, cv_bg_mask_gpu_, 20, 255, CV_THRESH_BINARY);
-			cv_bg_mask_gpu_.download(cvBgMask_);
-			bgMask_.update();
+			cv::cuda::threshold(cv_fg_mask_gpu_, cv_fg_mask_gpu_, 20, 255, CV_THRESH_BINARY);
+			cv_fg_mask_gpu_.download(cv_fg_mask_);
+			of_fg_mask_.update();
 
-			// Blob detection
-			float finderRes = blobFinder_.getResolution();
+			// Euclidian cluster segmentation
+			float finderRes = euclidian_cluster_segmentation_.getResolution();
 			finderRes *= finderRes;
 
-			blobFinder_.findBlobs(&bgMask_,
-				ofVec3f(0.05, 0.05, 0.1), 1, 0.06, 1.2, (int)(0.001*kinectHeight_*kinectWidth_ / finderRes), 1);
+			euclidian_cluster_segmentation_.findBlobs(&of_fg_mask_,
+				ofVec3f(0.05, 0.05, 0.1), 1, 0.06, 1.2, (int)(0.001*k_kinect_height_*k_kinect_width_ / finderRes), 1);
 
 			blobFound_ = false;
-			if (blobFinder_.nBlobs != 0)
+			if (euclidian_cluster_segmentation_.nBlobs != 0)
 				blobFound_ = true;
 
+			// The model is found
 			if (blobFound_) {
-				garment_augmentation::Simple3dblob *blob = blobFinder_.blobs[0];
+				garment_augmentation::Simple3dblob *blob = euclidian_cluster_segmentation_.blobs[0];  // Take the first blob, which is the biggest one
 
-				// Update the bg mask according to the blob
-				int pcW = blobFinder_.getWidth();
-				int pcH = blobFinder_.getHeight();
-				uchar *p_cv_bg_mask;
+				// Update the foreground mask to the blob only
+				int pcW = euclidian_cluster_segmentation_.getWidth();
+				int pcH = euclidian_cluster_segmentation_.getHeight();
+				uchar *p_cv_fg_mask;
 				for (int y = 0; y < pcH; y++){
-					p_cv_bg_mask = cvBgMask_.ptr<uchar>(y);
+					p_cv_fg_mask = cv_fg_mask_.ptr<uchar>(y);
 					for (int x = 0; x < pcW; ++x) {
-						if (blobFinder_.getCloudPoint(y*pcW + x).flag_ != blob->idx)
-							p_cv_bg_mask[x] = 0;
+						if (euclidian_cluster_segmentation_.getCloudPoint(y*pcW + x).flag_ != blob->idx)
+							p_cv_fg_mask[x] = 0;
 					}
 				}
 
-				// Eventual smoothing and cropping on the depth map
-				if (gaussian_size_ >= 3 && gaussian_sigma_ > 0) {
-					if (gaussian_size_ % 2 == 0)
-						gaussian_size_ = gaussian_size_ + 1;
-					ofxKinect_.CropAndSmooth(cv_bg_mask_gpu_, gaussian_size_, gaussian_sigma_);
+				// Eventual smoothing and cropping on the depth map !!! DESTRUCTIVE OPERATION ON THE DEPTH !!!
+				// this is a vertical smoothing, assuming that the folds are verticals, and crop the depth image
+				// to the contour of the model
+				if (gui_gaussian_size_ >= 3 && gui_gaussian_sigma_ > 0) {
+					if (gui_gaussian_size_ % 2 == 0)
+						gui_gaussian_size_ = gui_gaussian_size_ + 1;
+					ofxKinect_.CropAndSmooth(cv_fg_mask_gpu_, gui_gaussian_size_, gui_gaussian_sigma_);
 				}
 
-				// Update the garment object
-				garment_.Update(blobFinder_, *blob);
+				// Update the garment object with the blob (generate the mesh, etc.
+				garment_.Update(euclidian_cluster_segmentation_, *blob);
 
-				// Detect folds
-				detectFolds();
-				garment_.UpdateAnimations();
+				// Detect and update the folds
+				DetectFolds();
 
+				// Possibly use the tracking mesh by energy minimization too
 				/*if (!active_mesh_.isGenerated() && askedGeneration_) {
 					active_mesh_.generateMesh(garment_);
 				}
 				else if (askedGeneration_){
-					active_mesh_.updateMesh(ofxKinect_, garment_, blobFinder_.getResolution());
+					active_mesh_.updateMesh(ofxKinect_, garment_, euclidian_cluster_segmentation_.getResolution());
 				}*/
+
+				// Update the animations
+				garment_.UpdateAnimations();
 			}
 		}
 	}
-	// PROCESS	-	-	-	-	-	-	-	-	-	-	-	-	-	-	-
+	// !MAIN PROCESS LOOP //
 }
 
 void ofApp::draw() {
 	if (ofxKinect_.isFrameNew()) {
-		// COMPUTER SCREEN	/	/	/	/	/	/	/	/	/	/	/	/	/
+		// COMPUTER SCREEN //
 
 		ofBackground(ofColor::grey);
 		projectorWindow_.background(ofColor::black);
 
-		// Top Left
+		// Top Left : color video
 		ofxKinect_.draw(0, 0);
 
-		// Top Right
-		ofxKinect_.drawDepth(kinectWidth_, 0);
+		// Top Right : depth map
+		ofxKinect_.drawDepth(k_kinect_width_, 0);
 
-		// Bottom Left
-		bgMask_.draw(0, kinectHeight_);
+		// Bottom Left : foreground mask
+		of_fg_mask_.draw(0, k_kinect_height_);
 
-		// Bottom Right
+		// Bottom Right : mesh with folds and animations in the world coordinates
 		if (blobFound_) {
-			if (askPause_)
+			if (askPause_) // if the application is in pause, switch to a CAD-like view
 				easyCam_.begin();
 
 			ofPushMatrix();
-				ofTranslate(kinectWidth_, kinectHeight_);
+				ofTranslate(k_kinect_width_, k_kinect_height_);
 				ofScale(1 / k_to_world_units_, 1 / k_to_world_units_, 1 / k_to_world_units_);
 				ofTranslate(0, 0, -garment_.blob().maxZ.z - 1);
 				garment_.DrawMesh();
@@ -354,10 +352,10 @@ void ofApp::draw() {
 				easyCam_.end();
 		}
 
-		// COMPUTER SCREEN	-	-	-	-	-	-	-	-	-	-	-	-	-
+		// !COMPUTER SCREEN //
 
 		 
-		// PROJECTOR SCREEN	/	/	/	/	/	/	/	/	/	/	/	/	/
+		// PROJECTOR SCREEN //
 
 		if (blobFound_) {
 			projectorWindow_.Begin();
@@ -368,41 +366,38 @@ void ofApp::draw() {
 			projectorWindow_.End();
 		}
 
-		// PROJECTOR SCREEN	-	-	-	-	-	-	-	-	-	-	-	-	-
+		// !PROJECTOR SCREEN //
 	}
 
-	// GUI
-	fpsGui_.setup(std::string("fps : ") + std::to_string(ofGetFrameRate()));
-	gui_.draw();
-}
+	// GUI //
 
-/* OF ROUTINES	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
+	gui_fps_.setup(std::string("fps : ") + std::to_string(ofGetFrameRate()));
+	gui_.draw();
+
+	// !GUI //
+}
 
 void ofApp::exit() {
-	ofxKinect_.stop();
-}
-
-void ofApp::mousePressed(int x, int y, int button) {
-
+	ofxKinect_.stop(); // Clean stop of the kinect sensor
 }
 
 void ofApp::keyPressed(int key) {
-	if (key == ' ') {
+	if (key == ' ') { // Pause the application for close up to the mesh
 		askPause_ = !askPause_;
 	}
-	else if (key == 's') {
+	else if (key == 's') { // Save the various images and mesh
 		askSaveAssets_ = true;
 	}
-	else if (key == 'b') {
+	else if (key == 'b') { // Ask to learn the background from the current scene
 		askBgLearning_ = true;
 	}
-	else if (key == 'i') {
+	else if (key == 'i') { // Export the learnt background. It will be automatically loaded next time
 		askBgExport_ = true;
 	}
-	else if (key == 'c') {
+	else if (key == 'c') { // Launch the fold detection and tracking
 		askFoldComputation_ = true;
 	}
-	else if (key == 'g') {
+	else if (key == 'g') { // Generate the tracking mesh if enabled
 		askedGeneration_ = true;
 	}
 }
@@ -410,9 +405,10 @@ void ofApp::keyPressed(int key) {
 /* OF ROUTINES	-	-	-	-	-	-	-	-	-	-	-	-	-	*/
 
 
+
 /* METHODS	/	/	/	/	/	/	/	/	/	/	/	/	/	/	*/
 
-void ofApp::meshParameterizationLSCM(const int textureSize, ofMesh& mesh) {
+void ofApp::ParameterizationLSCM(const int textureSize, ofMesh& mesh) {
 	mesh.enableTextures();
 	ofVec2f* texCoords = new ofVec2f[mesh.getNumVertices()];
 	mesh.addTexCoords(texCoords, mesh.getNumVertices());
@@ -430,22 +426,25 @@ void ofApp::meshParameterizationLSCM(const int textureSize, ofMesh& mesh) {
 	}
 }
 
-void ofApp::detectFolds() {
+void ofApp::DetectFolds() {
 	const vector<vector<int>> &garment_mesh_2dview = garment_.mesh2d_view();
 	ofFastMesh &garment_mesh = garment_.mesh_ref();
 
-	// Convert the seeked fold width from meters to pixels
+	// Convert the fold widths from meters (GUI) to pixels (on the depth map)
 	float meters_per_pixel_horizontal = garment_.blob().massCenter.z * ofxKinect_.HORIZONTAL_FOCAL_LENGTH_INV;
-	int fold_pixels_width = fold_width_ / meters_per_pixel_horizontal;
-	fold_pixels_width /= blobFinder_.getResolution();
+	int fold_pixels_width = gui_fold_width_ / meters_per_pixel_horizontal;
+	fold_pixels_width /= euclidian_cluster_segmentation_.getResolution();
 
 	// Construct the GPU 3D coordinates map
 	cv::cuda::GpuMat world_coordinates_gpu;
 	cv::Mat world_coordinates;
+
 	ofRectangle model_2d_roi = garment_.blob().bounding_box_2d;
 	int top_left_x = model_2d_roi.getTopLeft().x;
 	int top_left_y = model_2d_roi.getTopLeft().y;
-	world_coordinates.create(model_2d_roi.height, model_2d_roi.width, CV_32FC3); // 4 channel is indicating whether there is a valid value
+
+	world_coordinates.create(model_2d_roi.height, model_2d_roi.width, CV_32FC3); // 4th channel is indicating whether there is a valid value
+
 	float *p_world_coord_row;
 	ofVec3f *vertex;
 	for (int y = 0; y < world_coordinates.rows; ++y) {
@@ -462,14 +461,15 @@ void ofApp::detectFolds() {
 			}
 		}
 	}
+
 	world_coordinates_gpu.upload(world_coordinates);
 
-	// GPU accelerated detection
+	// CUDA craters detection
 	cv::cuda::GpuMat detected_deformations_gpu;
 	detected_deformations_gpu.create(world_coordinates_gpu.size(), CV_8UC1);
-	garment_augmentation::cuda_optimization::AcceleratedDeformationsDetection(world_coordinates_gpu, fold_deformation_thresh_, fold_pixels_width, detected_deformations_gpu);
+	garment_augmentation::cuda_optimization::AcceleratedDeformationsDetection(world_coordinates_gpu, gui_crater_deformation_thresh_, fold_pixels_width, detected_deformations_gpu);
 
-	// Retrieve the values
+	// Get the result back from the graphic card
 	cv::Mat output_points;
 	detected_deformations_gpu.download(output_points);
 	std::vector<ofVec3f> points;
@@ -482,7 +482,7 @@ void ofApp::detectFolds() {
 			if (output_points_row_ptr[x] != 0) {
 				points.push_back(garment_mesh.getVertex(garment_mesh_2dview[top_left_x + x][top_left_y + y]));
 
-				// color back the mesh
+				// Color back the mesh
 				for (int yy = top_left_y + y - (fold_pixels_width - 1) / 2; yy <= top_left_y + y + (fold_pixels_width - 1) / 2; ++yy) {
 					for (int xx = top_left_x + x - (fold_pixels_width - 1) / 2; xx <= top_left_x + x + (fold_pixels_width - 1) / 2; ++xx) {
 						if (garment_mesh_2dview[xx][yy] != -1)
@@ -493,16 +493,17 @@ void ofApp::detectFolds() {
 		}
 	}
 
-	// Compute folds from deformaed areas
+	// Compute folds from craters
 	if (askFoldComputation_) {
-		// Tune the kalman parameters
-		ransac_kalman_tracker_.TuneKalmanCovariances(kalman_process_noise_, kalman_measurement_noise_, kalman_post_error_);
-		ransac_kalman_tracker_.SetVelocityUse(using_velocity_);
+		// Tune the kalman parameters according the GUI inputs
+		ransac_kalman_tracker_.TuneKalmanCovariances(gui_kalman_process_noise_, gui_kalman_measurement_noise_, gui_kalman_post_error_);
+		ransac_kalman_tracker_.SetVelocityUse(gui_using_velocity_);
 
 		// Run the tracker and retrieve the updated or new segments with their lifetime
 		std::vector<std::pair<garment_augmentation::math::Of3dsegmentOrientation, float> > tracked_segments;
-		ransac_kalman_tracker_.Track3Dsegments(points, fold_distance_thresh_, fold_points_num_thresh_, tracked_segments); // threshold : 5cm, minimum points : 10
+		ransac_kalman_tracker_.Track3Dsegments(points, gui_ransac_distance_thresh_, gui_ransac_points_num_thresh_, tracked_segments);
 
+		// Send the folds' update to the interactive garment object
 		garment_.UpdateFolds(tracked_segments);
 	}
 }

@@ -76,20 +76,11 @@
     <ClCompile Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\unicode\unicode.cpp">
       <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\unicode</Filter>
     </ClCompile>
-    <ClCompile Include="src\lscm.cpp">
-      <Filter>src\lscm</Filter>
-    </ClCompile>
-    <ClCompile Include="src\lscmUtilities.cpp">
-      <Filter>src\lscm</Filter>
-    </ClCompile>
     <ClCompile Include="src\kinect3dBlobDetector.cpp">
-      <Filter>src\blobDetection</Filter>
+      <Filter>src\euclidian_cluster_segmentation</Filter>
     </ClCompile>
     <ClCompile Include="src\ofSemiImplicitActiveMesh.cpp">
-      <Filter>src\surfaceTracking</Filter>
-    </ClCompile>
-    <ClCompile Include="src\flying_lights.cpp">
-      <Filter>src\garment</Filter>
+      <Filter>src\surface_tracking</Filter>
     </ClCompile>
     <ClCompile Include="src\interactive_garment.cpp">
       <Filter>src\garment</Filter>
@@ -106,32 +97,41 @@
     <ClCompile Include="src\ransac_lines.cpp">
       <Filter>src\math</Filter>
     </ClCompile>
-    <ClCompile Include="src\animation.cpp">
-      <Filter>src\garment</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxUbo\src\ofxUbo.cpp">
       <Filter>addons\ofxUbo\src</Filter>
     </ClCompile>
     <ClCompile Include="src\gl_shader.cpp">
       <Filter>src\toolbox</Filter>
     </ClCompile>
-    <ClCompile Include="src\contour_vector_field.cpp">
-      <Filter>src\garment</Filter>
-    </ClCompile>
-    <ClCompile Include="src\fold_video_texture.cpp">
-      <Filter>src\garment</Filter>
-    </ClCompile>
     <ClCompile Include="src\ransac_kalman_segments.cpp">
       <Filter>src\math</Filter>
     </ClCompile>
     <ClCompile Include="src\threaded_deformation_detector.cpp">
-      <Filter>src\garment\cpu threaded deformation detection</Filter>
+      <Filter>src\garment\cpu threaded craters detection</Filter>
     </ClCompile>
     <ClCompile Include="src\deformation_tracker.cpp">
-      <Filter>src\garment\cpu threaded deformation detection</Filter>
+      <Filter>src\garment\cpu threaded craters detection</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\addons\ofxGif\src\ofxGif.cpp">
       <Filter>addons\ofxGif\src</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\LSCM\lscm.cpp">
+      <Filter>libs\LSCM</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\LSCM\lscmUtilities.cpp">
+      <Filter>libs\LSCM</Filter>
+    </ClCompile>
+    <ClCompile Include="src\animation.cpp">
+      <Filter>src\garment\animations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\contour_vector_field.cpp">
+      <Filter>src\garment\animations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\flying_lights.cpp">
+      <Filter>src\garment\animations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fold_video_texture.cpp">
+      <Filter>src\garment\animations</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -225,23 +225,11 @@
     <Filter Include="addons\ofxKinectProjectorToolkit\libs\dlib\matrix\lapack">
       <UniqueIdentifier>{c935a0dc-dfd0-408d-822e-553e8dbd17e7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\shaders">
-      <UniqueIdentifier>{d0fd54cc-e453-43ef-a9c6-b6ce79afd805}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\lscm">
-      <UniqueIdentifier>{448622c0-f8c5-4946-8ce4-660db9338294}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\blobDetection">
-      <UniqueIdentifier>{72b4a2fa-8124-4308-92d4-60031df1fc86}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\toolbox">
       <UniqueIdentifier>{a422e4bd-4182-4d39-b3dc-fde4d55293e2}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\garment">
       <UniqueIdentifier>{a63da343-c2f1-4eb1-9ddc-9065fb43c334}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\surfaceTracking">
-      <UniqueIdentifier>{503b7d9e-5e71-4ebe-ad3e-661a304aff12}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\math">
       <UniqueIdentifier>{322f607f-9690-4f90-b89b-d2a367c24447}</UniqueIdentifier>
@@ -552,23 +540,38 @@
     <Filter Include="libs\opencv\include\opencv2\stitching\detail">
       <UniqueIdentifier>{cb913ff1-6830-4ba3-9fb0-e1ac6af7b326}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\garment\cuda deformation detection">
-      <UniqueIdentifier>{056ce509-37e2-4811-8202-d2c38e4e4965}</UniqueIdentifier>
-    </Filter>
     <Filter Include="libs\cuda">
       <UniqueIdentifier>{5b470c3e-5e80-4445-888c-653a78c81843}</UniqueIdentifier>
     </Filter>
     <Filter Include="libs\cuda\include">
       <UniqueIdentifier>{3bb1a48c-57a2-4830-bd3f-dca68bdf2b4b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\garment\cpu threaded deformation detection">
-      <UniqueIdentifier>{267c460b-6057-48ec-bd10-df68333da4a1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="addons\ofxGif">
       <UniqueIdentifier>{901a8da3-ab64-498a-b8a0-ad52774090a5}</UniqueIdentifier>
     </Filter>
     <Filter Include="addons\ofxGif\src">
       <UniqueIdentifier>{fc4c4c2a-d0a6-45de-bab3-294740aad0ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs\LSCM">
+      <UniqueIdentifier>{6e6cb85e-854c-4d1e-9ecb-dd289252c581}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\surface_tracking">
+      <UniqueIdentifier>{503b7d9e-5e71-4ebe-ad3e-661a304aff12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\euclidian_cluster_segmentation">
+      <UniqueIdentifier>{72b4a2fa-8124-4308-92d4-60031df1fc86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\garment\cpu threaded craters detection">
+      <UniqueIdentifier>{267c460b-6057-48ec-bd10-df68333da4a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\garment\cuda craters detection">
+      <UniqueIdentifier>{056ce509-37e2-4811-8202-d2c38e4e4965}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\garment\animations">
+      <UniqueIdentifier>{208e45e0-9786-4b4a-bbe0-c8e1b4391895}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\garment\animations\shaders">
+      <UniqueIdentifier>{d0fd54cc-e453-43ef-a9c6-b6ce79afd805}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -869,35 +872,23 @@
     <ClInclude Include="..\..\..\addons\ofxKinectProjectorToolkit\libs\dlib\unicode\unicode_abstract.h">
       <Filter>addons\ofxKinectProjectorToolkit\libs\dlib\unicode</Filter>
     </ClInclude>
-    <ClInclude Include="src\lscm.h">
-      <Filter>src\lscm</Filter>
-    </ClInclude>
-    <ClInclude Include="src\lscmUtilities.h">
-      <Filter>src\lscm</Filter>
-    </ClInclude>
     <ClInclude Include="src\kinect3dBlobDetector.h">
-      <Filter>src\blobDetection</Filter>
+      <Filter>src\euclidian_cluster_segmentation</Filter>
     </ClInclude>
     <ClInclude Include="src\fold.h">
       <Filter>src\garment</Filter>
     </ClInclude>
-    <ClInclude Include="src\animation.h">
-      <Filter>src\garment</Filter>
-    </ClInclude>
     <ClInclude Include="src\ofSemiImplicitActiveMesh.h">
-      <Filter>src\surfaceTracking</Filter>
-    </ClInclude>
-    <ClInclude Include="src\flying_lights.h">
-      <Filter>src\garment</Filter>
+      <Filter>src\surface_tracking</Filter>
     </ClInclude>
     <ClInclude Include="src\interactive_garment.h">
       <Filter>src\garment</Filter>
     </ClInclude>
     <ClInclude Include="src\simple_3dblob.h">
-      <Filter>src\blobDetection</Filter>
+      <Filter>src\euclidian_cluster_segmentation</Filter>
     </ClInclude>
     <ClInclude Include="src\point_cloud.h">
-      <Filter>src\blobDetection</Filter>
+      <Filter>src\euclidian_cluster_segmentation</Filter>
     </ClInclude>
     <ClInclude Include="src\cv_helper.h">
       <Filter>src\toolbox</Filter>
@@ -2438,12 +2429,6 @@
     <ClInclude Include="src\gl_shader.h">
       <Filter>src\toolbox</Filter>
     </ClInclude>
-    <ClInclude Include="src\contour_vector_field.h">
-      <Filter>src\garment</Filter>
-    </ClInclude>
-    <ClInclude Include="src\fold_video_texture.h">
-      <Filter>src\garment</Filter>
-    </ClInclude>
     <ClInclude Include="src\ransac_kalman_segments.h">
       <Filter>src\math</Filter>
     </ClInclude>
@@ -3312,31 +3297,43 @@
       <Filter>libs\opencv\include\opencv2\objdetect</Filter>
     </ClInclude>
     <ClInclude Include="src\cuda_accelerated_deformation_detection.h">
-      <Filter>src\garment\cuda deformation detection</Filter>
+      <Filter>src\garment\cuda craters detection</Filter>
     </ClInclude>
     <ClInclude Include="src\cuda_math_vectors_helper.cuh">
-      <Filter>src\garment\cuda deformation detection</Filter>
+      <Filter>src\garment\cuda craters detection</Filter>
     </ClInclude>
     <ClInclude Include="src\threaded_deformation_detector.h">
-      <Filter>src\garment\cpu threaded deformation detection</Filter>
+      <Filter>src\garment\cpu threaded craters detection</Filter>
     </ClInclude>
     <ClInclude Include="src\deformation_tracker.h">
-      <Filter>src\garment\cpu threaded deformation detection</Filter>
+      <Filter>src\garment\cpu threaded craters detection</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxGif\src\ofxGif.h">
       <Filter>addons\ofxGif\src</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\LSCM\lscm.h">
+      <Filter>libs\LSCM</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\LSCM\lscmUtilities.h">
+      <Filter>libs\LSCM</Filter>
+    </ClInclude>
+    <ClInclude Include="src\animation.h">
+      <Filter>src\garment\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="src\contour_vector_field.h">
+      <Filter>src\garment\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="src\flying_lights.h">
+      <Filter>src\garment\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fold_video_texture.h">
+      <Filter>src\garment\animations</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\data\shaders\to_projector.frag">
-      <Filter>src\shaders</Filter>
-    </None>
-    <None Include="bin\data\shaders\to_projector.vert">
-      <Filter>src\shaders</Filter>
-    </None>
     <None Include="libs\Eigen\Array">
       <Filter>libs\Eigen3\Eigen</Filter>
     </None>
@@ -3437,18 +3434,18 @@
       <Filter>libs\MRPT_base\includes\mrpt\otherlibs\stlplus</Filter>
     </None>
     <None Include="bin\data\shaders\contour_vector_field.frag">
-      <Filter>src\shaders</Filter>
+      <Filter>src\garment\animations\shaders</Filter>
     </None>
     <None Include="bin\data\shaders\contour_vector_field.vert">
-      <Filter>src\shaders</Filter>
+      <Filter>src\garment\animations\shaders</Filter>
     </None>
     <None Include="bin\data\shaders\contour_vector_field.geom">
-      <Filter>src\shaders</Filter>
+      <Filter>src\garment\animations\shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="src\cuda_accelerated_deformation_detection.cu">
-      <Filter>src\garment\cuda deformation detection</Filter>
+      <Filter>src\garment\cuda craters detection</Filter>
     </CudaCompile>
   </ItemGroup>
 </Project>

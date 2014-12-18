@@ -1,3 +1,6 @@
+// NOT USED
+// Simple line fitting iterative RANSAC algorithm
+
 #ifndef FLEXIBLE_SURFACE_AUGMENTATION_RANSAC_LINES_H_
 #define FLEXIBLE_SURFACE_AUGMENTATION_RANSAC_LINES_H_
 

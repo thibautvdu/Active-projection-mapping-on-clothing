@@ -1,3 +1,7 @@
+// NOT USED
+// Shader loading helper functions : vertex, fragment and geometry shaders reading
+// and loading
+
 #ifndef FLEXIBLE_SURFACE_AUGMENTATION_GL_SHADER_H_
 #define FLEXIBLE_SURFACE_AUGMENTATION_GL_SHADER_H_
 

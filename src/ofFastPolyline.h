@@ -1,3 +1,6 @@
+// Rewriting of ofPolyline with faster peformances for the closest point functions
+// and handle 3D coordinates and not only 2D coordinates (openframeworks conception mistake)
+
 #ifndef FLEXIBLE_SURFACE_AUGMENTATION_OF_FAST_POLYLINE_H_
 #define FLEXIBLE_SURFACE_AUGMENTATION_OF_FAST_POLYLINE_H_
 
