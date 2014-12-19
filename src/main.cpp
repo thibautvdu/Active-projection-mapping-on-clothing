@@ -14,11 +14,11 @@ int main() {
 	// Cover both the monitor and projector screen with a single large window
 	// (multi window is not possible in openframeworks yet while using the
 	// programmable renderer)
-	ofAppBaseWindow* window = ofGetWindowPtr();
-	ofAppGLFWWindow* GLFWWindow = (ofAppGLFWWindow*)window;
+	//ofAppBaseWindow* window = ofGetWindowPtr();
+	//ofAppGLFWWindow* GLFWWindow = (ofAppGLFWWindow*)window;
 
-	GLFWWindow->setMultiDisplayFullscreen(true);
-	window->setFullscreen(true);
+	//GLFWWindow->setMultiDisplayFullscreen(true);
+	//window->setFullscreen(true);
 	// !Fullscreen
 
 	ofRunApp(new ofApp());

@@ -1,3 +1,6 @@
+// Use openrameworks video player to play a video on the length of a fold
+// Currently only process on the first fold of the list
+
 #ifndef FLEXIBLE_SURFACE_AUGMENTATION_FOLD_VIDEO_TEXTURE_H_
 #define FLEXIBLE_SURFACE_AUGMENTATION_FOLD_VIDEO_TEXTURE_H_
 
